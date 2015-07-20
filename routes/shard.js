@@ -16,11 +16,13 @@ exports.list =
 
 		url = 'mongodb://'.concat(url);
 
-		var ns = req.param('db').concat('.').concat(req.param('collection'));
+		var namespace = req.param('db')
+			.concat('.').concat(req.param('collection'));
 
-		chunks = {};
-		shards = {};
-		changes = [];
+		var meta = {};
+
+		meta['chunks'] = {};
+		meta['changes'] = [];
 
 		MongoClient.connect(url, function (err, db)
 		{
@@ -29,22 +31,15 @@ exports.list =
 			else
 			{
 				var chunkcoll = db.collection('chunks');
-				var stream = chunkcoll.find({ ns : "bootcamp.twitter" }).stream();
+				var stream = chunkcoll.find({ ns : namespace }).stream();
 
-				stream.on("data", function(chunk)
-				{
-					if(!(chunk.shard in shards))
-						shards[chunk.shard] = [];
-
-					shards[chunk.shard].push(chunk);
-					chunks[s(chunk.min)] = chunk;
-				});
+				stream.on("data", function(chunk) { meta['chunks'][s(chunk.min)] = chunk; });
 
 			    var changecoll = db.collection('changelog');
 			    stream = changecoll.find({ ns : "bootcamp.twitter", what : /moveChunk|split/ }).sort({ _id : -1 }).stream();
 
-			    stream.on("data", function(change){ changes.push(change) });
-			    stream.on("end", function(){ res.json(chunks) });
+			    stream.on("data", function(change){ meta['changes'].push(change) });
+			    stream.on("end", function(){ res.json(meta) });
 			}
 		});
 	};
