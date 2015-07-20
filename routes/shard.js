@@ -27,7 +27,7 @@ exports.list =
 		MongoClient.connect(url, function (err, db)
 		{
 			if (err)
-				res('Unable to connect to the mongoDB server. Error:', err);
+				res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
 			else
 			{
 				var chunkcoll = db.collection('chunks');
