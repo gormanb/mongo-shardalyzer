@@ -7,6 +7,7 @@ var Shardalyzer =
 	chunks : {},
 	changes : [],
 	position : 0,
+	chunklist : [],
 
 	initialize : function(chunkdata, changedata)
 	{
@@ -14,6 +15,8 @@ var Shardalyzer =
 
 		this.shards = {};
 		this.chunks = {};
+
+		this.chunklist = [];
 
 		this.position = 0;
 
@@ -33,6 +36,9 @@ var Shardalyzer =
 
 		while(this.canFastForward())
 			this.fastforward();
+
+		for(var k in this.chunks)
+			this.chunklist.push(this.chunks[k]);
 	},
 
 	// ns-minkey0_val-minkeyN_val
@@ -43,7 +49,7 @@ var Shardalyzer =
 
 		// iterates in correct shardkey order
 		for(var k in minShardKey)
-			newId.concat("-").concat(k).concat("_").concat(s(minShardKey[k]));
+			newId = newId.concat("-").concat(k).concat("_").concat(s(minShardKey[k]));
 
 		return newId;
 	},
