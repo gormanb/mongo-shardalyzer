@@ -6,7 +6,7 @@
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
-  , shard = require('./routes/shard')
+  , mongo = require('./routes/mongo')
   , http = require('http')
   , path = require('path');
 
@@ -30,7 +30,9 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-app.get('/shards/:host/:port/:db/:collection*', shard.list);
+app.get('/mongo/dbs/:host/:port*', mongo.dbs);
+app.get('/mongo/collections/:host/:port/:db*', mongo.collections);
+app.get('/mongo/metadata/:host/:port/:db/:collection*', mongo.metadata);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
