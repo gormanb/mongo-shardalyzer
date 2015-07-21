@@ -28,8 +28,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/users', user.list);
+//app.get('/', routes.index);
+//app.get('/users', user.list);
 app.get('/mongo/dbs/:host/:port*', mongo.dbs);
 app.get('/mongo/collections/:host/:port/:db*', mongo.collections);
 app.get('/mongo/metadata/:host/:port/:db/:collection*', mongo.metadata);
