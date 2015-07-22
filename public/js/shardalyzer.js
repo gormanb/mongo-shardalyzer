@@ -1,6 +1,11 @@
 
 var s = JSON.stringify;
 
+var clone = function(orig)
+{
+	return jQuery.extend(true, {}, orig);
+}
+
 var Shardalyzer =
 {
 	shards : {},
@@ -30,7 +35,7 @@ var Shardalyzer =
 			this.shards[chunk.shard].push(chunk);
 			this.chunks[s(chunk.min)] = chunk;
 		}
-/*
+
 		while(this.canRewind())
 			this.rewind();
 
@@ -39,7 +44,6 @@ var Shardalyzer =
 
 		for(var k in this.chunks)
 			this.chunklist.push(this.chunks[k]);
-*/
 	},
 
 	// ns-minkey0_val-minkeyN_val
@@ -111,7 +115,7 @@ var Shardalyzer =
 			chunk[k] = left[k];
 
 		// create new chunk based on old
-		var newChunk = jQuery.extend(true, {}, chunk);
+		var newChunk = clone(chunk);
 
 		// update the new chunk's details
 		for(var k in right)
@@ -225,7 +229,7 @@ var Shardalyzer =
 		else
 		{
 			// subsequent splits create new chunks
-			var newChunk = jQuery.extend(true, {}, chunk);
+			var newChunk = clone(chunk);
 
 			for(var k in newMeta)
 				newChunk[k] = newMeta[k];
@@ -424,12 +428,12 @@ var Shardalyzer =
 					break;
 
 				case "moveChunk.to":
-					//this.revertMoveFrom(this.chunks, this.shards, this.changes[this.position++]);
+					//this.revertMoveTo(this.chunks, this.shards, this.changes[this.position++]);
 					this.position++;
 					break;
 
 				case "moveChunk.commit":
-					//this.revertMoveFrom(this.chunks, this.shards, this.changes[this.position++]);
+					//this.revertMoveCommit(this.chunks, this.shards, this.changes[this.position++]);
 					this.position++;
 					break;
 
@@ -459,11 +463,11 @@ var Shardalyzer =
 					break;
 
 				case "moveChunk.to":
-					this.applyMoveFrom(this.chunks, this.shards, this.changes[this.position]);
+					//this.applyMoveTo(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case "moveChunk.commit":
-					this.applyMoveFrom(this.chunks, this.shards, this.changes[this.position]);
+					//this.applyMoveCommit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case "multi-split":

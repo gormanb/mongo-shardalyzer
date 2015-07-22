@@ -104,9 +104,11 @@ shardvis.controller("showChart", function ($scope)
 {
 	console.log('chart handler');
 
+	$scope.chartmeta = {};
+
 	$scope.$watch('mongo.shardalyzer.shards["shard01"]', function(chunks)
 	{
-		$scope.data = [];
+		$scope.chartmeta.data = [];
 
 		for(var k in chunks)
 		{
@@ -118,12 +120,12 @@ shardvis.controller("showChart", function ($scope)
 				label: s(chunks[k])
 			};
 
-			$scope.data.push(entry);
+			$scope.chartmeta.data.push(entry);
 		}
 	});
 
 	// Chart.js Options
-    $scope.options =  {
+    $scope.chartmeta.options =  {
 
       // Sets the chart to be responsive
       responsive: true,
@@ -138,7 +140,7 @@ shardvis.controller("showChart", function ($scope)
       segmentStrokeWidth : 2,
 
       //Number - The percentage of the chart that we cut out of the middle
-      percentageInnerCutout : 50, // This is 0 for Pie charts
+      percentageInnerCutout : 75, // This is 0 for Pie charts
 
       //Number - Amount of animation steps
       animationSteps : 100,

@@ -15,20 +15,22 @@
 	</head>
 
 	<body>
-		mongo:// <input type="text" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
+		<div>
+			mongo:// <input type="text" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
 
-		: <input type="text" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
+			: <input type="text" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
 
-		/ <select ng-controller="dbList" ng-model="mongo.selectedDB" ng-options="db.name as db.name for db in mongo.dbList.databases">
-			<option value="">[database]</option>
-		</select>
+			/ <select ng-controller="dbList" ng-model="mongo.selectedDB" ng-options="db.name as db.name for db in mongo.dbList.databases">
+				<option value="">[database]</option>
+			</select>
 
-		. <select ng-controller="collList" ng-model="mongo.selectedColl" ng-options="coll.name as coll.name for coll in mongo.collList">
-			<option value="">[collection]</option>
-		</select>
+			. <select ng-controller="collList" ng-model="mongo.selectedColl" ng-options="coll.name as coll.name for coll in mongo.collList">
+				<option value="">[collection]</option>
+			</select>
+		</div>
 
 		<div ng-controller="showChart">
-		    <canvas tc-chartjs-doughnut chart-options="options" chart-data="data" auto-legend></canvas>
+		    <canvas tc-chartjs-doughnut chart-options="chartmeta.options" chart-data="chartmeta.data"></canvas>
 		</div>
 
 		<p>SHARDS<p>
