@@ -1,9 +1,28 @@
 
 var s = JSON.stringify;
 
+var peekBack = function(array)
+{
+	return array[array.length-1];
+}
+
+var remove = function(array, object)
+{
+	array.splice(array.indexOf(object), 1);
+}
+
 var clone = function(orig)
 {
 	return jQuery.extend(true, {}, orig);
+}
+
+var putAll = function(to, from)
+{
+	for(var prop in from)
+	{
+	    if(from.hasOwnProperty(prop))
+	        to[prop] = from[prop];
+	}
 }
 
 var Shardalyzer =
@@ -39,8 +58,8 @@ var Shardalyzer =
 		while(this.canRewind())
 			this.rewind();
 
-		while(this.canFastForward())
-			this.fastforward();
+//		while(this.canFastForward())
+//			this.fastforward();
 
 		for(var k in this.chunks)
 			this.chunklist.push(this.chunks[k]);
@@ -111,15 +130,13 @@ var Shardalyzer =
 		var chunk = chunks[s(before.min)];
 
 		// update the source chunk' details
-		for(var k in left)
-			chunk[k] = left[k];
+		putAll(chunk, left);
 
 		// create new chunk based on old
 		var newChunk = clone(chunk);
 
 		// update the new chunk's details
-		for(var k in right)
-			newChunk[k] = right[k];
+		putAll(newChunk, right);
 
 		// generate an _id for the new chunk
 		newChunk._id = this.generateChunkId(newChunk.ns, newChunk.min);
@@ -139,12 +156,11 @@ var Shardalyzer =
 		var splitChunk = chunks[s(right.min)];
 
 		// remove right chunk...
-		shards[splitChunk.shard].pop();
+		remove(shards[splitChunk.shard], splitChunk);
 		delete chunks[s(right.min)];
 
 		// ... and revert left
-		for(var k in before)
-			chunk[k] = before[k];
+		putAll(chunk, before);
 	},
 
 /*
@@ -222,17 +238,13 @@ var Shardalyzer =
 		var splitNum = change.details.number;
 
 		if(splitNum == 1) // split 1 of N updates existing chunk
-		{
-			for(var k in newMeta)
-				chunk[k] = newMeta[k];
-		}
+			putAll(chunk, newMeta);
 		else
 		{
 			// subsequent splits create new chunks
 			var newChunk = clone(chunk);
 
-			for(var k in newMeta)
-				newChunk[k] = newMeta[k];
+			putAll(newChunk, newMeta);
 
 			// generate an ID for the new chunk
 			newChunk._id = this.generateChunkId(newChunk.ns, newChunk.min);
@@ -266,13 +278,12 @@ var Shardalyzer =
 			//chunk.lastmodUnsplit();
 
 			// revert parent chunk
-			for(var k in before)
-				chunk[k] = before[k];
+			putAll(chunk, before);
 		}
 		else
 		{
 			// remove the child chunk
-			shards[newChunk.shard].pop();
+			remove(shards[newChunk.shard], newChunk);
 			delete chunks[s(newChunk.min)];
 		}
 	},
@@ -313,7 +324,7 @@ var Shardalyzer =
 
 		if(!success)
 		{
-			shards[change.details.to].pop();
+			remove(shards[change.details.to], chunk);
 			shards[change.details.from].push(chunk);
 
 			chunk.shard = change.details.from;
@@ -332,7 +343,7 @@ var Shardalyzer =
 		{
 			// if !success at [t+1], chunk has already been restored to source shard
 			// therefore, revert the change by putting it back on the target shard
-			shards[change.details.from].pop();
+			remove(shards[change.details.from], chunk);
 			shards[change.details.to].push(chunk);
 
 			chunk.shard = change.details.to;
@@ -371,14 +382,7 @@ var Shardalyzer =
 		// TODO: dupe chunk, put it in dest shard, tag as START_DEST for vis
 
 		// move the chunk from one shard to the other
-		shards[change.details.from] = shards[change.details.from].filter
-		(
-			function(testChunk)
-			{
-			  return s(testChunk.min) !== s(chunk.min);
-			}
-		);
-
+		remove(shards[change.details.from], chunk);
 		shards[change.details.to].push(chunk);
 	},
 
@@ -392,14 +396,7 @@ var Shardalyzer =
 
 		// restore the chunk to the original shard
 		// move the chunk from one shard to the other
-		shards[change.details.to] = shards[change.details.to].filter
-		(
-			function(testChunk)
-			{
-			  return s(testChunk.min) !== s(chunk.min);
-			}
-		);
-
+		remove(shards[change.details.to], chunk);
 		shards[change.details.from].push(chunk);
 	},
 
