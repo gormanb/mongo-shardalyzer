@@ -228,8 +228,8 @@ var Shardalyzer =
  */
 	applyMultiSplit : function(chunks, shards, change)
 	{
+		// the original chunk's metadata
 		var before = change.details.before;
-		var newMeta = change.details.chunk;
 
 		// the original chunk
 		var chunk = chunks[s(before.min)];
@@ -237,17 +237,21 @@ var Shardalyzer =
 		// this split's position in the sequence
 		var splitNum = change.details.number;
 
-		if(splitNum == 1) // split 1 of N updates existing chunk
-			putAll(chunk, newMeta);
+		// get the metadata of the new chunk
+		var newMeta = change.details.chunk;
+		var newMin = newMeta.min;
+
+		if(splitNum == 1)
+			putAll(chunk, newMeta); // split 1 of N updates existing chunk
 		else
 		{
 			// subsequent splits create new chunks
 			var newChunk = clone(chunk);
-
 			putAll(newChunk, newMeta);
 
 			// generate an ID for the new chunk
-			newChunk._id = this.generateChunkId(newChunk.ns, newChunk.min);
+			var newId = generateChunkId(chunk.ns, newMin);
+			newChunk._id = newId;
 
 			// add new chunk to topology
 			shards[newChunk.shard].push(newChunk);
@@ -257,8 +261,8 @@ var Shardalyzer =
 
 	revertMultiSplit : function(chunks, shards, change)
 	{
+		// the original chunk's metadata
 		var before = change.details.before;
-		var newMeta = change.details.chunk;
 
 		// the original chunk
 		var chunk = chunks[s(before.min)];
@@ -266,12 +270,15 @@ var Shardalyzer =
 		// this split's position in the sequence
 		var splitNum = change.details.number;
 
+		// get the metadata of the new chunk
+		var newMeta = change.details.chunk;
+		var newMin = newMeta.min;
+
 		// get the child chunk
-		var newChunk = chunks[s(newMeta.min)];
+		var newChunk = chunks[s(newMin)];
 
 		if(splitNum == 1)
 		{
-			// get min and max before split
 			// 2.6 {before} includes original lastmod & Epoch
 			// 3.0 omits this information, need to recreate
 			chunk.lastmod = newMeta.lastmod;
@@ -284,7 +291,7 @@ var Shardalyzer =
 		{
 			// remove the child chunk
 			remove(shards[newChunk.shard], newChunk);
-			delete chunks[s(newChunk.min)];
+			delete chunks[s(newMin)];
 		}
 	},
 
@@ -317,6 +324,9 @@ var Shardalyzer =
 */
 	applyMoveFrom : function(chunks, shards, change)
 	{
+		var from = change.details.from;
+		var to = change.details.to;
+
 		var chunk = chunks[s(change.details.min)];
 
 		var success =
@@ -324,16 +334,18 @@ var Shardalyzer =
 
 		if(!success)
 		{
-			remove(shards[change.details.to], chunk);
-			shards[change.details.from].push(chunk);
-
-			chunk.shard = change.details.from;
+			remove(shards[to], chunk);
+			shards[from].push(chunk);
+			chunk.shard = from;
 			//chunk.lastmodUnmove(0);
 		}
 	},
 
 	revertMoveFrom : function(chunks, shards, change)
 	{
+		var from = change.details.from;
+		var to = change.details.to
+
 		var chunk = chunks[s(change.details.min)];
 
 		var success =
@@ -343,10 +355,9 @@ var Shardalyzer =
 		{
 			// if !success at [t+1], chunk has already been restored to source shard
 			// therefore, revert the change by putting it back on the target shard
-			remove(shards[change.details.from], chunk);
-			shards[change.details.to].push(chunk);
-
-			chunk.shard = change.details.to;
+			remove(shards[from], chunk);
+			shards[to].push(chunk);
+			chunk.shard = to;
 			//chunk.lastmodMove(0);
 		}
 	},
@@ -373,41 +384,44 @@ var Shardalyzer =
 */
 	applyMoveStart : function(chunks, shards, change)
 	{
+		var from = change.details.from;
+		var to = change.details.to;
+
 		// get relevant chunk
 		var chunk = chunks[s(change.details.min)];
-
-		chunk.shard = change.details.to;
+		chunk.shard = to;
 		//chunk.lastmodMove(0);
 
 		// TODO: dupe chunk, put it in dest shard, tag as START_DEST for vis
 
 		// move the chunk from one shard to the other
-		remove(shards[change.details.from], chunk);
-		shards[change.details.to].push(chunk);
+		remove(shards[from], chunk);
+		shards[to].push(chunk);
 	},
 
 	revertMoveStart : function(chunks, shards, change)
 	{
+		var from = change.details.from;
+		var to = change.details.to;
+
 		// get relevant chunk
 		var chunk = chunks[s(change.details.min)];
-
-		chunk.shard = change.details.from;
+		chunk.shard = from;
 		//chunk.lastmodUnmove(0);
 
 		// restore the chunk to the original shard
-		// move the chunk from one shard to the other
-		remove(shards[change.details.to], chunk);
-		shards[change.details.from].push(chunk);
+		remove(shards[to], chunk);
+		shards[from].push(chunk);
 	},
 
 	canFastForward : function()
 	{
-		return this.changes.length > 0 && this.position !== 0;
+		return this.changes.length > 0 && this.position > 0;
 	},
 
 	canRewind : function()
 	{
-		return this.changes.length > 0 && this.position !== this.changes.length;
+		return this.changes.length > 0 && this.position < this.changes.length;
 	},
 
 	rewind : function()
@@ -417,31 +431,31 @@ var Shardalyzer =
 			switch(this.changes[this.position].what)
 			{
 				case "moveChunk.start":
-					this.revertMoveStart(this.chunks, this.shards, this.changes[this.position++]);
+					this.revertMoveStart(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case "moveChunk.from":
-					this.revertMoveFrom(this.chunks, this.shards, this.changes[this.position++]);
+					this.revertMoveFrom(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case "moveChunk.to":
-					//this.revertMoveTo(this.chunks, this.shards, this.changes[this.position++]);
-					this.position++;
+					//this.revertMoveTo(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case "moveChunk.commit":
-					//this.revertMoveCommit(this.chunks, this.shards, this.changes[this.position++]);
-					this.position++;
+					//this.revertMoveCommit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case "multi-split":
-					this.revertMultiSplit(this.chunks, this.shards, this.changes[this.position++]);
+					this.revertMultiSplit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case "split":
-					this.revertSplit(this.chunks, this.shards, this.changes[this.position++]);
+					this.revertSplit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 			}
+
+			this.position++;
 		}
 	},
 
