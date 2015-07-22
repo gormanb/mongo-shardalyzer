@@ -1,22 +1,25 @@
 
 var s = JSON.stringify;
 
-var peekBack = function(array)
+function peekBack(array)
 {
 	return array[array.length-1];
 }
 
-var remove = function(array, object)
+function remove(array, object)
 {
-	array.splice(array.indexOf(object), 1);
+	var pos = array.indexOf(object);
+
+	if(pos >= 0)
+		array.splice(pos, 1);
 }
 
-var clone = function(orig)
+function clone(orig)
 {
 	return jQuery.extend(true, {}, orig);
 }
 
-var putAll = function(to, from)
+function putAll(to, from)
 {
 	for(var prop in from)
 	{
@@ -250,8 +253,7 @@ var Shardalyzer =
 			putAll(newChunk, newMeta);
 
 			// generate an ID for the new chunk
-			var newId = generateChunkId(chunk.ns, newMin);
-			newChunk._id = newId;
+			newChunk._id = this.generateChunkId(chunk.ns, newMin);
 
 			// add new chunk to topology
 			shards[newChunk.shard].push(newChunk);
