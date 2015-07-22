@@ -3,18 +3,18 @@
 	<head>
 		<title>Shardalyzer</title>
 		<!-- <link rel="stylesheet" href="js/angular-chart/angular-chart.css"> -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+		<!-- <script src="js/angular-chart/angular-chart.min.js"></script> -->
+		<script src="js/tc-angular-chartjs/tc-angular-chartjs.min.js"></script>
+
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-		<script src="js/angular-chart/angular-chart.min.js"></script>
 		<script src="js/shardalyzer.js"></script>
 		<script src="js/shardalyzer-ctrl.js"></script>
 	</head>
 
 	<body>
-		<!-- <canvas id="radar" class="chart chart-radar" data="data" labels="labels"></canvas> -->
-
 		mongo:// <input type="text" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
 
 		: <input type="text" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
@@ -26,6 +26,10 @@
 		. <select ng-controller="collList" ng-model="mongo.selectedColl" ng-options="coll.name as coll.name for coll in mongo.collList">
 			<option value="">[collection]</option>
 		</select>
+
+		<div ng-controller="showChart">
+		    <canvas tc-chartjs-doughnut chart-options="options" chart-data="data" auto-legend></canvas>
+		</div>
 
 		<p>SHARDS<p>
 
