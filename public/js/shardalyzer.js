@@ -30,7 +30,7 @@ var Shardalyzer =
 			this.shards[chunk.shard].push(chunk);
 			this.chunks[s(chunk.min)] = chunk;
 		}
-
+/*
 		while(this.canRewind())
 			this.rewind();
 
@@ -39,6 +39,7 @@ var Shardalyzer =
 
 		for(var k in this.chunks)
 			this.chunklist.push(this.chunks[k]);
+*/
 	},
 
 	// ns-minkey0_val-minkeyN_val

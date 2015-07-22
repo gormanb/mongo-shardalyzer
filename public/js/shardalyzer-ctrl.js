@@ -104,29 +104,25 @@ shardvis.controller("showChart", function ($scope)
 {
 	console.log('chart handler');
 
-	// Chart.js Data
-    $scope.data = [
-      {
-        value: 300,
-        color:'#F7464A',
-        highlight: '#FF5A5E',
-        label: 'Red'
-      },
-      {
-        value: 50,
-        color: '#46BFBD',
-        highlight: '#5AD3D1',
-        label: 'Green'
-      },
-      {
-        value: 100,
-        color: '#FDB45C',
-        highlight: '#FFC870',
-        label: 'Yellow'
-      }
-    ];
+	$scope.$watch('mongo.shardalyzer.shards["shard01"]', function(chunks)
+	{
+		$scope.data = [];
 
-    // Chart.js Options
+		for(var k in chunks)
+		{
+			var entry =
+			{
+				value: 1,
+				color: '#FDB45C',
+				highlight: '#FFC870',
+				label: s(chunks[k])
+			};
+
+			$scope.data.push(entry);
+		}
+	});
+
+	// Chart.js Options
     $scope.options =  {
 
       // Sets the chart to be responsive
@@ -158,6 +154,5 @@ shardvis.controller("showChart", function ($scope)
 
       //String - A legend template
       legendTemplate : '<ul class="tc-chart-js-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'
-
     };
 });
