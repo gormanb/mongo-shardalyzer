@@ -61,8 +61,8 @@ var Shardalyzer =
 		while(this.canRewind())
 			this.rewind();
 
-//		while(this.canFastForward())
-//			this.fastforward();
+		while(this.canFastForward())
+			this.fastforward();
 
 		for(var k in this.chunks)
 			this.chunklist.push(this.chunks[k]);
@@ -334,11 +334,11 @@ var Shardalyzer =
 		var success =
 			(change.details.note == "success");
 
-		if(!success)
+		if(success)
 		{
-			remove(shards[to], chunk);
-			shards[from].push(chunk);
-			chunk.shard = from;
+			remove(shards[from], chunk);
+			shards[to].push(chunk);
+			chunk.shard = to;
 			//chunk.lastmodUnmove(0);
 		}
 	},
@@ -353,13 +353,13 @@ var Shardalyzer =
 		var success =
 			(change.details.note == "success");
 
-		if(!success)
+		if(success)
 		{
 			// if !success at [t+1], chunk has already been restored to source shard
 			// therefore, revert the change by putting it back on the target shard
-			remove(shards[from], chunk);
-			shards[to].push(chunk);
-			chunk.shard = to;
+			remove(shards[to], chunk);
+			shards[from].push(chunk);
+			chunk.shard = from;
 			//chunk.lastmodMove(0);
 		}
 	},
@@ -386,7 +386,7 @@ var Shardalyzer =
 */
 	applyMoveStart : function(chunks, shards, change)
 	{
-		var from = change.details.from;
+/*		var from = change.details.from;
 		var to = change.details.to;
 
 		// get relevant chunk
@@ -399,10 +399,12 @@ var Shardalyzer =
 		// move the chunk from one shard to the other
 		remove(shards[from], chunk);
 		shards[to].push(chunk);
+*/
 	},
 
 	revertMoveStart : function(chunks, shards, change)
 	{
+/*
 		var from = change.details.from;
 		var to = change.details.to;
 
@@ -414,6 +416,7 @@ var Shardalyzer =
 		// restore the chunk to the original shard
 		remove(shards[to], chunk);
 		shards[from].push(chunk);
+*/
 	},
 
 	canFastForward : function()
