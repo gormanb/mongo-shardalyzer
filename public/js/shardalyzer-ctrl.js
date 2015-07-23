@@ -1,5 +1,5 @@
 
-var shardvis = angular.module('shard-vis', ["tc.chartjs"]).run
+var shardalyze = angular.module('shard-vis', ["tc.chartjs"]).run
 (
 	function($rootScope)
 	{
@@ -13,7 +13,7 @@ var shardvis = angular.module('shard-vis', ["tc.chartjs"]).run
 	}
 );
 
-shardvis.controller
+shardalyze.controller
 (
 	'nsList',
 	function ($scope, $http)
@@ -74,27 +74,45 @@ shardvis.controller
 	}
 );
 
-shardvis.controller("showChart", function ($scope)
+shardalyze.controller("updateCharts", function ($scope)
 {
 	console.log('chart handler');
 
 	$scope.chartmeta = {};
 
-	$scope.$watch('mongo.shardalyzer.shards["shard01"]', function(chunks)
+	$scope.$watch('mongo.shardalyzer.shards', function(shards)
 	{
-		$scope.chartmeta.data = [];
+		$scope.chartmeta.data = {};
 
-		for(var k in chunks)
+		for(var s in shards)
 		{
-			var entry =
-			{
-				value: 1,
-				color: '#FDB45C',
-				highlight: '#FFC870',
-				label: s(chunks[k])
-			};
+			$scope.chartmeta.data[s] = [];
 
-			$scope.chartmeta.data.push(entry);
+			for(var chunk in shards[s])
+			{
+				var entry =
+				{
+					value: 1,
+					color: '#FDB45C',
+					highlight: '#FFC870',
+					label: JSON.stringify(shards[s][chunk])
+				};
+	
+				$scope.chartmeta.data[s].push(entry);
+			}
+
+			if($scope.chartmeta.data[s].length == 0)
+			{
+				var entry =
+				{
+					value: 1,
+					color: '#AAAAAA',
+					highlight: '#CCCCCC',
+					label: 'Empty'
+				};
+	
+				$scope.chartmeta.data[s].push(entry);
+			}
 		}
 	});
 

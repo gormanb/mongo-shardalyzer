@@ -4,6 +4,13 @@
 		<title>Shardalyzer</title>
 		<!-- <link rel="stylesheet" href="js/angular-chart/angular-chart.css"> -->
 		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
+
+		<link rel="stylesheet" href="http://carlcraig.github.io/tc-angular-chartjs/css/prism.css">
+		<link rel="stylesheet" href="http://carlcraig.github.io/tc-angular-chartjs/css/normalize.css">
+		<link rel="stylesheet" href="http://carlcraig.github.io/tc-angular-chartjs/css/foundation.min.css">
+		<link rel="stylesheet" href="http://carlcraig.github.io/tc-angular-chartjs/css/font-awesome.min.css">
+		<link rel="stylesheet" href="http://carlcraig.github.io/tc-angular-chartjs/css/app.css">
+
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 		<!-- <script src="js/angular-chart/angular-chart.min.js"></script> -->
@@ -25,8 +32,10 @@
 			</select>
 		</div>
 
-		<div ng-controller="showChart">
-		    <canvas tc-chartjs-doughnut chart-options="chartmeta.options" chart-data="chartmeta.data"></canvas>
+		<div  class="row" style="margin-top:20px;" style="height:300px;" ng-controller="updateCharts">
+			<div ng-repeat="(shard, chunks) in chartmeta.data" class="medium-8 columns">
+			    <canvas tc-chartjs-doughnut chart-options="chartmeta.options" chart-data="chunks"></canvas>
+			</div>
 		</div>
 
 		<p>SHARDS<p>
