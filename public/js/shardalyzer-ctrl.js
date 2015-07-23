@@ -93,7 +93,7 @@ shardalyze.controller("updateCharts", function ($scope)
 				var entry =
 				{
 					value: 1,
-					color: '#FDB45C',
+					color: (shards[s][chunk].status == undefined ? '#FDB45C' : '#FF0000'),
 					highlight: '#FFC870',
 					label: JSON.stringify(shards[s][chunk])
 				};

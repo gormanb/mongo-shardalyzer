@@ -58,6 +58,9 @@ var Shardalyzer =
 			this.chunks[s(chunk.min)] = chunk;
 		}
 
+		if(this.canRewind())
+			this.tag(this.chunks, this.changes[0]);
+
 		while(this.canRewind())
 			this.rewind();
 
@@ -419,6 +422,98 @@ var Shardalyzer =
 */
 	},
 
+	tag : function(chunks, change)
+	{
+		switch(change.what)
+		{
+			case "moveChunk.start":
+				chunks[s(change.details.min)].status = "moveChunk.start.source";
+				break;
+
+			case "moveChunk.from":
+				var success =
+					(change.details.note == "success");
+
+				chunks[s(change.details.min)].status =
+					(success ? "moveChunk.from.success" : "moveChunk.from.failure");
+
+				break;
+
+			case "moveChunk.to":
+				chunks[s(change.details.min)].status = "moveChunk.to.source";
+				break;
+
+			case "moveChunk.commit":
+				chunks[s(change.details.min)].status = "moveChunk.commit";
+				break;
+
+			case "multi-split":
+
+				var before = change.details.before;
+				var newMeta = change.details.chunk;
+
+				chunks[s(before.min)].status = "multi-split.source";
+
+				// don't tag if splitNum == 1; both chunk refs same
+				if(change.details.number > 1)
+					chunks[s(newMeta.min)].status = "multi-split.dest";
+
+				break;
+
+			case "split":
+
+				var left = change.details.left;
+				var right = change.details.right;
+
+				chunks[s(left.min)].status = "multi-split.source";
+				chunks[s(right.min)].status = "multi-split.dest";
+
+				break;
+		}
+	},
+
+	untag : function(chunks, change)
+	{
+		switch(change.what)
+		{
+			case "moveChunk.start":
+				delete chunks[s(change.details.min)].status;
+				break;
+
+			case "moveChunk.from":
+				delete chunks[s(change.details.min)].status;
+				break;
+
+			case "moveChunk.to":
+				delete chunks[s(change.details.min)].status;
+				break;
+
+			case "moveChunk.commit":
+				delete chunks[s(change.details.min)].status;
+				break;
+
+			case "multi-split":
+
+				var before = change.details.before;
+				var newMeta = change.details.chunk;
+
+				delete chunks[s(before.min)].status;
+				delete chunks[s(newMeta.min)].status;
+
+				break;
+
+			case "split":
+
+				var left = change.details.left;
+				var right = change.details.right;
+
+				delete chunks[s(left.min)].status;
+				delete chunks[s(right.min)].status;
+
+				break;
+		}
+	},
+
 	canFastForward : function()
 	{
 		return this.changes.length > 0 && this.position > 0;
@@ -433,6 +528,8 @@ var Shardalyzer =
 	{
 		if(this.canRewind())
 		{
+			this.untag(this.chunks, this.changes[this.position]);
+
 			switch(this.changes[this.position].what)
 			{
 				case "moveChunk.start":
@@ -461,6 +558,9 @@ var Shardalyzer =
 			}
 
 			this.position++;
+
+			if(this.position < this.changes.length)
+				this.tag(this.chunks, this.changes[this.position]);
 		}
 	},
 
@@ -468,6 +568,9 @@ var Shardalyzer =
 	{
 		if(this.canFastForward())
 		{
+			if(this.position < this.changes.length)
+				this.untag(this.chunks, this.changes[this.position]);
+
 			switch(this.changes[--this.position].what)
 			{
 				case "moveChunk.start":
@@ -494,6 +597,8 @@ var Shardalyzer =
 					this.applySplit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 			}
+
+			this.tag(this.chunks, this.changes[this.position]);
 		}
 	}
 };
