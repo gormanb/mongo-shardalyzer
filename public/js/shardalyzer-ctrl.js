@@ -143,10 +143,10 @@ shardvis.controller("showChart", function ($scope)
       percentageInnerCutout : 75, // This is 0 for Pie charts
 
       //Number - Amount of animation steps
-      animationSteps : 100,
+      animationSteps : 250,
 
       //String - Animation easing effect
-      animationEasing : 'easeOutBounce',
+      animationEasing : 'easeOutQuint',
 
       //Boolean - Whether we animate the rotation of the Doughnut
       animateRotate : true,

@@ -8,6 +8,33 @@ var MongoClient = mongodb.MongoClient;
 
 var s = JSON.stringify;
 
+exports.namespaces =
+	function(req, res)
+	{
+		var url = req.param('host').concat(':')
+			.concat(req.param('port')).concat('/config');
+
+		url = 'mongodb://'.concat(url);
+
+		MongoClient.connect(url, function(err, db)
+		{
+			if (err)
+				res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+			else
+			{
+				var chunkcoll = db.collection('chunks');
+
+				chunkcoll.distinct('ns', function(err, namespaces)
+				{
+					if(err)
+						res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+					else
+						res.json(namespaces);
+				});
+			}
+		})
+	};
+
 exports.dbs =
 	function(req, res)
 	{
