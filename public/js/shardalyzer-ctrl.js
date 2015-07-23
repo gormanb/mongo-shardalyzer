@@ -93,7 +93,7 @@ shardalyze.controller("updateCharts", function ($scope)
 				var entry =
 				{
 					value: 1,
-					color: (shards[s][chunk].status == undefined ? '#FDB45C' : '#FF0000'),
+					color: $scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status],
 					highlight: '#FFC870',
 					label: JSON.stringify(shards[s][chunk])
 				};

@@ -52,6 +52,8 @@ var Shardalyzer =
 	position : 0,
 	chunklist : [],
 
+	statuscolors : {},
+
 	initialize : function(chunkdata, changedata)
 	{
 		this.changes = changedata;
@@ -73,6 +75,16 @@ var Shardalyzer =
 			this.shards[chunk.shard].push(chunk);
 			this.chunks[s(chunk.min)] = chunk;
 		}
+
+		var statuscolors = this.statuscolors;
+
+		statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#00CC00', statuscolors[STATUS_MULTI_SPLIT_DEST] = 'FFFF00',
+		statuscolors[STATUS_SPLIT_SOURCE] = '#00CC00', statuscolors[STATUS_SPLIT_DEST] = 'FFFF00',
+		statuscolors[STATUS_START_SOURCE] = '#00CC00', statuscolors[STATUS_START_DEST] = 'FFFF00',
+		statuscolors[STATUS_TO_SOURCE] = '#00CC00', statuscolors[STATUS_TO_DEST] = 'FFFF00',
+		statuscolors[STATUS_FROM_SUCCESS] = '#00CC00', statuscolors[STATUS_FROM_FAILURE] = 'FF0000',
+		statuscolors[STATUS_COMMIT] = '#0000CC',
+		statuscolors.undefined = '#FDB45C';
 
 		if(this.canRewind())
 			this.tag(this.chunks, this.changes[0]);
