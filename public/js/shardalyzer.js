@@ -28,6 +28,22 @@ function putAll(to, from)
 	}
 }
 
+var	OP_SPLIT = "split", OP_MULTI_SPLIT = "multi-split",
+	OP_START = "moveChunk.start", OP_TO = "moveChunk.to",
+	OP_COMMIT = "moveChunk.commit", OP_FROM = "moveChunk.from";
+
+var	SOURCE = ".source", DESTINATION = ".dest",
+	SUCCESS = ".success", FAILURE = ".fail";
+
+var	STATUS_START_SOURCE = OP_START + SOURCE, STATUS_START_DEST = OP_START + DESTINATION,
+	STATUS_TO_SOURCE = OP_TO + SOURCE, STATUS_TO_DEST = OP_TO + DESTINATION,
+	STATUS_FROM_SUCCESS = OP_FROM + SUCCESS, STATUS_FROM_FAILURE = OP_FROM + FAILURE,
+	STATUS_COMMIT = OP_COMMIT;
+
+var	STATUS_SPLIT_SOURCE = OP_SPLIT + SOURCE, STATUS_SPLIT_DEST = OP_SPLIT + DESTINATION,
+	STATUS_MULTI_SPLIT_SOURCE = OP_MULTI_SPLIT + SOURCE,
+	STATUS_MULTI_SPLIT_DEST = OP_MULTI_SPLIT + DESTINATION;
+
 var Shardalyzer =
 {
 	shards : {},
@@ -426,47 +442,47 @@ var Shardalyzer =
 	{
 		switch(change.what)
 		{
-			case "moveChunk.start":
-				chunks[s(change.details.min)].status = "moveChunk.start.source";
+			case OP_START:
+				chunks[s(change.details.min)].status = STATUS_START_SOURCE;
 				break;
 
-			case "moveChunk.from":
+			case OP_FROM:
 				var success =
 					(change.details.note == "success");
 
 				chunks[s(change.details.min)].status =
-					(success ? "moveChunk.from.success" : "moveChunk.from.failure");
+					(success ? STATUS_FROM_SUCCESS : STATUS_FROM_FAILURE);
 
 				break;
 
-			case "moveChunk.to":
-				chunks[s(change.details.min)].status = "moveChunk.to.source";
+			case OP_TO:
+				chunks[s(change.details.min)].status = STATUS_TO_SOURCE;
 				break;
 
-			case "moveChunk.commit":
-				chunks[s(change.details.min)].status = "moveChunk.commit";
+			case OP_COMMIT:
+				chunks[s(change.details.min)].status = STATUS_COMMIT;
 				break;
 
-			case "multi-split":
+			case OP_MULTI_SPLIT:
 
 				var before = change.details.before;
 				var newMeta = change.details.chunk;
 
-				chunks[s(before.min)].status = "multi-split.source";
+				chunks[s(before.min)].status = STATUS_MULTI_SPLIT_SOURCE;
 
 				// don't tag if splitNum == 1; both chunk refs same
 				if(change.details.number > 1)
-					chunks[s(newMeta.min)].status = "multi-split.dest";
+					chunks[s(newMeta.min)].status = STATUS_MULTI_SPLIT_DEST;
 
 				break;
 
-			case "split":
+			case OP_SPLIT:
 
 				var left = change.details.left;
 				var right = change.details.right;
 
-				chunks[s(left.min)].status = "multi-split.source";
-				chunks[s(right.min)].status = "multi-split.dest";
+				chunks[s(left.min)].status = STATUS_SPLIT_SOURCE;
+				chunks[s(right.min)].status = STATUS_SPLIT_DEST;
 
 				break;
 		}
@@ -476,23 +492,23 @@ var Shardalyzer =
 	{
 		switch(change.what)
 		{
-			case "moveChunk.start":
+			case OP_START:
 				delete chunks[s(change.details.min)].status;
 				break;
 
-			case "moveChunk.from":
+			case OP_FROM:
 				delete chunks[s(change.details.min)].status;
 				break;
 
-			case "moveChunk.to":
+			case OP_TO:
 				delete chunks[s(change.details.min)].status;
 				break;
 
-			case "moveChunk.commit":
+			case OP_COMMIT:
 				delete chunks[s(change.details.min)].status;
 				break;
 
-			case "multi-split":
+			case OP_MULTI_SPLIT:
 
 				var before = change.details.before;
 				var newMeta = change.details.chunk;
@@ -502,7 +518,7 @@ var Shardalyzer =
 
 				break;
 
-			case "split":
+			case OP_SPLIT:
 
 				var left = change.details.left;
 				var right = change.details.right;
@@ -532,27 +548,27 @@ var Shardalyzer =
 
 			switch(this.changes[this.position].what)
 			{
-				case "moveChunk.start":
+				case OP_START:
 					this.revertMoveStart(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "moveChunk.from":
+				case OP_FROM:
 					this.revertMoveFrom(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "moveChunk.to":
+				case OP_TO:
 					//this.revertMoveTo(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "moveChunk.commit":
+				case OP_COMMIT:
 					//this.revertMoveCommit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "multi-split":
+				case OP_MULTI_SPLIT:
 					this.revertMultiSplit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "split":
+				case OP_SPLIT:
 					this.revertSplit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 			}
@@ -573,27 +589,27 @@ var Shardalyzer =
 
 			switch(this.changes[--this.position].what)
 			{
-				case "moveChunk.start":
+				case OP_START:
 					this.applyMoveStart(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "moveChunk.from":
+				case OP_FROM:
 					this.applyMoveFrom(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "moveChunk.to":
+				case OP_TO:
 					//this.applyMoveTo(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "moveChunk.commit":
+				case OP_COMMIT:
 					//this.applyMoveCommit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "multi-split":
+				case OP_MULTI_SPLIT:
 					this.applyMultiSplit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
-				case "split":
+				case OP_SPLIT:
 					this.applySplit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 			}
