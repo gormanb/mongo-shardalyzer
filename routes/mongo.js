@@ -94,8 +94,7 @@ exports.metadata =
 
 		url = 'mongodb://'.concat(url);
 
-		var namespace = req.param('db')
-			.concat('.').concat(req.param('collection'));
+		var namespace = req.param('namespace');
 
 		var meta = {};
 

@@ -20,12 +20,8 @@
 
 			: <input type="text" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
 
-			/ <select ng-controller="dbList" ng-model="mongo.selectedDB" ng-options="db.name as db.name for db in mongo.dbList.databases">
-				<option value="">[database]</option>
-			</select>
-
-			. <select ng-controller="collList" ng-model="mongo.selectedColl" ng-options="coll.name as coll.name for coll in mongo.collList">
-				<option value="">[collection]</option>
+			/ <select ng-controller="nsList" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
+				<option value="">[namespace]</option>
 			</select>
 		</div>
 

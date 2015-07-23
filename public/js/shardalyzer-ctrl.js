@@ -15,15 +15,15 @@ var shardvis = angular.module('shard-vis', ["tc.chartjs"]).run
 
 shardvis.controller
 (
-	'dbList',
+	'nsList',
 	function ($scope, $http)
 	{
-		$scope.mongo.selectedDB = null;
-		$scope.mongo.dbList = [];
+		$scope.mongo.selectedNS = null;
+		$scope.mongo.nsList = [];
 
-		var updateDBList = function(selected)
+		var updateNSList = function(selected)
 		{
-			var url = '/mongo/dbs/'
+			var url = '/mongo/namespaces/'
 				.concat($scope.mongo.host).concat('/').concat($scope.mongo.port);
 
 			$http
@@ -35,53 +35,20 @@ shardvis.controller
 			(
 				function (result)
 				{
-					$scope.mongo.dbList = result;
+					$scope.mongo.nsList = result;
 				}
 			);
 		};
 
-		$scope.$watch('mongo.host', updateDBList);
-		$scope.$watch('mongo.port', updateDBList);
-	}
-);
+		$scope.$watch('mongo.host', updateNSList);
+		$scope.$watch('mongo.port', updateNSList);
 
-shardvis.controller
-(
-	'collList',
-	function ($scope, $http)
-	{
-		$scope.mongo.selectedColl = null;
-		$scope.mongo.collList = [];
-
-		$scope.$watch('mongo.selectedDB', function(selected)
+		$scope.$watch('mongo.selectedNS', function(selected)
 		{
-			var url =
-				'/mongo/collections/'
-					.concat($scope.mongo.host).concat('/')
-						.concat($scope.mongo.port).concat('/').concat(selected);
-
-			$http
-			({
-				method: 'GET',
-				url: url
-			})
-			.success
-			(
-				function (result)
-				{
-					$scope.mongo.collList = result;
-				}
-			);
-		});
-
-		$scope.$watch('mongo.selectedColl', function(selected)
-		{
-			var url =
-				'/mongo/metadata/'
-					.concat($scope.mongo.host).concat('/')
-						.concat($scope.mongo.port).concat('/')
-							.concat($scope.mongo.selectedDB).concat('/')
-								.concat($scope.mongo.selectedColl);
+			var url = '/mongo/metadata/'
+				.concat($scope.mongo.host).concat('/')
+					.concat($scope.mongo.port).concat('/')
+						.concat($scope.mongo.selectedNS);
 
 			$http
 			({
