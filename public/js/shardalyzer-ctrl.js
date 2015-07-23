@@ -129,7 +129,7 @@ shardalyze.controller("updateCharts", function ($scope)
       segmentStrokeColor : '#fff',
 
       //Number - The width of each segment stroke
-      segmentStrokeWidth : 2,
+      segmentStrokeWidth : 1,
 
       //Number - The percentage of the chart that we cut out of the middle
       percentageInnerCutout : 75, // This is 0 for Pie charts
