@@ -37,6 +37,13 @@ shardvis.controller
 				{
 					$scope.mongo.nsList = result;
 				}
+			)
+			.error
+			(
+				function(err)
+				{
+					$scope.mongo.nsList = [];
+				}
 			);
 		};
 

@@ -19,7 +19,7 @@ exports.namespaces =
 		MongoClient.connect(url, function(err, db)
 		{
 			if (err)
-				res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+				res.status(500).send(err);
 			else
 			{
 				var chunkcoll = db.collection('chunks');
@@ -27,7 +27,7 @@ exports.namespaces =
 				chunkcoll.distinct('ns', function(err, namespaces)
 				{
 					if(err)
-						res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+						res.status(500).send(err);
 					else
 						res.json(namespaces);
 				});
@@ -47,13 +47,13 @@ exports.dbs =
 		MongoClient.connect(url, function (err, db)
 		{
 			if (err)
-				res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+				res.status(500).send(err);
 			else
 			{
 				db.admin().listDatabases(function(err, dbs)
 				{
 					if(err)
-						res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+						res.status(500).send(err);
 					else
 						res.json(dbs);
 				});
@@ -72,13 +72,13 @@ exports.dbs =
 			MongoClient.connect(url, function (err, db)
 			{
 				if (err)
-					res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+					res.status(500).send(err);
 				else
 				{
 					db.listCollections().toArray(function(err, colls)
 					{
 						if(err)
-							res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+							res.status(500).send(err);
 						else
 							res.json(colls);
 					});
@@ -104,7 +104,7 @@ exports.metadata =
 		MongoClient.connect(url, function (err, db)
 		{
 			if (err)
-				res.render('500.jade', {title: '500: Internal Server Error', error: err, stack: err.stack});
+				res.status(500).send(err);
 			else
 			{
 				var chunkcoll = db.collection('chunks');
