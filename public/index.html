@@ -4,6 +4,7 @@
 		<title>Shardalyzer</title>
 		<!-- <link rel="stylesheet" href="js/angular-chart/angular-chart.css"> -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="js/rzslider/rzslider.min.css"></script>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
@@ -11,6 +12,7 @@
 		<script src="js/tc-angular-chartjs/tc-angular-chartjs.min.js"></script>
 
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<script src="js/rzslider/rzslider.min.js"></script>
 		<script src="js/shardalyzer.js"></script>
 		<script src="js/shardalyzer-ctrl.js"></script>
 	</head>
@@ -30,6 +32,10 @@
 			<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4">
 			    <canvas tc-chartjs-doughnut chart-options="chartmeta.options" chart-data="chunks"></canvas>
 			</div>
+		</div>
+
+		<div class="row">
+			<rzslider rz-slider-model="mongo.shardalyzer.changes.length"></rzslider>
 		</div>
 
 		<p>SHARDS<p>

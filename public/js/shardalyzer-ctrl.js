@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shard-vis', ["tc.chartjs"]).run
+var shardalyze = angular.module('shard-vis', ["tc.chartjs", "rzModule"]).run
 (
 	function($rootScope)
 	{
