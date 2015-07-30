@@ -2,14 +2,14 @@
 <html ng-app="shard-vis">
 	<head>
 		<title>Shardalyzer</title>
-		<!-- <link rel="stylesheet" href="js/angular-chart/angular-chart.css"> -->
+		<link rel="stylesheet" href="js/angular-chart/angular-chart.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 		<link rel="stylesheet" href="js/rzslider/rzslider.min.css"></script>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
-		<!-- <script src="js/angular-chart/angular-chart.min.js"></script> -->
-		<script src="js/tc-angular-chartjs/tc-angular-chartjs.js"></script>
+		<script src="js/angular-chart/angular-chart.min.js"></script>
+		<!-- <script src="js/tc-angular-chartjs/tc-angular-chartjs.js"></script> -->
 
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 		<script src="js/rzslider/rzslider.min.js"></script>
@@ -30,7 +30,12 @@
 
 		<div class="row" style="margin-top:20px;" style="height:300px;" ng-controller="updateCharts">
 			<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4">
-			    <canvas tc-chartjs-doughnut chart-options="chartmeta.options" chart-data="chunks"></canvas>
+				<canvas id="doughnut_shard" class="chart chart-doughnut"
+					options="chartmeta.options"
+					data="chunks"
+					labels="chartmeta.labels[shard]"
+					colours="chartmeta.colors[shard]"></canvas>
+			    <!-- <canvas tc-chartjs-doughnut chart-options="chartmeta.options" chart-data="chunks"></canvas> -->
 			</div>
 		</div>
 

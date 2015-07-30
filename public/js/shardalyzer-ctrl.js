@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shard-vis', ["tc.chartjs", "rzModule"]).run
+var shardalyze = angular.module('shard-vis', ["chart.js", "rzModule"]).run
 (
 	function($rootScope)
 	{
@@ -79,37 +79,32 @@ shardalyze.controller("updateCharts", function ($scope)
 	$scope.$watch('mongo.shardalyzer.position', function(position)
 	{
 		$scope.chartmeta.data = {};
+		$scope.chartmeta.labels = {};
+		$scope.chartmeta.colors = {};
 
 		var shards = $scope.mongo.shardalyzer.shards;
 
 		for(var s in shards)
 		{
 			$scope.chartmeta.data[s] = [];
+			$scope.chartmeta.labels[s] = [];
+			$scope.chartmeta.colors[s] = [];
 
 			for(var chunk in shards[s])
 			{
-				var entry =
-				{
-					value: 1,
-					color: $scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status],
-					highlight: '#FFC870',
-					label: JSON.stringify(shards[s][chunk])
-				};
-	
-				$scope.chartmeta.data[s].push(entry);
+				var label = JSON.stringify(shards[s][chunk]);
+				var color = $scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status];
+
+				$scope.chartmeta.data[s].push(1);
+				$scope.chartmeta.labels[s].push(label);
+				$scope.chartmeta.colors[s].push(color);
 			}
 
 			if($scope.chartmeta.data[s].length == 0)
 			{
-				var entry =
-				{
-					value: 1,
-					color: '#AAAAAA',
-					highlight: '#CCCCCC',
-					label: 'Empty'
-				};
-	
-				$scope.chartmeta.data[s].push(entry);
+				$scope.chartmeta.data[s].push(1);
+				$scope.chartmeta.labels[s].push('Empty');
+				$scope.chartmeta.colors[s].push('#AAAAAA');
 			}
 		}
 	});
@@ -133,13 +128,13 @@ shardalyze.controller("updateCharts", function ($scope)
       percentageInnerCutout : 75, // This is 0 for Pie charts
 
       //Number - Amount of animation steps
-      animationSteps : 250,
+      animationSteps : 1,
 
       //String - Animation easing effect
       animationEasing : 'easeOutQuint',
 
       //Boolean - Whether we animate the rotation of the Doughnut
-      animateRotate : true,
+      animateRotate : false,
 
       //Boolean - Whether we animate scaling the Doughnut from the centre
       animateScale : false,
