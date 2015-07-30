@@ -9,80 +9,78 @@ var shardalyze = angular.module('shard-vis', ["tc.chartjs", "rzModule"]).run
 		$rootScope.mongo.host = "localhost";
 		$rootScope.mongo.port = 27017;
 
+		$rootScope.mongo.slider = 0;
+
 		$rootScope.mongo.shardalyzer = Shardalyzer;
 	}
 );
 
-shardalyze.controller
-(
-	'nsList',
-	function ($scope, $http)
+shardalyze.controller('nsList', function ($scope, $http)
+{
+	$scope.mongo.selectedNS = null;
+	$scope.mongo.nsList = [];
+
+	var updateNSList = function(selected)
 	{
-		$scope.mongo.selectedNS = null;
-		$scope.mongo.nsList = [];
+		var url = '/mongo/namespaces/'
+			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port);
 
-		var updateNSList = function(selected)
-		{
-			var url = '/mongo/namespaces/'
-				.concat($scope.mongo.host).concat('/').concat($scope.mongo.port);
+		$http
+		({
+			method: 'GET',
+			url: url
+		})
+		.success
+		(
+			function (result)
+			{
+				$scope.mongo.nsList = result;
+			}
+		)
+		.error
+		(
+			function(err)
+			{
+				$scope.mongo.nsList = [];
+			}
+		);
+	};
 
-			$http
-			({
-				method: 'GET',
-				url: url
-			})
-			.success
-			(
-				function (result)
-				{
-					$scope.mongo.nsList = result;
-				}
-			)
-			.error
-			(
-				function(err)
-				{
-					$scope.mongo.nsList = [];
-				}
-			);
-		};
+	$scope.$watch('mongo.host', updateNSList);
+	$scope.$watch('mongo.port', updateNSList);
 
-		$scope.$watch('mongo.host', updateNSList);
-		$scope.$watch('mongo.port', updateNSList);
+	$scope.$watch('mongo.selectedNS', function(selected)
+	{
+		var url = '/mongo/metadata/'
+			.concat($scope.mongo.host).concat('/')
+				.concat($scope.mongo.port).concat('/')
+					.concat($scope.mongo.selectedNS);
 
-		$scope.$watch('mongo.selectedNS', function(selected)
-		{
-			var url = '/mongo/metadata/'
-				.concat($scope.mongo.host).concat('/')
-					.concat($scope.mongo.port).concat('/')
-						.concat($scope.mongo.selectedNS);
-
-			$http
-			({
-				method: 'GET',
-				url: url
-			})
-			.success
-			(
-				function (result)
-				{
-					$scope.mongo.metadata = result;
-					$scope.mongo.shardalyzer.initialize(result.chunks, result.changelog);
-				}
-			);
-		});
-	}
-);
+		$http
+		({
+			method: 'GET',
+			url: url
+		})
+		.success
+		(
+			function (result)
+			{
+				$scope.mongo.metadata = result;
+				$scope.mongo.shardalyzer.initialize(result.chunks, result.changelog);
+			}
+		);
+	});
+});
 
 shardalyze.controller("updateCharts", function ($scope)
 {
-	console.log('chart handler');
-
 	$scope.chartmeta = {};
 
-	$scope.$watch('mongo.shardalyzer.shards', function(shards)
+	$scope.$watch('mongo.shardalyzer.position', function(position)
 	{
 		$scope.chartmeta.data = {};
+
+		var shards = $scope.mongo.shardalyzer.shards;
 
 		for(var s in shards)
 		{
@@ -149,4 +147,31 @@ shardalyze.controller("updateCharts", function ($scope)
       //String - A legend template
       legendTemplate : '<ul class="tc-chart-js-legend"><% for (var i=0; i<segments.length; i++){%><li><span style="background-color:<%=segments[i].fillColor%>"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>'
     };
+});
+
+shardalyze.controller("sliderControl", function($scope)
+{
+	$scope.slidermeta = {};
+
+	$scope.slidermeta.min = 0;
+	$scope.slidermeta.max = 0;
+
+	$scope.slidermeta.translate = function(value)
+	{
+		if($scope.mongo.shardalyzer.changes[value] !== undefined)
+		{
+			$scope.mongo.shardalyzer.bttf(value);
+			return $scope.mongo.shardalyzer.changes[value].time;
+		}
+		else
+			return value;
+	};
+
+	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
+	{
+		if(length == undefined)
+			$scope.slidermeta.max = 0;
+		else
+			$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
+	});
 });

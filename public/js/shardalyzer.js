@@ -628,5 +628,16 @@ var Shardalyzer =
 
 			this.tag(this.chunks, this.changes[this.position]);
 		}
+	},
+
+	bttf : function(instant)
+	{
+		while(instant >= 0 && instant <= this.changes.length && instant !== this.position)
+		{
+			if(instant > this.position)
+				this.rewind();
+			else
+				this.fastforward();
+		}
 	}
 };

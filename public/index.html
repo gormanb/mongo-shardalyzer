@@ -6,10 +6,10 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 		<link rel="stylesheet" href="js/rzslider/rzslider.min.css"></script>
 
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
 		<!-- <script src="js/angular-chart/angular-chart.min.js"></script> -->
-		<script src="js/tc-angular-chartjs/tc-angular-chartjs.min.js"></script>
+		<script src="js/tc-angular-chartjs/tc-angular-chartjs.js"></script>
 
 		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 		<script src="js/rzslider/rzslider.min.js"></script>
@@ -34,8 +34,12 @@
 			</div>
 		</div>
 
-		<div class="row">
-			<rzslider rz-slider-model="mongo.shardalyzer.changes.length"></rzslider>
+		<div class="row" style="width:85%" ng-controller="sliderControl">
+			<rzslider rz-model="mongo.slider"
+				rz-slider-floor="slidermeta.min"
+				rz-slider-ceil="slidermeta.max"
+				rz-slider-translate="slidermeta.translate"
+				rz-slider-always-show-bar="true"></rzslider>
 		</div>
 
 		<p>SHARDS<p>
