@@ -20,6 +20,8 @@ shardalyze.controller('nsList', function($scope, $http)
 
 	var updateNSList = function(selected)
 	{
+		$scope.mongo.selectedNS = null;
+
 		var url = '/mongo/namespaces/'
 			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port);
 
@@ -66,6 +68,14 @@ shardalyze.controller('nsList', function($scope, $http)
 				$scope.mongo.metadata = result;
 				$scope.mongo.shardalyzer.initialize(result.chunks, result.changelog);
 			}
+		)
+		.error
+		(
+			function(err)
+			{
+				$scope.mongo.metadata = {};
+				$scope.mongo.shardalyzer.initialize([], []);
+			}
 		);
 	});
 });
@@ -104,6 +114,12 @@ shardalyze.controller("updateCharts", function($scope)
 				$scope.chartmeta.labels[s].push('Empty');
 				$scope.chartmeta.colors[s].push('#AAAAAA');
 			}
+		}
+
+		if(position == undefined)
+		{
+	    	  $scope.chartmeta.options.animateRotate = true;
+	    	  $scope.chartmeta.options.animationSteps = 125;
 		}
 	});
 
@@ -146,22 +162,24 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.slidermeta.min = 0;
 	$scope.slidermeta.max = 0;
 
+	$scope.slidermeta.position = 0;
+
 	$scope.slidermeta.translate = function(value)
 	{
 		if($scope.mongo.shardalyzer.changes[value] !== undefined)
-		{
-			$scope.mongo.shardalyzer.bttf(value);
 			return $scope.mongo.shardalyzer.changes[value].time;
-		}
 		else
 			return value;
 	};
 
+	$scope.$watch('slidermeta.position', function(position)
+	{
+		$scope.mongo.shardalyzer.bttf(position);
+	});
+
 	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
 	{
-		if(length == undefined)
-			$scope.slidermeta.max = 0;
-		else
-			$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
+		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
+		$scope.slidermeta.position = 0;
 	});
 });

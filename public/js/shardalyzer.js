@@ -82,7 +82,7 @@ var Shardalyzer =
 			this.chunks[s(chunk.min)] = chunk;
 		}
 
-		this.position = (changedata == null || changedata == undefined ? undefined : 0);
+		this.position = (changedata.length > 0 ? 0 : undefined);
 		this.statuscolors = statuscolors;
 
 		if(this.canRewind())
@@ -631,7 +631,7 @@ var Shardalyzer =
 
 	bttf : function(instant)
 	{
-		while(instant >= 0 && instant <= this.changes.length && instant !== this.position)
+		while(this.position !== undefined && instant >= 0 && instant <= this.changes.length && instant !== this.position)
 		{
 			if(instant > this.position)
 				this.rewind();
