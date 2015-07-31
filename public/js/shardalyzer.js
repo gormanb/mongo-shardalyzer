@@ -1,4 +1,30 @@
 
+var	OP_SPLIT = "split", OP_MULTI_SPLIT = "multi-split",
+	OP_START = "moveChunk.start", OP_TO = "moveChunk.to",
+	OP_COMMIT = "moveChunk.commit", OP_FROM = "moveChunk.from";
+
+var	SOURCE = ".source", DESTINATION = ".dest",
+	SUCCESS = ".success", FAILURE = ".fail";
+
+var	STATUS_START_SOURCE = OP_START + SOURCE, STATUS_START_DEST = OP_START + DESTINATION,
+	STATUS_TO_SOURCE = OP_TO + SOURCE, STATUS_TO_DEST = OP_TO + DESTINATION,
+	STATUS_FROM_SUCCESS = OP_FROM + SUCCESS, STATUS_FROM_FAILURE = OP_FROM + FAILURE,
+	STATUS_COMMIT = OP_COMMIT;
+
+var	STATUS_SPLIT_SOURCE = OP_SPLIT + SOURCE, STATUS_SPLIT_DEST = OP_SPLIT + DESTINATION,
+	STATUS_MULTI_SPLIT_SOURCE = OP_MULTI_SPLIT + SOURCE,
+	STATUS_MULTI_SPLIT_DEST = OP_MULTI_SPLIT + DESTINATION;
+
+var statuscolors = {};
+
+statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#00CC00', statuscolors[STATUS_MULTI_SPLIT_DEST] = 'FFFF00',
+statuscolors[STATUS_SPLIT_SOURCE] = '#00CC00', statuscolors[STATUS_SPLIT_DEST] = 'FFFF00',
+statuscolors[STATUS_START_SOURCE] = '#00CC00', statuscolors[STATUS_START_DEST] = 'FFFF00',
+statuscolors[STATUS_TO_SOURCE] = '#00CC00', statuscolors[STATUS_TO_DEST] = 'FFFF00',
+statuscolors[STATUS_FROM_SUCCESS] = '#00CC00', statuscolors[STATUS_FROM_FAILURE] = 'FF0000',
+statuscolors[STATUS_COMMIT] = '#0000CC',
+statuscolors.undefined = '#FDB45C';
+
 var s = JSON.stringify;
 
 function peekBack(array)
@@ -28,31 +54,13 @@ function putAll(to, from)
 	}
 }
 
-var	OP_SPLIT = "split", OP_MULTI_SPLIT = "multi-split",
-	OP_START = "moveChunk.start", OP_TO = "moveChunk.to",
-	OP_COMMIT = "moveChunk.commit", OP_FROM = "moveChunk.from";
-
-var	SOURCE = ".source", DESTINATION = ".dest",
-	SUCCESS = ".success", FAILURE = ".fail";
-
-var	STATUS_START_SOURCE = OP_START + SOURCE, STATUS_START_DEST = OP_START + DESTINATION,
-	STATUS_TO_SOURCE = OP_TO + SOURCE, STATUS_TO_DEST = OP_TO + DESTINATION,
-	STATUS_FROM_SUCCESS = OP_FROM + SUCCESS, STATUS_FROM_FAILURE = OP_FROM + FAILURE,
-	STATUS_COMMIT = OP_COMMIT;
-
-var	STATUS_SPLIT_SOURCE = OP_SPLIT + SOURCE, STATUS_SPLIT_DEST = OP_SPLIT + DESTINATION,
-	STATUS_MULTI_SPLIT_SOURCE = OP_MULTI_SPLIT + SOURCE,
-	STATUS_MULTI_SPLIT_DEST = OP_MULTI_SPLIT + DESTINATION;
-
 var Shardalyzer =
 {
 	shards : {},
 	chunks : {},
 	changes : [],
-	position : 0,
+	position : undefined,
 	chunklist : [],
-
-	statuscolors : {},
 
 	initialize : function(chunkdata, changedata)
 	{
@@ -62,8 +70,6 @@ var Shardalyzer =
 		this.chunks = {};
 
 		this.chunklist = [];
-
-		this.position = 0;
 
 		for(var k in chunkdata)
 		{
@@ -76,15 +82,8 @@ var Shardalyzer =
 			this.chunks[s(chunk.min)] = chunk;
 		}
 
-		var statuscolors = this.statuscolors;
-
-		statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#00CC00', statuscolors[STATUS_MULTI_SPLIT_DEST] = 'FFFF00',
-		statuscolors[STATUS_SPLIT_SOURCE] = '#00CC00', statuscolors[STATUS_SPLIT_DEST] = 'FFFF00',
-		statuscolors[STATUS_START_SOURCE] = '#00CC00', statuscolors[STATUS_START_DEST] = 'FFFF00',
-		statuscolors[STATUS_TO_SOURCE] = '#00CC00', statuscolors[STATUS_TO_DEST] = 'FFFF00',
-		statuscolors[STATUS_FROM_SUCCESS] = '#00CC00', statuscolors[STATUS_FROM_FAILURE] = 'FF0000',
-		statuscolors[STATUS_COMMIT] = '#0000CC',
-		statuscolors.undefined = '#FDB45C';
+		this.position = (changedata == null || changedata == undefined ? undefined : 0);
+		this.statuscolors = statuscolors;
 
 		if(this.canRewind())
 			this.tag(this.chunks, this.changes[0]);
