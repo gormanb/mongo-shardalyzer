@@ -118,12 +118,24 @@ shardalyze.controller("updateCharts", function($scope)
 
       percentageInnerCutout : 75, // This is 0 for Pie charts
 
-      animationSteps : 100,
       animationEasing : 'easeOutQuint',
+      animationSteps : 125,
       animateRotate : true,
       animateScale : false,
 
-      legendTemplate : ''
+      legendTemplate : '',
+
+      tooltipTemplate : function(label)
+      {
+    	  return label.label;
+      },
+
+      // disable animation after initial loading
+      onAnimationProgress : function()
+      {
+    	  $scope.chartmeta.options.animateRotate = false;
+    	  $scope.chartmeta.options.animationSteps = 1;
+      }
     };
 });
 
