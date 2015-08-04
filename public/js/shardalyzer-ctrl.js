@@ -228,30 +228,60 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 		playing : 0,
 		promise : null,
 
-		setState : function(dir)
+		cancel : function()
+		{
+			$interval.cancel(this.promise);
+			this.promise = null;
+			this.playing = 0;
+		},
+
+		play : function(dir)
 		{
 			if(this.playing == dir)
 			{
 				// already playing in this direction, so pause and return
-				$interval.cancel(this.promise);
-				this.playing = 0;
+				this.cancel();
 				return;
 			}
 			else if(this.playing !== 0) // playing in opposite direction, so cancel
-				$interval.cancel(this.promise);
+				this.cancel();
 
 			this.promise = $interval(updateSlider, 100, 0, true, dir);
 			this.playing = dir;
 		},
 
-		rewindPause : function()
+		start : function()
 		{
-			this.setState(1);
+			this.cancel();
+			updateSlider(-$scope.mongo.slider);
 		},
 
-		ffPause : function()
+		fastforward : function()
 		{
-			this.setState(-1);
+			this.play(-1);
+		},
+
+		forward : function()
+		{
+			this.cancel();
+			updateSlider(-1);
+		},
+
+		back : function()
+		{
+			this.cancel();
+			updateSlider(1);
+		},
+
+		rewind : function()
+		{
+			this.play(1);
+		},
+
+		end : function()
+		{
+			this.cancel();
+			updateSlider($scope.mongo.shardalyzer.changes.length - $scope.mongo.slider)
 		}
 	}
 }]);

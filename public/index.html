@@ -53,9 +53,15 @@
 		</div>
 
 		<div class="row" style="width:75%; margin:0 auto;" ng-controller="playControl">
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.ffPause();" value="|<" />
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.rewindPause();" value=">|" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.start();" value="|<" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.fastforward();" value="<<" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.forward();" value="<" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.back();" value=">" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.rewind();" value=">>" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.end();" value=">|" />
 		</div>
+
+		{{mongo.shardalyzer.changes[mongo.slider]}}
 
 	</body>
 
