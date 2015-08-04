@@ -54,6 +54,23 @@ function putAll(to, from)
 	}
 }
 
+function sortObject(obj)
+{
+	var sorted = [];
+
+	for(var k in obj)
+		sorted.push(k);
+
+	sorted.sort();
+
+	var newObj = {};
+
+	for(var k in sorted)
+		newObj[sorted[k]] = obj[sorted[k]];
+
+	return newObj;
+}
+
 var Shardalyzer =
 {
 	shards : {},
@@ -81,6 +98,9 @@ var Shardalyzer =
 			this.shards[chunk.shard].push(chunk);
 			this.chunks[s(chunk.min)] = chunk;
 		}
+
+		// sort shard map by shard name
+		this.shards = sortObject(this.shards);
 
 		this.position = (changedata.length > 0 ? 0 : undefined);
 		this.statuscolors = statuscolors;
