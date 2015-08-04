@@ -21,10 +21,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular-chart.js": "~0.7.2",
-    "angularjs-slider": "~0.1.23",
+    "angular-chart.js": "*",
     "angular-bootstrap-slider": "*",
-    "bootstrap": "~3.3.5",
-    "install": "~1.0.4"
+    "install": "*"
   }
 }

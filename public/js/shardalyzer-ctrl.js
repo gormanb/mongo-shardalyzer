@@ -9,6 +9,8 @@ var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "ui.bootstrap-sli
 		$rootScope.mongo.host = "localhost";
 		$rootScope.mongo.port = 27017;
 
+		$rootScope.mongo.slider = 0;
+
 		$rootScope.mongo.shardalyzer = Shardalyzer;
 	}
 );
@@ -165,8 +167,6 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.slidermeta.ticks = [];
 	$scope.slidermeta.snap = 30;
 
-	$scope.slidermeta.position = 0;
-
 	$scope.slidermeta.formatter = function(value)
 	{
 		if($scope.mongo.shardalyzer.changes[value] !== undefined)
@@ -175,7 +175,7 @@ shardalyze.controller("sliderControl", function($scope)
 			return value;
 	};
 
-	$scope.$watch('slidermeta.position', function(position)
+	$scope.$watch('mongo.slider', function(position)
 	{
 		$scope.mongo.shardalyzer.bttf(position);
 	});
@@ -183,7 +183,7 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
 	{
 		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
-		$scope.slidermeta.position = 0;
+		$scope.mongo.slider = 0;
 
 		$scope.slidermeta.ticks = [];
 		$scope.slidermeta.ticklabels = [];
@@ -212,3 +212,46 @@ shardalyze.controller("sliderControl", function($scope)
 		}
 	});
 });
+
+shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $interval)
+{
+	var updateSlider = function(offset)
+	{
+		var newpos = $scope.mongo.slider + offset;
+
+		if(newpos >= 0 && newpos <= $scope.mongo.shardalyzer.changes.length)
+			$scope.mongo.slider = newpos;
+	}
+
+	$scope.playctrl =
+	{
+		playing : 0,
+		promise : null,
+
+		setState : function(dir)
+		{
+			if(this.playing == dir)
+			{
+				// already playing in this direction, so pause and return
+				$interval.cancel(this.promise);
+				this.playing = 0;
+				return;
+			}
+			else if(this.playing !== 0) // playing in opposite direction, so cancel
+				$interval.cancel(this.promise);
+
+			this.promise = $interval(updateSlider, 100, 0, true, dir);
+			this.playing = dir;
+		},
+
+		rewindPause : function()
+		{
+			this.setState(1);
+		},
+
+		ffPause : function()
+		{
+			this.setState(-1);
+		}
+	}
+}]);

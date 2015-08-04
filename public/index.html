@@ -4,17 +4,15 @@
 		<title>Shardalyzer</title>
 		<link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">
 		<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/bower_components/angularjs-slider/dist/rzslider.min.css">
 		<link rel="stylesheet" href="/bower_components/seiyria-bootstrap-slider/css/bootstrap-slider.css">
 
+		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
 		<script src="/bower_components/angular/angular.min.js"></script>
 		<script src="/bower_components/Chart.js/Chart.min.js"></script>
-		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
 		<script src="/bower_components/seiyria-bootstrap-slider/js/bootstrap-slider.js"></script>
 		<script src="/bower_components/angular-bootstrap-slider/slider.js"></script>
 
 		<script src="/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
-		<script src="/bower_components/angularjs-slider/dist/rzslider.min.js"></script>
 
 		<script src="js/shardalyzer.js"></script>
 		<script src="js/shardalyzer-ctrl.js"></script>
@@ -43,40 +41,22 @@
 		</div>
 
 		<div class="row" style="width:75%; margin:0 auto;" ng-controller="sliderControl">
-			<slider ng-model="slidermeta.position"
+			<slider ng-model="mongo.slider"
 				min="slidermeta.min"
 				max="slidermeta.max"
-				formatter="slidermeta.formatter"
+				value="mongo.slider"
 				ticks="slidermeta.ticks"
 				ticksLabels="slidermeta.ticklabels"
 				ticks_snap_bounds="slidermeta.snap"
-				value="slidermeta.position">
+				formatter="slidermeta.formatter">
 			</slider>
 		</div>
-<!--
-		<div class="row" style="width:85%" ng-controller="sliderControl">
-			<rzslider rz-slider-model="slidermeta.position"
-				rz-slider-floor="slidermeta.min"
-				rz-slider-ceil="slidermeta.max"
-				rz-slider-translate="slidermeta.translate"
-				rz-slider-always-show-bar="true"></rzslider>
+
+		<div class="row" style="width:75%; margin:0 auto;" ng-controller="playControl">
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.ffPause();" value="|<" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.rewindPause();" value=">|" />
 		</div>
--->
-<!--
-		<p>SHARDS<p>
 
-		{{mongo.shardalyzer.shards["shard01"].length}}
-		{{mongo.shardalyzer.shards["shard02"].length}}
-		{{mongo.shardalyzer.shards["shard03"].length}}
-
-		<p>META<p>
-
-		{{mongo.metadata.chunks}}
-
-		<p>SIM<p>
-
-		{{mongo.shardalyzer.chunklist}}
--->
 	</body>
 
 </html>
