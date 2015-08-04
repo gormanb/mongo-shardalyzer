@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shard-vis', ["chart.js", "rzModule"]).run
+var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "rzModule"]).run
 (
 	function($rootScope)
 	{

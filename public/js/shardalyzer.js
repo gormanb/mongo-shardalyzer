@@ -388,7 +388,7 @@ var Shardalyzer =
 			// if !success at [t+1], chunk has already been restored to source shard
 			// therefore, revert the change by putting it back on the target shard
 			remove(shards[to], chunk);
-			shards[from].push(chunk);
+			shards[from].unshift(chunk);
 			chunk.shard = from;
 			//chunk.lastmodMove(0);
 		}
