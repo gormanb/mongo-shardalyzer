@@ -4,11 +4,14 @@
 		<title>Shardalyzer</title>
 		<link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">
 		<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/bower_components/angularjs-slider/dist/rzslider.min.css"></script>
+		<link rel="stylesheet" href="/bower_components/angularjs-slider/dist/rzslider.min.css">
+		<link rel="stylesheet" href="/bower_components/seiyria-bootstrap-slider/css/bootstrap-slider.css">
 
 		<script src="/bower_components/angular/angular.min.js"></script>
 		<script src="/bower_components/Chart.js/Chart.min.js"></script>
 		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="/bower_components/seiyria-bootstrap-slider/js/bootstrap-slider.js"></script>
+		<script src="/bower_components/angular-bootstrap-slider/slider.js"></script>
 
 		<script src="/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
 		<script src="/bower_components/angularjs-slider/dist/rzslider.min.js"></script>
@@ -39,6 +42,18 @@
 			</div>
 		</div>
 
+		<div class="row" style="width:75%; margin:0 auto;" ng-controller="sliderControl">
+			<slider ng-model="slidermeta.position"
+				min="slidermeta.min"
+				max="slidermeta.max"
+				formatter="slidermeta.formatter"
+				ticks="slidermeta.ticks"
+				ticksLabels="slidermeta.ticklabels"
+				ticks_snap_bounds="slidermeta.snap"
+				value="slidermeta.position">
+			</slider>
+		</div>
+<!--
 		<div class="row" style="width:85%" ng-controller="sliderControl">
 			<rzslider rz-slider-model="slidermeta.position"
 				rz-slider-floor="slidermeta.min"
@@ -46,6 +61,7 @@
 				rz-slider-translate="slidermeta.translate"
 				rz-slider-always-show-bar="true"></rzslider>
 		</div>
+-->
 <!--
 		<p>SHARDS<p>
 

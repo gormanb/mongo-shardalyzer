@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "rzModule"]).run
+var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "ui.bootstrap-slider"]).run
 (
 	function($rootScope)
 	{
@@ -162,9 +162,12 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.slidermeta.min = 0;
 	$scope.slidermeta.max = 0;
 
+	$scope.slidermeta.ticks = [];
+	$scope.slidermeta.snap = 30;
+
 	$scope.slidermeta.position = 0;
 
-	$scope.slidermeta.translate = function(value)
+	$scope.slidermeta.formatter = function(value)
 	{
 		if($scope.mongo.shardalyzer.changes[value] !== undefined)
 			return $scope.mongo.shardalyzer.changes[value].time;
@@ -181,5 +184,31 @@ shardalyze.controller("sliderControl", function($scope)
 	{
 		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
 		$scope.slidermeta.position = 0;
+
+		$scope.slidermeta.ticks = [];
+		$scope.slidermeta.ticklabels = [];
+
+		for(var i in $scope.mongo.shardalyzer.changes)
+		{
+			var change = $scope.mongo.shardalyzer.changes[i];
+
+			if(change.details !== undefined && change.details.note !== undefined && change.details.note !== "success")
+			{
+				$scope.slidermeta.ticks.push(i);
+				$scope.slidermeta.ticklabels.push(i);
+			}
+		}
+
+		if($scope.slidermeta.ticks[0] !== 0)
+		{
+			$scope.slidermeta.ticklabels.unshift("");
+			$scope.slidermeta.ticks.unshift(0);
+		}
+
+		if($scope.slidermeta.ticks[$scope.slidermeta.ticks.length-1] !== $scope.slidermeta.max)
+		{
+			$scope.slidermeta.ticks.push($scope.slidermeta.max);
+			$scope.slidermeta.ticklabels.push("");
+		}
 	});
 });
