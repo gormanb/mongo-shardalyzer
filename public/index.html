@@ -41,10 +41,10 @@
 		</div>
 
 		<div class="row" style="width:75%; margin:0 auto;" ng-controller="sliderControl">
-			<slider ng-model="mongo.slider"
+			<slider ng-model="mongo.ui.slider"
 				min="slidermeta.min"
 				max="slidermeta.max"
-				value="mongo.slider"
+				value="mongo.ui.slider"
 				ticks="slidermeta.ticks"
 				ticksLabels="slidermeta.ticklabels"
 				ticks_snap_bounds="slidermeta.snap"
@@ -61,7 +61,11 @@
 			<input type="button" style="margin:0 auto;" ng-click="playctrl.end();" value=">|" />
 		</div>
 
-		{{mongo.shardalyzer.changes[mongo.slider]}}
+		<div class="row" style="width:75%; margin:0 auto;" ng-controller="changelogControl">
+			<select size=25 style="width:100%;" ng-model="mongo.ui.selectedchange">
+				<option ng-repeat="(index, change) in mongo.shardalyzer.changes" value="index">{{change}}</option>
+			</select>
+		</div>
 
 	</body>
 

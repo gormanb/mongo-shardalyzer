@@ -9,7 +9,10 @@ var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "ui.bootstrap-sli
 		$rootScope.mongo.host = "localhost";
 		$rootScope.mongo.port = 27017;
 
-		$rootScope.mongo.slider = 0;
+		$rootScope.mongo.ui = {};
+
+		$rootScope.mongo.ui.selectedchange = 0;
+		$rootScope.mongo.ui.slider = 0;
 
 		$rootScope.mongo.shardalyzer = Shardalyzer;
 	}
@@ -175,7 +178,7 @@ shardalyze.controller("sliderControl", function($scope)
 			return value;
 	};
 
-	$scope.$watch('mongo.slider', function(position)
+	$scope.$watch('mongo.ui.slider', function(position)
 	{
 		$scope.mongo.shardalyzer.bttf(position);
 	});
@@ -183,7 +186,7 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
 	{
 		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
-		$scope.mongo.slider = 0;
+		$scope.mongo.ui.slider = 0;
 
 		$scope.slidermeta.ticks = [];
 		$scope.slidermeta.ticklabels = [];
@@ -217,10 +220,10 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 {
 	var updateSlider = function(offset)
 	{
-		var newpos = $scope.mongo.slider + offset;
+		var newpos = $scope.mongo.ui.slider + offset;
 
 		if(newpos >= 0 && newpos <= $scope.mongo.shardalyzer.changes.length)
-			$scope.mongo.slider = newpos;
+			$scope.mongo.ui.slider = newpos;
 	}
 
 	$scope.playctrl =
@@ -253,7 +256,7 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 		start : function()
 		{
 			this.cancel();
-			updateSlider(-$scope.mongo.slider);
+			updateSlider(-$scope.mongo.ui.slider);
 		},
 
 		fastforward : function()
@@ -281,7 +284,15 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 		end : function()
 		{
 			this.cancel();
-			updateSlider($scope.mongo.shardalyzer.changes.length - $scope.mongo.slider)
+			updateSlider($scope.mongo.shardalyzer.changes.length - $scope.mongo.ui.slider)
 		}
 	}
 }]);
+
+shardalyze.controller("changelogControl", function($scope)
+{
+	$scope.$watch('mongo.ui.slider', function(value)
+	{
+		$scope.mongo.ui.selectedchange = value.toString();
+	});
+});
