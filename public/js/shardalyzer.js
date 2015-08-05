@@ -17,13 +17,13 @@ var	STATUS_SPLIT_SOURCE = OP_SPLIT + SOURCE, STATUS_SPLIT_DEST = OP_SPLIT + DEST
 
 var statuscolors = {};
 
-statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#00CC00', statuscolors[STATUS_MULTI_SPLIT_DEST] = 'FFFF00',
-statuscolors[STATUS_SPLIT_SOURCE] = '#00CC00', statuscolors[STATUS_SPLIT_DEST] = 'FFFF00',
-statuscolors[STATUS_START_SOURCE] = '#00CC00', statuscolors[STATUS_START_DEST] = 'FFFF00',
-statuscolors[STATUS_TO_SOURCE] = '#00CC00', statuscolors[STATUS_TO_DEST] = 'FFFF00',
-statuscolors[STATUS_FROM_SUCCESS] = '#00CC00', statuscolors[STATUS_FROM_FAILURE] = 'FF0000',
-statuscolors[STATUS_COMMIT] = '#0000CC',
-statuscolors.undefined = '#FDB45C';
+statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#FFB347', statuscolors[STATUS_MULTI_SPLIT_DEST] = '#D19036',
+statuscolors[STATUS_SPLIT_SOURCE] = '#FFB347', statuscolors[STATUS_SPLIT_DEST] = '#D19036',
+statuscolors[STATUS_START_SOURCE] = '#77DD77', statuscolors[STATUS_START_DEST] = '#AAAAAA',
+statuscolors[STATUS_TO_SOURCE] = '#33DD33', statuscolors[STATUS_TO_DEST] = '#AAAAAA',
+statuscolors[STATUS_FROM_SUCCESS] = '#00AA00', statuscolors[STATUS_FROM_FAILURE] = '#DD0000',
+statuscolors[STATUS_COMMIT] = '#0000AA',
+statuscolors.undefined = '#AEC6CF';
 
 var s = JSON.stringify;
 

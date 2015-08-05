@@ -114,7 +114,7 @@ shardalyze.controller("updateCharts", function($scope)
 			{
 				$scope.chartmeta.data[s].push(1);
 				$scope.chartmeta.labels[s].push('Empty');
-				$scope.chartmeta.colors[s].push('#AAAAAA');
+				$scope.chartmeta.colors[s].push('#EEEEEE');
 			}
 		}
 
