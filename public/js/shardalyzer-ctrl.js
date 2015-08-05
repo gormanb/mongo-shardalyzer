@@ -11,7 +11,8 @@ var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "ui.bootstrap-sli
 
 		$rootScope.mongo.ui = {};
 
-		$rootScope.mongo.ui.selectedchange = 0;
+		$rootScope.mongo.ui.selectedchange = "0";
+		$rootScope.mongo.ui.errors = [];
 		$rootScope.mongo.ui.slider = 0;
 
 		$rootScope.mongo.shardalyzer = Shardalyzer;
@@ -167,7 +168,7 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.slidermeta.min = 0;
 	$scope.slidermeta.max = 0;
 
-	$scope.slidermeta.ticks = [];
+	$scope.mongo.ui.errors = [];
 	$scope.slidermeta.snap = 30;
 
 	$scope.slidermeta.formatter = function(value)
@@ -188,7 +189,7 @@ shardalyze.controller("sliderControl", function($scope)
 		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
 		$scope.mongo.ui.slider = 0;
 
-		$scope.slidermeta.ticks = [];
+		$scope.mongo.ui.errors = [];
 		$scope.slidermeta.ticklabels = [];
 
 		for(var i in $scope.mongo.shardalyzer.changes)
@@ -197,20 +198,20 @@ shardalyze.controller("sliderControl", function($scope)
 
 			if(change.details !== undefined && change.details.note !== undefined && change.details.note !== "success")
 			{
-				$scope.slidermeta.ticks.push(i);
+				$scope.mongo.ui.errors.push(i);
 				$scope.slidermeta.ticklabels.push(i);
 			}
 		}
 
-		if($scope.slidermeta.ticks[0] !== 0)
+		if($scope.mongo.ui.errors[0] !== 0)
 		{
 			$scope.slidermeta.ticklabels.unshift("");
-			$scope.slidermeta.ticks.unshift(0);
+			$scope.mongo.ui.errors.unshift(0);
 		}
 
-		if($scope.slidermeta.ticks[$scope.slidermeta.ticks.length-1] !== $scope.slidermeta.max)
+		if($scope.mongo.ui.errors[$scope.mongo.ui.errors.length-1] !== $scope.slidermeta.max)
 		{
-			$scope.slidermeta.ticks.push($scope.slidermeta.max);
+			$scope.mongo.ui.errors.push($scope.slidermeta.max);
 			$scope.slidermeta.ticklabels.push("");
 		}
 	});
@@ -259,6 +260,17 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 			updateSlider(-$scope.mongo.ui.slider);
 		},
 
+		forwardError : function()
+		{
+			var pos = $scope.mongo.ui.errors.filter(function(value) { return value < $scope.mongo.ui.slider; });
+
+			if(pos.length > 0)
+			{
+				pos = pos[pos.length-1];
+				updateSlider(-($scope.mongo.ui.slider - pos));
+			}
+		},
+
 		fastforward : function()
 		{
 			this.play(-1);
@@ -279,6 +291,17 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 		rewind : function()
 		{
 			this.play(1);
+		},
+
+		backError : function()
+		{
+			var pos = $scope.mongo.ui.errors.filter(function(value) { return value > $scope.mongo.ui.slider; });
+
+			if(pos.length > 0)
+			{
+				pos = pos[0];
+				updateSlider(pos - $scope.mongo.ui.slider);
+			}
 		},
 
 		end : function()

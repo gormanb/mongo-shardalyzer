@@ -45,7 +45,7 @@
 				min="slidermeta.min"
 				max="slidermeta.max"
 				value="mongo.ui.slider"
-				ticks="slidermeta.ticks"
+				ticks="mongo.ui.errors"
 				ticksLabels="slidermeta.ticklabels"
 				ticks_snap_bounds="slidermeta.snap"
 				formatter="slidermeta.formatter">
@@ -54,16 +54,19 @@
 
 		<div class="row" style="width:75%; margin:0 auto;" ng-controller="playControl">
 			<input type="button" style="margin:0 auto;" ng-click="playctrl.start();" value="|<" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.forwardError();" value="<x" />
 			<input type="button" style="margin:0 auto;" ng-click="playctrl.fastforward();" value="<<" />
 			<input type="button" style="margin:0 auto;" ng-click="playctrl.forward();" value="<" />
 			<input type="button" style="margin:0 auto;" ng-click="playctrl.back();" value=">" />
 			<input type="button" style="margin:0 auto;" ng-click="playctrl.rewind();" value=">>" />
+			<input type="button" style="margin:0 auto;" ng-click="playctrl.backError();" value="x>" />
 			<input type="button" style="margin:0 auto;" ng-click="playctrl.end();" value=">|" />
 		</div>
 
 		<div class="row" style="width:75%; margin:0 auto;" ng-controller="changelogControl">
-			<select size=25 style="width:100%;" ng-model="mongo.ui.selectedchange">
-				<option ng-repeat="(index, change) in mongo.shardalyzer.changes" value="index">{{change}}</option>
+			<select size=25 style="width:100%;" disabled
+				ng-options="index as change | json for (index, change) in mongo.shardalyzer.changes"
+				ng-model="mongo.ui.selectedchange">
 			</select>
 		</div>
 
