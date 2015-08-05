@@ -61,30 +61,30 @@ exports.dbs =
 		});
 	};
 
-	exports.collections =
-		function(req, res)
+exports.collections =
+	function(req, res)
+	{
+		var url = req.param('host').concat(':')
+			.concat(req.param('port')).concat('/').concat(req.param('db'));
+
+		url = 'mongodb://'.concat(url);
+
+		MongoClient.connect(url, function (err, db)
 		{
-			var url = req.param('host').concat(':')
-				.concat(req.param('port')).concat('/').concat(req.param('db'));
-
-			url = 'mongodb://'.concat(url);
-
-			MongoClient.connect(url, function (err, db)
+			if (err)
+				res.status(500).send(err);
+			else
 			{
-				if (err)
-					res.status(500).send(err);
-				else
+				db.listCollections().toArray(function(err, colls)
 				{
-					db.listCollections().toArray(function(err, colls)
-					{
-						if(err)
-							res.status(500).send(err);
-						else
-							res.json(colls);
-					});
-				}
-			});
-		};
+					if(err)
+						res.status(500).send(err);
+					else
+						res.json(colls);
+				});
+			}
+		});
+	};
 
 exports.metadata =
 	function(req, res)
@@ -113,7 +113,7 @@ exports.metadata =
 				stream.on("data", function(chunk) { meta['chunks'].push(chunk); });
 
 			    var changecoll = db.collection('changelog');
-			    stream = changecoll.find({ ns : namespace, what : /moveChunk|split/ }).sort({ _id : -1 }).stream();
+			    stream = changecoll.find({ ns : namespace, what : /moveChunk|split/ }).sort({ time : -1 }).stream();
 
 			    stream.on("data", function(change){ meta['changelog'].push(change) });
 			    stream.on("end", function(){ res.json(meta) });
