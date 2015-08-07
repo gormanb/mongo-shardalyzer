@@ -52,15 +52,37 @@
 			</slider>
 		</div>
 
-		<div class="row" style="width:75%; margin:0 auto;" ng-controller="playControl">
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.start();" value="|<" />
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.forwardError();" value="<x" />
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.fastforward();" value="<<" />
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.forward();" value="<" />
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.back();" value=">" />
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.rewind();" value=">>" />
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.backError();" value="x>" />
-			<input type="button" style="margin:0 auto;" ng-click="playctrl.end();" value=">|" />
+		<div class="row" style="width:75%; margin:0 auto;">
+			{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}&nbsp;
+		</div>
+
+		<div class="row" style="width:75%; margin:0 auto;">
+			<div class="btn-group" role="group" ng-controller="playControl">
+				<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
+					<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-info" ng-click="playctrl.fastforward();" value="<<">
+					<span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-danger" ng-click="playctrl.forwardError();" value="! <">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-default" ng-click="playctrl.forward();" value="<">
+					<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-default" ng-click="playctrl.back();" value=">">
+					<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-danger" ng-click="playctrl.backError();" value="> !">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-info" ng-click="playctrl.rewind();" value=">>">
+					<span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-primary" ng-click="playctrl.end();" value=">|">
+					<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+				</button>
+			</div>
 		</div>
 
 		<div class="row" style="width:75%; margin:0 auto;" ng-controller="changelogControl">
