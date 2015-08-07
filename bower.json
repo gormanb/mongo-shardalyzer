@@ -23,6 +23,7 @@
   "dependencies": {
     "angular-chart.js": "*",
     "angular-bootstrap-slider": "*",
+    "angular-bootstrap": "*",
     "install": "*"
   }
 }

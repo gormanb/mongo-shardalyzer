@@ -86,7 +86,7 @@
 		</div>
 
 		<div class="row" style="width:75%; margin:0 auto;" ng-controller="changelogControl">
-			<select size=25 style="width:100%;" disabled
+			<select class="form-control" size=25 style="width:100%;" disabled
 				ng-options="index as change | json for (index, change) in mongo.shardalyzer.changes"
 				ng-model="mongo.ui.selectedchange">
 			</select>
