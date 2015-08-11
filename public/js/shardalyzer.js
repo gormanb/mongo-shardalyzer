@@ -77,7 +77,6 @@ var Shardalyzer =
 	chunks : {},
 	changes : [],
 	position : undefined,
-	chunklist : [],
 
 	initialize : function(chunkdata, changedata)
 	{
@@ -85,8 +84,6 @@ var Shardalyzer =
 
 		this.shards = {};
 		this.chunks = {};
-
-		this.chunklist = [];
 
 		for(var k in chunkdata)
 		{
@@ -107,15 +104,6 @@ var Shardalyzer =
 
 		if(this.canRewind())
 			this.tag(this.chunks, this.changes[0]);
-
-		while(this.canRewind())
-			this.rewind();
-
-		while(this.canFastForward())
-			this.fastforward();
-
-		for(var k in this.chunks)
-			this.chunklist.push(this.chunks[k]);
 	},
 
 	// ns-minkey0_val-minkeyN_val
