@@ -44,24 +44,12 @@
 			</div>
 		</div>
 
-		<div class="row" style="width:75%; margin:0 auto;" ng-controller="sliderControl">
-			<slider ng-model="mongo.ui.slider"
-				min="slidermeta.min"
-				max="slidermeta.max"
-				value="mongo.ui.slider"
-				ticks="mongo.ui.errors"
-				ticksLabels="slidermeta.ticklabels"
-				ticks_snap_bounds="slidermeta.snap"
-				formatter="slidermeta.formatter">
-			</slider>
-		</div>
-
 		<div class="row" style="width:75%; margin:0 auto;">
 			{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}&nbsp;
 		</div>
 
-		<div class="row" style="width:75%; margin:0 auto;">
-			<div class="btn-group" role="group" ng-controller="playControl">
+		<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
+			<div class="btn-group" style="display:table-cell; min-width:350px" role="group" ng-controller="playControl">
 				<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
 					<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
 				</button>
@@ -86,6 +74,18 @@
 				<button type="button" class="btn btn-primary" ng-click="playctrl.end();" value=">|">
 					<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
 				</button>
+			</div>
+
+			<div style="display:table-cell; width:100%" ng-controller="sliderControl">
+				<slider ng-model="mongo.ui.slider"
+					min="slidermeta.min"
+					max="slidermeta.max"
+					value="mongo.ui.slider"
+					ticks="mongo.ui.errors"
+					ticksLabels="slidermeta.ticklabels"
+					ticks_snap_bounds="slidermeta.snap"
+					formatter="slidermeta.formatter">
+				</slider>
 			</div>
 		</div>
 
