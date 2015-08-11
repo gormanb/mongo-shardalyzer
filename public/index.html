@@ -40,10 +40,9 @@
 					labels="chartmeta.labels[shard]"
 					colours="chartmeta.colors[shard]"></canvas>
 			    <p align="center"><b>{{shard}} : {{chunks.length}}</b></p>
+			    <div id="chartjs-tooltip-{{shard}}" class="chartjs-tooltip"></div>
 			</div>
 		</div>
-
-		<div id="chartjs-tooltip"></div>
 
 		<div class="row" style="width:75%; margin:0 auto;" ng-controller="sliderControl">
 			<slider ng-model="mongo.ui.slider"

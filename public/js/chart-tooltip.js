@@ -1,19 +1,27 @@
+
+var last_tt = undefined;
+
 Chart.defaults.global.customTooltips = function(tooltip)
 {
-	// Tooltip Element
-    var tooltipEl = $('#chartjs-tooltip');
-    // Hide if no tooltip
-    if (!tooltip) {
-        tooltipEl.css({
-            opacity: 0
-        });
-        return;
+	var obj = (tooltip ? JSON.parse(tooltip.text) : last_tt !== undefined ? JSON.parse(last_tt.text) : undefined);
+	var tooltipEl = (obj !== undefined ? $('#chartjs-tooltip-'.concat(obj.shard)) : undefined);
+
+	// Hide if no tooltip
+    if (!tooltip)
+    {
+    	if(tooltipEl !== undefined)
+    		tooltipEl.css({ opacity: 0 });
+
+    	return;
     }
+
+    last_tt = tooltip;
+
     // Set caret Position
     tooltipEl.removeClass('above below');
     tooltipEl.addClass(tooltip.yAlign);
     // Set Text
-    tooltipEl.html(tooltip.text);
+    tooltipEl.html("<pre>".concat(tooltip.text).concat("</pre>"));
     // Find Y Location on page
     var top;
     if (tooltip.yAlign == 'above') {

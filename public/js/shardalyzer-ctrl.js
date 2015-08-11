@@ -106,8 +106,8 @@ shardalyze.controller("updateCharts", function($scope)
 
 			for(var chunk in shards[s])
 			{
-				var label = JSON.stringify(shards[s][chunk], null, 2);
 				var color = $scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status];
+				var label = JSON.stringify(shards[s][chunk], null, 2);
 
 				$scope.chartmeta.data[s].push(1);
 				$scope.chartmeta.labels[s].push(label);
@@ -149,7 +149,7 @@ shardalyze.controller("updateCharts", function($scope)
 
       tooltipTemplate : function(label)
       {
-    	  return "<pre>".concat(label.label).concat("</pre>");
+    	  return label.label;
       },
 
       // disable animation after initial loading
