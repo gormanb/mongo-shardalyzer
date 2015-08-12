@@ -13,6 +13,7 @@ var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "ui.bootstrap", "
 
 		$rootScope.mongo.ui.selectedchange = "0";
 		$rootScope.mongo.ui.changelog = [];
+		$rootScope.mongo.ui.logwindow = 25;
 		$rootScope.mongo.ui.errors = [];
 		$rootScope.mongo.ui.slider = 0;
 
@@ -185,12 +186,19 @@ shardalyze.controller("sliderControl", function($scope)
 		$scope.mongo.shardalyzer.bttf(position);
 
 		var changes = $scope.mongo.shardalyzer.changes;
+		var window = $scope.mongo.ui.logwindow;
+		var offset = Math.floor(window / 2);
 
-		var start = Math.max(Math.min(position, changes.length-13)-12, 0);
-		var end = Math.max(Math.min(position+13, changes.length), 25);
+		var start = Math.max(Math.min(position, changes.length-offset)-offset, 0);
+		var end = Math.max(Math.min(position+offset, changes.length), window);
 
 		$scope.mongo.ui.selectedchange = (position - start).toString();
-		$scope.mongo.ui.changelog = changes.slice(start, end);
+
+		for(var k = 0; k < (end-start); k++)
+		{
+			if(changes[start + k] !== undefined)
+				$scope.mongo.ui.changelog[k] = changes[start + k];
+		}
 	});
 
 	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
