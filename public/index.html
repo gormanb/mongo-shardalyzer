@@ -2,23 +2,25 @@
 <html ng-app="shardalyzer-ui">
 	<head>
 		<title>Shardalyzer</title>
-		<link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">
-		<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/bower_components/seiyria-bootstrap-slider/css/bootstrap-slider.css">
-		<link rel="stylesheet" href="/bower_components/angular-bootstrap/ui-bootstrap-csp.css">
-
 		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
 
 		<script src="/bower_components/angular/angular.min.js"></script>
 		<script src="/bower_components/Chart.js/Chart.min.js"></script>
 
+		<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/bower_components/angular-bootstrap/ui-bootstrap-csp.css">
 		<script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
 		<script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
+		<link rel="stylesheet" href="/bower_components/seiyria-bootstrap-slider/css/bootstrap-slider.css">
 		<script src="/bower_components/seiyria-bootstrap-slider/js/bootstrap-slider.js"></script>
 		<script src="/bower_components/angular-bootstrap-slider/slider.js"></script>
 
+		<link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">
 		<script src="/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+
+		<link rel="stylesheet" href="/bower_components/json-formatter/dist/json-formatter.min.css">
+		<script src="/bower_components/json-formatter/dist/json-formatter.min.js"></script>
 
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
 		<script src="js/chart-tooltip.js"></script>
@@ -95,11 +97,17 @@
 			</div>
 		</div>
 
-		<div class="row" style="width:75%; margin:0 auto;" ng-controller="changelogControl">
-			<select class="form-control" size=25 style="width:100%;" disabled
-				ng-options="index as change | json for (index, change) in mongo.ui.changelog"
-				ng-model="mongo.ui.selectedchange">
-			</select>
+		<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
+			<div id="changelist" style="display:table-cell; width:100%" ng-controller="changelogControl">
+				<select class="form-control" size=25 style="width:100%;" disabled
+					ng-options="index as change | json for (index, change) in mongo.ui.changelog"
+					ng-model="mongo.ui.selectedchange">
+				</select>
+			</div>
+
+			<div style="display:table-cell; min-width:350px; max-width:350px;" ng-show="mongo.ui.changelog[mongo.ui.selectedchange] !== undefined">
+				<json-formatter json="mongo.ui.changelog[mongo.ui.selectedchange]" open="3"></json-formatter>
+			</div>
 		</div>
 
 	</body>
