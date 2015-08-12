@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "ui.bootstrap-slider"]).run
+var shardalyze = angular.module('shardalyzer-ui', ["chart.js", "ui.bootstrap", "ui.bootstrap-slider"]).run
 (
 	function($rootScope)
 	{

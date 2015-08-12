@@ -5,10 +5,16 @@
 		<link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">
 		<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/bower_components/seiyria-bootstrap-slider/css/bootstrap-slider.css">
+		<link rel="stylesheet" href="/bower_components/angular-bootstrap/ui-bootstrap-csp.css">
 
 		<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+
 		<script src="/bower_components/angular/angular.min.js"></script>
 		<script src="/bower_components/Chart.js/Chart.min.js"></script>
+
+		<script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+		<script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
 		<script src="/bower_components/seiyria-bootstrap-slider/js/bootstrap-slider.js"></script>
 		<script src="/bower_components/angular-bootstrap-slider/slider.js"></script>
 
@@ -44,10 +50,8 @@
 			</div>
 		</div>
 
-		<div class="row" style="width:75%; margin:0 auto;">
-			<div class="alert alert-danger">
-				{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}
-			</div>
+		<div class="row" style="width:75%; margin:0 auto;" ng-show="mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg != undefined">
+			<alert type="danger">{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}</alert>
 		</div>
 
 		<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
