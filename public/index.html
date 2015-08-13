@@ -22,7 +22,12 @@
 		<link rel="stylesheet" href="/bower_components/json-formatter/dist/json-formatter.min.css">
 		<script src="/bower_components/json-formatter/dist/json-formatter.min.js"></script>
 
+		<link rel="stylesheet" href="/bower_components/jasny-bootstrap/dist/css/jasny-bootstrap.min.css" media="screen">
+		<script src="/bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.min.js"></script>
+		<script src="/bower_components/jasny-bootstrap/js/offcanvas.js"></script>
+
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
+		<link rel="stylesheet" href="stylesheets/navmenu-push.css">
 		<script src="js/chart-tooltip.js"></script>
 
 		<script src="js/shardalyzer.js"></script>
@@ -30,83 +35,104 @@
 	</head>
 
 	<body>
-		<div>
-			mongo:// <input type="text" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
-
-			: <input type="text" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
-
-			/ <select ng-controller="nsList" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
-				<option value="">[namespace]</option>
-			</select>
-		</div>
-
-		<div class="row" style="margin-top:20px;" style="height:300px;" ng-controller="updateCharts">
-			<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4">
-				<canvas id="doughnut_shard" class="chart chart-doughnut"
-					options="chartmeta.options"
-					data="chunks"
-					labels="chartmeta.labels[shard]"
-					colours="chartmeta.colors[shard]"></canvas>
-			    <p align="center"><b>{{shard}} : {{chunks.length}}</b></p>
-			    <div id="chartjs-tooltip-{{shard}}" class="chartjs-tooltip"></div>
-			</div>
-		</div>
-
-		<div class="row" style="width:75%; margin:0 auto;" ng-show="mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg != undefined">
-			<alert type="danger">{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}</alert>
-		</div>
-
-		<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
-			<div class="btn-group" style="display:table-cell; min-width:350px" role="group" ng-controller="playControl">
-				<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
-					<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
-				</button>
-				<button type="button" class="btn btn-info" ng-click="playctrl.fastforward();" value="<<">
-					<span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
-				</button>
-				<button type="button" class="btn btn-danger" ng-click="playctrl.forwardError();" value="! <">
-					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-				</button>
-				<button type="button" class="btn btn-default" ng-click="playctrl.forward();" value="<">
-					<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-				</button>
-				<button type="button" class="btn btn-default" ng-click="playctrl.back();" value=">">
-					<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-				</button>
-				<button type="button" class="btn btn-danger" ng-click="playctrl.backError();" value="> !">
-					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-				</button>
-				<button type="button" class="btn btn-info" ng-click="playctrl.rewind();" value=">>">
-					<span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
-				</button>
-				<button type="button" class="btn btn-primary" ng-click="playctrl.end();" value=">|">
-					<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+		<div id="navcontainer">
+			<div class="navbar navbar-default navbar-fixed-top" style="width:100%;">
+				<button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#navmenu" data-canvas="#navcontainer" data-placement="left">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
 				</button>
 			</div>
 
-			<div style="display:table-cell; width:100%" ng-controller="sliderControl">
-				<slider ng-model="mongo.ui.slider"
-					min="slidermeta.min"
-					max="slidermeta.max"
-					value="mongo.ui.slider"
-					ticks="mongo.ui.errors"
-					ticksLabels="slidermeta.ticklabels"
-					ticks_snap_bounds="slidermeta.snap"
-					formatter="slidermeta.formatter">
-				</slider>
-			</div>
-		</div>
+			<nav id="navmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
+				<a class="navmenu-brand" href="#">Connect to Server</a>
+					<ul class="nav navmenu-nav">
+					<li class="active"><a href="#"><small>Specify connection parameters</small></a></li>
+					<li><a href="#">Host&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="text" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
+						</a>
+					</li>
+					<li><a href="#">Port&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="text" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
+						</a>
+					</li>
+					<li><a href="#">NS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<select ng-controller="nsList" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
+								<option value="">[namespace]</option>
+							</select>
+						</a>
+					</li>
+				</ul>
+			</nav>
 
-		<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
-			<div id="changelist" style="display:table-cell; width:100%" ng-controller="changelogControl">
-				<select class="form-control" size=25 style="width:100%;" disabled
-					ng-options="index as change | json for (index, change) in mongo.ui.changelog"
-					ng-model="mongo.ui.selectedchange">
-				</select>
+			<div class="row" style="margin-top:20px;" style="height:300px;" ng-controller="updateCharts">
+				<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4">
+					<canvas id="doughnut_shard" class="chart chart-doughnut"
+						options="chartmeta.options"
+						data="chunks"
+						labels="chartmeta.labels[shard]"
+						colours="chartmeta.colors[shard]"></canvas>
+				    <p align="center"><b>{{shard}} : {{chunks.length}}</b></p>
+				    <div id="chartjs-tooltip-{{shard}}" class="chartjs-tooltip"></div>
+				</div>
 			</div>
 
-			<div style="display:table-cell; min-width:385px; max-width:385px;" ng-show="mongo.ui.changelog[mongo.ui.selectedchange] !== undefined">
-				<json-formatter json="mongo.ui.changelog[mongo.ui.selectedchange]" open="3"></json-formatter>
+			<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
+				<div class="btn-group" style="display:table-cell; min-width:350px" role="group" ng-controller="playControl">
+					<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
+						<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-info" ng-click="playctrl.fastforward();" value="<<">
+						<span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-danger" ng-click="playctrl.forwardError();" value="! <">
+						<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-default" ng-click="playctrl.forward();" value="<">
+						<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-default" ng-click="playctrl.back();" value=">">
+						<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-danger" ng-click="playctrl.backError();" value="> !">
+						<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-info" ng-click="playctrl.rewind();" value=">>">
+						<span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+					</button>
+					<button type="button" class="btn btn-primary" ng-click="playctrl.end();" value=">|">
+						<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+					</button>
+				</div>
+
+				<div style="display:table-cell; width:100%" ng-controller="sliderControl">
+					<slider ng-model="mongo.ui.slider"
+						min="slidermeta.min"
+						max="slidermeta.max"
+						value="mongo.ui.slider"
+						ticks="mongo.ui.errors"
+						ticksLabels="slidermeta.ticklabels"
+						ticks_snap_bounds="slidermeta.snap"
+						formatter="slidermeta.formatter">
+					</slider>
+				</div>
+			</div>
+
+			<div class="row" style="width:75%; margin:0 auto;" ng-show="mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg != undefined">
+				<alert type="danger">{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}</alert>
+			</div>
+
+			<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
+				<div id="changelist" style="display:table-cell; width:100%" ng-controller="changelogControl">
+					<select class="form-control" size=25 style="width:100%;"
+						ng-options="index as change | json for (index, change) in mongo.ui.changelog"
+						ng-model="mongo.ui.selectedchange">
+					</select>
+				</div>
+
+				<div style="display:table-cell; min-width:385px; max-width:385px;" ng-show="mongo.ui.changelog[mongo.ui.selectedchange] !== undefined">
+					<json-formatter json="mongo.ui.changelog[mongo.ui.selectedchange]" open="3"></json-formatter>
+				</div>
 			</div>
 		</div>
 

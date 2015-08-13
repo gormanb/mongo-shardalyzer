@@ -24,6 +24,8 @@
     "angular-chart.js": "*",
     "angular-bootstrap-slider": "*",
     "angular-bootstrap": "*",
+    "jasny-bootstrap": "*",
+    "json-formatter": "*",
     "install": "*"
   }
 }
