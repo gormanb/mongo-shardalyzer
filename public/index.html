@@ -35,7 +35,7 @@
 	</head>
 
 	<body>
-		<div id="navcontainer">
+		<div id="navcontainer" style="height:100%;">
 			<div class="navbar navbar-default navbar-fixed-top" style="width:100%;">
 				<button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#navmenu" data-canvas="#navcontainer" data-placement="left">
 					<span class="icon-bar"></span>
@@ -122,17 +122,24 @@
 				<alert type="danger">{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}</alert>
 			</div>
 
-			<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
-				<div id="changelist" style="display:table-cell; width:100%; overflow:auto" ng-controller="changelogControl">
-					<select class="form-control" size=25 style="width:100%; overflow:visible"
-						ng-options="index as change | json for (index, change) in mongo.ui.changelog"
-						ng-model="mongo.ui.selectedchange">
-					</select>
-				</div>
-
-				<div style="display:table-cell; min-width:385px; max-width:385px;" ng-show="mongo.ui.changelog[mongo.ui.selectedchange] !== undefined">
-					<json-formatter json="mongo.ui.changelog[mongo.ui.selectedchange]" open="3"></json-formatter>
-				</div>
+			<div class="row" style="width:75%; margin:0 auto">
+				<tabset>
+					<tab heading="Changelog">
+						<div class="row" style="width:100%; margin:0 auto; display:table; border-collapse:collapse;">
+							<div id="changelist" style="display:table-cell; width:100%; overflow:auto;" ng-controller="changelogControl">
+								<select class="form-control" size=25 style="width:100%; overflow:visible;"
+									ng-options="index as change | json for (index, change) in mongo.ui.changelog"
+									ng-model="mongo.ui.selectedchange">
+								</select>
+							</div>
+			
+							<div style="display:table-cell; min-width:385px; max-width:385px; max-height:20em; overflow:auto;" ng-show="mongo.ui.changelog[mongo.ui.selectedchange] !== undefined">
+								<json-formatter json="mongo.ui.changelog[mongo.ui.selectedchange]" open="3" style="overflow:visible;"></json-formatter>
+							</div>
+						</div>
+					</tab>
+					<tab heading="Query">TODO</tab>
+				</tabset>
 			</div>
 		</div>
 
