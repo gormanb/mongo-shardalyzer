@@ -71,6 +71,11 @@ function sortObject(obj)
 	return newObj;
 }
 
+function success(change)
+{
+	return (change.details.note === undefined || change.details.note === "success");
+}
+
 var Shardalyzer =
 {
 	shards : {},
@@ -369,10 +374,7 @@ var Shardalyzer =
 
 		var chunk = chunks[s(change.details.min)];
 
-		var success =
-			(change.details.note == "success");
-
-		if(success)
+		if(success(change))
 		{
 			remove(shards[from], chunk);
 			shards[to].push(chunk);
@@ -388,13 +390,8 @@ var Shardalyzer =
 
 		var chunk = chunks[s(change.details.min)];
 
-		var success =
-			(change.details.note == "success");
-
-		if(success)
+		if(success(change))
 		{
-			// if !success at [t+1], chunk has already been restored to source shard
-			// therefore, revert the change by putting it back on the target shard
 			remove(shards[to], chunk);
 			shards[from].unshift(chunk);
 			chunk.shard = from;
@@ -466,11 +463,8 @@ var Shardalyzer =
 				break;
 
 			case OP_FROM:
-				var success =
-					(change.details.note == "success");
-
 				chunks[s(change.details.min)].status =
-					(success ? STATUS_FROM_SUCCESS : STATUS_FROM_FAILURE);
+					(success(change) ? STATUS_FROM_SUCCESS : STATUS_FROM_FAILURE);
 
 				break;
 

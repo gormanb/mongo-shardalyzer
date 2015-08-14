@@ -213,7 +213,7 @@ shardalyze.controller("sliderControl", function($scope)
 		{
 			var change = $scope.mongo.shardalyzer.changes[i];
 
-			if(change.details !== undefined && change.details.note !== undefined && change.details.note !== "success")
+			if(change.details.note === "aborted")
 			{
 				$scope.mongo.ui.errors.push(i);
 				$scope.slidermeta.ticklabels.push(i);
