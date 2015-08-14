@@ -123,8 +123,8 @@
 			</div>
 
 			<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
-				<div id="changelist" style="display:table-cell; width:100%" ng-controller="changelogControl">
-					<select class="form-control" size=25 style="width:100%;"
+				<div id="changelist" style="display:table-cell; width:100%; overflow:auto" ng-controller="changelogControl">
+					<select class="form-control" size=25 style="width:100%; overflow:visible"
 						ng-options="index as change | json for (index, change) in mongo.ui.changelog"
 						ng-model="mongo.ui.selectedchange">
 					</select>
