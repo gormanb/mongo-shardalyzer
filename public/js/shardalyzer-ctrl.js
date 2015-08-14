@@ -333,3 +333,54 @@ shardalyze.controller("changelogControl", function($scope)
 {
 	// nothing to do at present
 });
+
+function quote(jsol)
+{
+	jsol = jsol.replace(/\s/g, "");
+
+	jsol = jsol.replace(/\{/g, "{\"")
+		.replace(/,/g, ",\"")
+		.replace(/\:/g, "\":")
+		.replace(/\"\"/g, "\"")
+		.replace(/,\"\{/g, ",{")
+		.replace(/\{\"\}/g, "{}");
+
+	return jsol;
+}
+
+shardalyze.controller("queryCtrl", function($scope, $http)
+{
+	$scope.query = {};
+
+	$scope.query.result = undefined;
+	$scope.query.query = undefined;
+	$scope.query.error = undefined;
+
+	$scope.query.submit = function()
+	{
+		var url = '/mongo/query/'
+			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port)
+				.concat('/config/changelog/').concat(quote($scope.query.query));
+
+		$http
+		({
+			method: 'GET',
+			url: url
+		})
+		.success
+		(
+			function(result)
+			{
+				$scope.query.result = JSON.stringify(result, null, 2);
+				$scope.query.error = undefined;
+			}
+		)
+		.error
+		(
+			function(err)
+			{
+				$scope.query.error = err.message;
+			}
+		);
+	};
+});

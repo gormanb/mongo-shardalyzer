@@ -35,6 +35,7 @@ app.get('/mongo/dbs/:host/:port*', mongo.dbs);
 app.get('/mongo/namespaces/:host/:port*', mongo.namespaces);
 app.get('/mongo/collections/:host/:port/:db*', mongo.collections);
 app.get('/mongo/metadata/:host/:port/:namespace*', mongo.metadata);
+app.get('/mongo/query/:host/:port/:db/:collection/:query*', mongo.query);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

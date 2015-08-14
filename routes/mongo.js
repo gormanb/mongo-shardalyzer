@@ -120,3 +120,46 @@ exports.metadata =
 			}
 		});
 	};
+
+exports.query =
+	function(req, res)
+	{
+		var url = req.param('host').concat(':')
+			.concat(req.param('port')).concat('/').concat(req.param('db'));
+
+		url = 'mongodb://'.concat(url);
+
+		try
+		{
+			var query = JSON.parse(req.param('query'));
+		}
+		catch(err)
+		{
+			res.status(500).send(err);
+			throw err;
+		}
+
+		var collection = req.param('collection');
+
+		var result = [];
+
+		MongoClient.connect(url, function (err, db)
+		{
+			if (err)
+				res.status(500).send(err);
+			else
+			{
+				var coll = db.collection(collection);
+
+				var stream = undefined;
+
+				if(Array.isArray(query))
+					stream = coll.aggregate(query).stream();
+				else
+					stream = coll.find(query).stream();
+
+				stream.on("data", function(document) { result.push(document) });
+			    stream.on("end", function(){ res.json(result) });
+			}
+		});
+	}
