@@ -66,8 +66,8 @@
 				</ul>
 			</nav>
 
-			<div class="row" style="margin-top:20px; height:40vh;" ng-controller="updateCharts">
-				<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4">
+			<div class="row-fluid row-centered" style="margin-top:20px; height:40vh; overflow:auto" ng-controller="updateCharts">
+				<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4 col-centered">
 					<canvas id="doughnut_shard" class="chart chart-doughnut"
 						options="chartmeta.options"
 						data="chunks"
@@ -119,15 +119,15 @@
 				</div>
 			</div>
 
-			<div class="row" style="width:75%; margin:0 auto;" ng-show="mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg != undefined">
-				<alert type="danger">{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}</alert>
+			<div class="row" style="width:75%; margin:0 auto;" ng-style="{ 'visibility' : (mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg != undefined ? 'visible' : 'hidden') }">
+				<alert type="danger">{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}&nbsp;</alert>
 			</div>
 
 			<div class="row" style="width:75%; margin:0 auto">
 				<tabset>
 					<tab heading="Changelog">
 						<div class="row" style="width:100%; margin:0 auto; display:table; border-collapse:collapse;">
-							<div id="changelist" style="display:table-cell; width:100%; overflow:auto;" ng-controller="changelogControl">
+							<div id="changelist" style="display:table-cell; width:100%; overflow:scroll;" ng-controller="changelogControl">
 								<select class="form-control" size=25 style="width:100%; overflow:visible;"
 									ng-options="index as change | json for (index, change) in mongo.ui.changelog"
 									ng-model="mongo.ui.selectedchange">
@@ -149,7 +149,7 @@
 
 							<textarea style="width:100%; display:table-cell; height:29em;" ng-model="query.result" />
 
-							<alert  ng-show="query.error != undefined" type="danger">{{query.error}}</alert>
+							<alert ng-style="{ 'visibility' : (query.error != undefined ? 'visible' : 'hidden') }" type="danger">{{query.error}}&nbsp;</alert>
 						</div>
 					</tab>
 				</tabset>
