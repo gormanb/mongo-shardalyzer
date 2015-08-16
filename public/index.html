@@ -47,19 +47,19 @@
 			</div>
 
 			<nav id="navmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
-				<a class="navmenu-brand" href="#">Connect to Server</a>
+				<span class="navmenu-brand">Connect to Server</span>
 					<ul class="nav navmenu-nav">
 					<li class="active"><a href="#"><small>Specify connection parameters</small></a></li>
 					<li><a href="#">Host&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="text" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
+							<input type="text" style="color: #333; font-weight:normal" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
 						</a>
 					</li>
 					<li><a href="#">Port&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="text" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
+							<input type="text" style="color: #333; font-weight:normal" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
 						</a>
 					</li>
 					<li><a href="#">NS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<select ng-controller="nsList" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
+							<select style="color: #333; font-weight:normal" ng-controller="nsList" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
 								<option value="">[namespace]</option>
 							</select>
 						</a>
@@ -68,7 +68,7 @@
 			</nav>
 
 			<div id="header"></div>
-			<div id="footer">Testing testing</div>
+			<div id="footer"></div>
 
 			<div id="content">
 				<div class="row-fluid row-centered" style="padding:60px 0 0 0; height:40vh; overflow:auto" ng-controller="updateCharts">

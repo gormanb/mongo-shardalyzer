@@ -14,10 +14,49 @@
     height: 50px;
 }
 
+.navmenu-default {
+	background-color: #69a340;
+	color: white;
+}
+
+.navmenu-default .navmenu-brand {
+	background-color: #3a281e;
+	color: white;
+	height: 50px;
+	margin: 0;
+}
+
+.navmenu-default .navmenu-brand:hover,
+.navbar-default .navbar-offcanvas .navmenu-brand:hover,
+.navmenu-default .navmenu-brand:focus,
+.navbar-default .navbar-offcanvas .navmenu-brand:focus {
+  color: white;
+  background-color: #3a281e;
+}
+
+.navmenu-default .navmenu-nav  {
+	color: white;
+}
+
+.navmenu-default .navmenu-nav > li > a,
+.navbar-default .navbar-offcanvas .navmenu-nav > li > a {
+  color: white;
+  font-weight: bold;
+  width: 100%;
+}
+
+.navmenu-default .navmenu-nav > li > a:hover,
+.navbar-default .navbar-offcanvas .navmenu-nav > li > a:hover,
+.navmenu-default .navmenu-nav > li > a:focus,
+.navbar-default .navbar-offcanvas .navmenu-nav > li > a:focus {
+  color: #333;
+  background-color: transparent;
+}
+
 @media (min-width: 0) {
   .navbar-toggle {
     display: block; /* force showing the toggle */
-    background: #69a340;
+    background-color: #69a340;
   }
 }
 
@@ -30,7 +69,7 @@
 */
   .navbar {
     right: auto;
-    background: #3a281e;
+    background-color: #3a281e;
     border: none;
   }
 }
