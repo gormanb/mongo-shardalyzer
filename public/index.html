@@ -79,9 +79,10 @@
 							labels="chartmeta.labels[shard]"
 							colours="chartmeta.colors[shard]"></canvas>
 					    <p align="center"><b>{{shard}} : {{chunks.length}}</b></p>
-					    <div id="chartjs-tooltip-{{shard}}" class="chartjs-tooltip"></div>
 					</div>
 				</div>
+
+			    <div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 
 				<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
 					<div class="btn-group" style="display:table-cell; min-width:350px" role="group" ng-controller="playControl">
