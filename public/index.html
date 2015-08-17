@@ -26,6 +26,11 @@
 		<script src="/bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.min.js"></script>
 		<script src="/bower_components/jasny-bootstrap/js/offcanvas.js"></script>
 
+		<link rel="stylesheet" href="/bower_components/angular-growl-v2/build/angular-growl.min.css">
+		<script src="/bower_components/angular-growl-v2/build/angular-growl.min.js"></script>
+
+		<script src="/bower_components/angular-animate/angular-animate.min.js"></script>
+
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
 		<link rel="stylesheet" href="stylesheets/navmenu-push.css">
 		<link rel="stylesheet" href="stylesheets/style.css">
@@ -36,6 +41,8 @@
 	</head>
 
 	<body>
+	    <div growl limit-messages="5"></div>
+
 		<div id="navcontainer" style="height:100%;">
 			<div class="navbar navbar-default navbar-fixed-top" style="width:100%;">
 				<button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#navmenu" data-canvas="#navcontainer" data-placement="left">
@@ -154,8 +161,6 @@
 								</button>
 
 								<textarea style="width:100%; display:table-cell; height:20em;" ng-model="query.result" />
-
-								<alert ng-style="{ 'visibility' : (query.error != undefined ? 'visible' : 'hidden') }" type="danger">{{query.error}}&nbsp;</alert>
 							</div>
 						</tab>
 					</tabset>

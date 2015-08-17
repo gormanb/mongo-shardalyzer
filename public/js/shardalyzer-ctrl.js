@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter']).run
+var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate']).run
 (
 	function($rootScope)
 	{
@@ -21,7 +21,15 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 	}
 );
 
-shardalyze.controller('nsList', function($scope, $http)
+shardalyze.config(['growlProvider', function(growlProvider)
+{
+	growlProvider.globalTimeToLive({success: 5000, error: 5000, warning: 5000, info: 5000});
+	growlProvider.globalDisableCountDown(true);
+	growlProvider.globalReversedOrder(true);
+	growlProvider.onlyUniqueMessages(true);
+}]);
+
+shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
 	$scope.mongo.selectedNS = null;
 	$scope.mongo.nsList = [];
@@ -49,6 +57,7 @@ shardalyze.controller('nsList', function($scope, $http)
 		(
 			function(err)
 			{
+				growl.error("Failed to get namespace list from " + $scope.mongo.host + ":" + $scope.mongo.port + " : " + err.message);
 				$scope.mongo.nsList = [];
 			}
 		);
@@ -81,12 +90,11 @@ shardalyze.controller('nsList', function($scope, $http)
 		(
 			function(err)
 			{
-				$scope.mongo.metadata = {};
-				$scope.mongo.shardalyzer.initialize([], []);
+				growl.error("Failed to retrieve data from " + $scope.mongo.host + ":" + $scope.mongo.port + "/" + $scope.mongo.selectedNS + " : " + err.message);
 			}
 		);
 	});
-});
+}]);
 
 shardalyze.controller("updateCharts", function($scope)
 {
@@ -348,13 +356,12 @@ function quote(jsol)
 	return jsol;
 }
 
-shardalyze.controller("queryCtrl", function($scope, $http)
+shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
 	$scope.query = {};
 
 	$scope.query.result = undefined;
 	$scope.query.query = undefined;
-	$scope.query.error = undefined;
 
 	$scope.query.submit = function()
 	{
@@ -372,15 +379,14 @@ shardalyze.controller("queryCtrl", function($scope, $http)
 			function(result)
 			{
 				$scope.query.result = JSON.stringify(result, null, 2);
-				$scope.query.error = undefined;
 			}
 		)
 		.error
 		(
 			function(err)
 			{
-				$scope.query.error = err.message;
+				growl.error("Query failed: " + err.message);
 			}
 		);
 	};
-});
+}]);

@@ -24,6 +24,8 @@
     "angular-chart.js": "*",
     "angular-bootstrap-slider": "*",
     "angular-bootstrap": "*",
+    "angular-growl-v2": "*",
+    "angular-animate": "*",
     "jasny-bootstrap": "*",
     "json-formatter": "*",
     "install": "*"
