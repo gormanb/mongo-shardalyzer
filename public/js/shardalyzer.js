@@ -473,6 +473,26 @@ var Shardalyzer =
 */
 	},
 
+	applyMoveTo : function(chunks, shards, change)
+	{
+		// nothing to do here at present
+	},
+
+	revertMoveTo : function(chunks, shards, change)
+	{
+		// nothing to do here at present
+	},
+
+	applyMoveCommit : function(chunks, shards, change)
+	{
+		// nothing to do here at present
+	},
+
+	revertMoveCommit : function(chunks, shards, change)
+	{
+		// nothing to do here at present
+	},
+
 	tag : function(chunks, change)
 	{
 		switch(change.what)
@@ -589,11 +609,11 @@ var Shardalyzer =
 					break;
 
 				case OP_TO:
-					//this.revertMoveTo(this.chunks, this.shards, this.changes[this.position]);
+					this.revertMoveTo(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case OP_COMMIT:
-					//this.revertMoveCommit(this.chunks, this.shards, this.changes[this.position]);
+					this.revertMoveCommit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case OP_MULTI_SPLIT:
@@ -630,11 +650,11 @@ var Shardalyzer =
 					break;
 
 				case OP_TO:
-					//this.applyMoveTo(this.chunks, this.shards, this.changes[this.position]);
+					this.applyMoveTo(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case OP_COMMIT:
-					//this.applyMoveCommit(this.chunks, this.shards, this.changes[this.position]);
+					this.applyMoveCommit(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case OP_MULTI_SPLIT:
