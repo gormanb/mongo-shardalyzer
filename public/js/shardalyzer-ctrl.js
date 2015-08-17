@@ -25,9 +25,14 @@ shardalyze.config(['growlProvider', function(growlProvider)
 {
 	growlProvider.globalTimeToLive({success: 5000, error: 5000, warning: 5000, info: 5000});
 	growlProvider.globalDisableCountDown(true);
-	growlProvider.globalReversedOrder(true);
+	/*growlProvider.globalReversedOrder(true);*/
 	growlProvider.onlyUniqueMessages(true);
 }]);
+
+function growlmsg(headline, source, msg)
+{
+	return "<b>" + headline + "</b><br><b>" + source + "</b><br><i>" + msg + "</i>";
+}
 
 shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
@@ -57,7 +62,9 @@ shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $
 		(
 			function(err)
 			{
-				growl.error("Failed to get namespace list from " + $scope.mongo.host + ":" + $scope.mongo.port + " : " + err.message);
+				growl.error(growlmsg("Failed to get namespace list",
+					$scope.mongo.host + ":" + $scope.mongo.port, err.message));
+
 				$scope.mongo.nsList = [];
 			}
 		);
@@ -90,7 +97,8 @@ shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $
 		(
 			function(err)
 			{
-				growl.error("Failed to retrieve data from " + $scope.mongo.host + ":" + $scope.mongo.port + "/" + $scope.mongo.selectedNS + " : " + err.message);
+				growl.error(growlmsg("Failed to retrieve data",
+					$scope.mongo.host + ":" + $scope.mongo.port + "/" + $scope.mongo.selectedNS, err.message));
 			}
 		);
 	});
@@ -385,7 +393,8 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 		(
 			function(err)
 			{
-				growl.error("Query failed: " + err.message);
+				growl.error(growlmsg("Query failed", $scope.mongo.host + ":" +
+					$scope.mongo.port + "/" + $scope.mongo.selectedNS, err.message));
 			}
 		);
 	};

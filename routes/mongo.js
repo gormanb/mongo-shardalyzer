@@ -135,7 +135,7 @@ exports.query =
 		}
 		catch(err)
 		{
-			res.status(500).send(err);
+			res.status(500).json({ stack : err.stack, message : err.message });
 			throw err;
 		}
 
