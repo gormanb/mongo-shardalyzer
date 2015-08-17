@@ -74,12 +74,12 @@
 				</ul>
 			</nav>
 
-			<div id="contentcontainer" class="box">
+			<div id="contentcontainer" class="flexv">
 
-				<div id="header" class="stack header" style="padding:120px 0 0 0;"></div>
+				<div id="header" class="snug" style="padding:120px 0 0 0;"></div>
 
-				<div id="shardview" class="stack greedy">
-					<div style="overflow:auto" ng-controller="updateCharts">
+				<div id="shardview" class="greedy">
+					<div style="max-height:335px; overflow:auto" ng-controller="updateCharts">
 						<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4 col-centered">
 							<canvas id="doughnut_shard" class="chart chart-doughnut"
 								options="chartmeta.options"
@@ -93,9 +93,9 @@
 
 				<div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 
-				<div id="shardcontrols" class="stack snug">
-					<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
-						<div class="btn-group" style="display:table-cell; min-width:350px" role="group" ng-controller="playControl">
+				<div id="shardcontrols" class="snug">
+					<div class="flexh" style="width:75%; margin:0 auto;">
+						<div class="btn-group snug" style="min-width:350px" role="group" ng-controller="playControl">
 							<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
 								<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
 							</button>
@@ -122,7 +122,7 @@
 							</button>
 						</div>
 
-						<div style="display:table-cell; width:100%" ng-controller="sliderControl">
+						<div class="greedy" ng-controller="sliderControl">
 							<slider ng-model="mongo.ui.slider"
 								min="slidermeta.min"
 								max="slidermeta.max"
@@ -135,12 +135,12 @@
 						</div>
 					</div>
 
-					<div class="row" style="width:75%; margin:0 auto;" ng-style="{ 'visibility' : (mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg != undefined ? 'visible' : 'hidden') }">
+					<div style="width:75%; margin:0 auto;" ng-style="{ 'visibility' : (mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg != undefined ? 'visible' : 'hidden') }">
 						<alert type="danger">{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}&nbsp;</alert>
 					</div>
 				</div>
 
-				<div id="changelogquery" class="stack snug" style="padding: 0 0 15px 0">
+				<div id="changelogquery" class="snug" style="padding: 0 0 15px 0">
 					<div style="width:75%; margin: auto;">
 						<tabset>
 							<tab heading="Changelog">
@@ -189,7 +189,7 @@
 					</div>
 				</div>
 
-				<div class="stack footer"></div>
+				<div class="footer"></div>
 
 			</div>
 
