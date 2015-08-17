@@ -2,42 +2,42 @@ html,
 body {
    margin:0;
    padding:0;
-   width:100%;
-}
-
-html {
-  height: 100vh;
+   width: 100%;
+   height: 100%;
 }
 
 body {
   position: relative;
   background:#f5f6f7;
   height:100%;
-  min-height: 100%;
-  max-height: 100%;
 }
 
-#container {
-   min-height:100%;
-   position:relative;
+.container {
+	height: 100%;
+	width: 100%;
 }
 
-#header {
-   padding:10px;
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
 }
 
-#content {
-   padding:10px;
+.box .stack {
+  flex: 0 1 30px;
 }
 
-#footer {
-  position: fixed;
-  margin: auto 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width:100%;
-  height:50px;
+.box .stack.header {
+  flex: 0 1 auto;
+}
+
+.box .stack.content {
+  flex: 1 1 auto;
+}
+
+.box .stack.footer {
+  flex: 0 1 50px;
   background-color: #3a281e;
   text-align: center;
   text-color: white;
