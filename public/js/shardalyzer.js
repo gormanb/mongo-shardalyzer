@@ -73,6 +73,7 @@ function sortObject(obj)
 
 function success(change)
 {
+	// absence of "note" field is interpreted as success (as in 2.6)
 	return (change.details.note === undefined || change.details.note === "success");
 }
 
@@ -89,6 +90,24 @@ var Shardalyzer =
 
 		this.shards = {};
 		this.chunks = {};
+
+		var currentmove = {};
+
+		// iterate from end to start, i.e. in chronological order
+		// populate "from" & "to" fields in 2.6 moveChunk.from
+		for(var i = this.changes.length-1; i >= 0; i--)
+		{
+			if(this.changes[i].what == OP_START)
+			{
+				currentmove.from = this.changes[i].details.from;
+				currentmove.to = this.changes[i].details.to;
+			}
+			else if(this.changes[i].what == OP_FROM)
+			{
+				this.changes[i].details.from = currentmove.from;
+				this.changes[i].details.to = currentmove.to;
+			}
+		}
 
 		for(var k in chunkdata)
 		{
