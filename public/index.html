@@ -76,10 +76,10 @@
 
 			<div id="contentcontainer" class="box">
 
-				<div id="header" class="stack header"></div>
+				<div id="header" class="stack header" style="padding:120px 0 0 0;"></div>
 
-				<div id="shardcontrol" class="stack content">
-					<div class="row-fluid row-centered" style="padding:60px 0 0 0; overflow:auto" ng-controller="updateCharts">
+				<div id="shardview" class="stack greedy">
+					<div style="overflow:auto" ng-controller="updateCharts">
 						<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4 col-centered">
 							<canvas id="doughnut_shard" class="chart chart-doughnut"
 								options="chartmeta.options"
@@ -88,11 +88,12 @@
 								colours="chartmeta.colors[shard]"></canvas>
 							<p align="center"><b>{{shard}} : {{chunks.length}}</b></p>
 						</div>
-						&nbsp;
 					</div>
+				</div>
 
-					<div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
+				<div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 
+				<div id="shardcontrols" class="stack snug">
 					<div class="row" style="width:75%; margin:0 auto; display:table; border-collapse:collapse;">
 						<div class="btn-group" style="display:table-cell; min-width:350px" role="group" ng-controller="playControl">
 							<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
@@ -139,13 +140,13 @@
 					</div>
 				</div>
 
-				<div id="changelogquery" class="stack content">
+				<div id="changelogquery" class="stack snug" style="padding: 0 0 15px 0">
 					<div style="width:75%; margin: auto;">
 						<tabset>
 							<tab heading="Changelog">
-								<div style="width:100%; height:19em; max-height:19em; margin:0 auto; display:table; border-collapse:collapse;">
+								<div style="width:100%; height:20em; max-height:20em; margin:0 auto; display:table; border-collapse:collapse;">
 									<div id="changelist" style="display:table-cell; width:100%;" ng-controller="changelogControl">
-										<select class="form-control" size=15 style="width:100%; overflow-x:scroll;"
+										<select class="form-control" size=18 style="width:100%; overflow-x:scroll;"
 											ng-options="index as change | json for (index, change) in mongo.ui.changelog"
 											ng-model="mongo.ui.selectedchange">
 										</select>
@@ -158,22 +159,40 @@
 							</tab>
 							<tab heading="Query">
 								<div ng-controller="queryCtrl" style="width:100%; margin:0 auto; display:table; border-collapse:collapse;">
-									<input type="text" style="width:100%; display:table-cell;" ng-model="query.query" ng-model-options="{updateOn : 'change'}" />
+									<div class="input-group">
+										<div class="input-group-btn">
+											<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												Action<span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu">
+												<li><a href="#">Action</a></li>
+												<li><a href="#">Another action</a></li>
+												<li><a href="#">Something else here</a></li>
+												<li role="separator" class="divider"></li>
+												<li><a href="#">Separated link</a></li>
+											</ul>
+										</div>
+
+										<input type="text" class="form-control" ng-model="query.query" ng-model-options="{updateOn : 'change'}" />
+
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-primary" ng-click="query.submit()" value="?">
+												<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+											</button>
+										</span>
+									</div>
 	
-									<button type="button" class="btn btn-primary" ng-click="query.submit()" value="?">
-										<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-									</button>
-	
-									<textarea style="width:100%; display:table-cell; height:20em;" ng-model="query.result" />
+									<textarea class="form-control" style="width:100%; display:table-cell; height:20em;" ng-model="query.result"></textarea>
 								</div>
 							</tab>
 						</tabset>
 					</div>
 				</div>
 
-				<div id="footer" class="stack footer">TESTING</div>
+				<div class="stack footer"></div>
 
 			</div>
+
 		</div>
 
 	</body>
