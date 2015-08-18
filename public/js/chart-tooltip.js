@@ -12,19 +12,21 @@ Chart.defaults.global.customTooltips = function(tooltip)
 
     // align to cursor
     tooltipEl.removeClass('above below');
-    tooltipEl.addClass(tooltip.yAlign);
+    tooltipEl.addClass('center');
 
     // set text content
     tooltipEl.html("<pre>".concat(tooltip.text).concat("</pre>"));
 
-    var top;
-
     // get y-location of tooltip
+    var top = tooltip.y + tooltip.caretHeight + tooltip.caretPadding;
+
+/*
     if (tooltip.yAlign == 'above') {
         top = tooltip.y - tooltip.caretHeight - tooltip.caretPadding;
     } else {
         top = tooltip.y + tooltip.caretHeight + tooltip.caretPadding;
     }
+*/
 
     // set position and display
     tooltipEl.css({

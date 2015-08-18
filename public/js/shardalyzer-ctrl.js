@@ -31,7 +31,12 @@ shardalyze.config(['growlProvider', function(growlProvider)
 
 function growlmsg(headline, source, msg)
 {
-	return "<b>" + headline + "</b><br><b>" + source + "</b><br><i>" + msg + "</i>";
+	var message = "<b>" + headline + "</b><br><b>" + source + "</b>";
+
+	if(msg !== undefined)
+		message += "<br><i>" + msg + "</i>";
+
+	return message;
 }
 
 shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $http, growl)
@@ -55,6 +60,9 @@ shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $
 		(
 			function(result)
 			{
+				growl.success(growlmsg("Connected to mongo server",
+					$scope.mongo.host + ":" + $scope.mongo.port, "Namespace list loaded"));
+
 				$scope.mongo.nsList = result;
 			}
 		)
@@ -89,7 +97,6 @@ shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $
 		(
 			function(result)
 			{
-				$scope.mongo.metadata = result;
 				$scope.mongo.shardalyzer.initialize(result.chunks, result.changelog);
 			}
 		)
@@ -187,7 +194,7 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.slidermeta.max = 0;
 
 	$scope.mongo.ui.errors = [];
-	$scope.slidermeta.snap = 30;
+	$scope.slidermeta.snap = 1;
 
 	$scope.slidermeta.formatter = function(value)
 	{
