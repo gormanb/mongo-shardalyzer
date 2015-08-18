@@ -160,18 +160,14 @@
 							<tab heading="Query">
 								<div ng-controller="queryCtrl" style="width:100%; margin:0 auto; display:table; border-collapse:collapse;">
 									<div class="input-group">
-										<div class="input-group-btn">
-											<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-												Action<span class="caret"></span>
-											</button>
-											<ul class="dropdown-menu">
-												<li><a href="#">Action</a></li>
-												<li><a href="#">Another action</a></li>
-												<li><a href="#">Something else here</a></li>
-												<li role="separator" class="divider"></li>
-												<li><a href="#">Separated link</a></li>
-											</ul>
-										</div>
+										<span class="input-group-btn">
+											<select class="form-control"
+												ng-model="query.selectedColl"
+												ng-init="query.selectedColl = query.selectedColl || 'changelog'"
+												ng-options="coll.name as coll.name for coll in mongo.collList">
+												<option value="">[collection]</option>
+											</select>
+										</span>
 
 										<input type="text" class="form-control" ng-model="query.query" ng-model-options="{updateOn : 'change'}" />
 
@@ -181,7 +177,7 @@
 											</button>
 										</span>
 									</div>
-	
+
 									<textarea class="form-control" style="width:100%; display:table-cell; height:20em;" ng-model="query.result"></textarea>
 								</div>
 							</tab>

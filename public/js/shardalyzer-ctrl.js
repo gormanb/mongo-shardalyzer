@@ -9,6 +9,10 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo.host = "localhost";
 		$rootScope.mongo.port = 27017;
 
+		$rootScope.mongo.selectedNS = null;
+		$rootScope.mongo.collList = [];
+		$rootScope.mongo.nsList = [];
+
 		$rootScope.mongo.ui = {};
 
 		$rootScope.mongo.ui.selectedchange = "0";
@@ -39,11 +43,18 @@ function growlmsg(headline, source, msg)
 	return message;
 }
 
+function pathify(components)
+{
+	var path = "";
+
+	for(var k in components)
+		path += (components[k] + '/');
+
+	return path;
+}
+
 shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
-	$scope.mongo.selectedNS = null;
-	$scope.mongo.nsList = [];
-
 	var updateNSList = function(selected)
 	{
 		$scope.mongo.selectedNS = null;
@@ -359,6 +370,9 @@ shardalyze.controller("changelogControl", function($scope)
 
 function quote(jsol)
 {
+	if(jsol == undefined)
+		return "";
+
 	jsol = jsol.replace(/\s/g, "");
 
 	jsol = jsol.replace(/\{/g, "{\"")
@@ -378,11 +392,13 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 	$scope.query.result = undefined;
 	$scope.query.query = undefined;
 
+	$scope.query.selectedColl = undefined;
+
 	$scope.query.submit = function()
 	{
 		var url = '/mongo/query/'
 			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port)
-				.concat('/config/changelog/').concat(quote($scope.query.query));
+				.concat('/config/').concat($scope.query.selectedColl).concat('/').concat(quote($scope.query.query));
 
 		$http
 		({
@@ -401,8 +417,38 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 			function(err)
 			{
 				growl.error(growlmsg("Query failed", $scope.mongo.host + ":" +
-					$scope.mongo.port + "/" + $scope.mongo.selectedNS, err.message));
+					$scope.mongo.port + "/config/" + $scope.query.selectedColl, err.message));
 			}
 		);
 	};
+
+	// watch for changes to nsList (i.e. server changed), also grab collections
+	// obviously will be mostly the same but may only have subset of collections
+	$scope.$watch('mongo.nsList', function(list)
+	{
+		var url = '/mongo/collections/'
+			.concat($scope.mongo.host).concat('/')
+				.concat($scope.mongo.port).concat('/config');
+
+		$http
+		({
+			method: 'GET',
+			url: url
+		})
+		.success
+		(
+			function(result)
+			{
+				$scope.mongo.collList = result;
+			}
+		)
+		.error
+		(
+			function(err)
+			{
+				growl.error(growlmsg("Failed to retrieve collections list",
+					$scope.mongo.host + ":" + $scope.mongo.port, err.message));
+			}
+		);
+	});
 }]);
