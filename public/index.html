@@ -57,16 +57,16 @@
 				<span class="navmenu-brand">Connect to Server</span>
 					<ul class="nav navmenu-nav">
 					<li class="active"><a href="#"><small>Specify connection parameters</small></a></li>
-					<li><a href="#">Host&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="text" style="color: #333; font-weight:normal" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
+					<li><a href="#">Host
+							<input type="text" class="form-control" style="color: #333; font-weight:normal" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
 						</a>
 					</li>
-					<li><a href="#">Port&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="text" style="color: #333; font-weight:normal" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
+					<li><a href="#">Port
+							<input type="text" class="form-control" style="color: #333; font-weight:normal" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
 						</a>
 					</li>
-					<li><a href="#">NS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<select style="color: #333; font-weight:normal" ng-controller="nsList" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
+					<li><a href="#">Namespace
+							<select class="form-control" style="color: #333; font-weight:normal" ng-controller="nsList" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
 								<option value="">[namespace]</option>
 							</select>
 						</a>
@@ -148,12 +148,13 @@
 									<div id="changelist" style="display:table-cell; width:100%;" ng-controller="changelogControl">
 										<select class="form-control" size=18 style="width:100%; overflow-x:scroll;"
 											ng-options="index as change | json for (index, change) in mongo.ui.changelog"
-											ng-model="mongo.ui.selectedchange">
+											ng-model="mongo.ui.selectedchange"
+											ng-readonly="true">
 										</select>
 									</div>
 	
 									<div style="min-width:385px; max-width:385px; height:100%; overflow-y:scroll; background:white" ng-show="mongo.ui.changelog[mongo.ui.selectedchange] !== undefined">
-										<json-formatter json="mongo.ui.changelog[mongo.ui.selectedchange]" open="3"></json-formatter>
+										<json-formatter json="mongo.ui.changelog[mongo.ui.selectedchange]" open="3" ng-readonly="true"></json-formatter>
 									</div>
 								</div>
 							</tab>
@@ -163,13 +164,13 @@
 										<span class="input-group-btn">
 											<select class="form-control"
 												ng-model="query.selectedColl"
-												ng-init="query.selectedColl = query.selectedColl || 'changelog'"
+												ng-init="query.selectedColl = 'changelog'"
 												ng-options="coll.name as coll.name for coll in mongo.collList">
 												<option value="">[collection]</option>
 											</select>
 										</span>
 
-										<input type="text" class="form-control" ng-model="query.query" ng-model-options="{updateOn : 'change'}" />
+										<input type="text" class="form-control" ng-model="query.query" ng-model-options="{updateOn : 'change'}" ng-enter="query.submit()" />
 
 										<span class="input-group-btn">
 											<button type="button" class="btn btn-primary" ng-click="query.submit()" value="?">
@@ -178,7 +179,7 @@
 										</span>
 									</div>
 
-									<textarea class="form-control" style="width:100%; display:table-cell; height:20em;" ng-model="query.result"></textarea>
+									<textarea class="form-control" style="width:100%; display:table-cell; height:20em;" ng-model="query.result" ng-readonly="true"></textarea>
 								</div>
 							</tab>
 						</tabset>

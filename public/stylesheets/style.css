@@ -46,6 +46,8 @@ body {
 .flexv .footer {
   flex: 0 1 40px;
   background-color: #3a281e;
+  margin-left: -15px;
+  width: 100vw;
   text-align: center;
   color: white;
 }

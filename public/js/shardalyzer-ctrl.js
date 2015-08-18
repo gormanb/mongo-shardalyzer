@@ -25,6 +25,25 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 	}
 );
 
+shardalyze.directive('ngEnter', function ()
+{
+    return function (scope, element, attrs)
+    {
+        element.bind("keydown keypress", function (event)
+        {
+            if(event.which === 13)
+            {
+                scope.$apply(function ()
+                {
+                    scope.$eval(attrs.ngEnter);
+                });
+ 
+                event.preventDefault();
+            }
+        });
+    };
+});
+
 shardalyze.config(['growlProvider', function(growlProvider)
 {
 	growlProvider.globalTimeToLive({success: 5000, error: 5000, warning: 5000, info: 5000});
