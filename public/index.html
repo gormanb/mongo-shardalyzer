@@ -80,13 +80,17 @@
 
 				<div id="shardview" class="greedy">
 					<div style="max-height:40vh; overflow:auto" ng-controller="updateCharts">
-						<div ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4 col-centered">
+						<div ng-show="mongo.selectedNS !== undefined" ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4 col-centered">
 							<canvas id="doughnut_shard" class="chart chart-doughnut"
 								options="chartmeta.options"
 								data="chunks"
 								labels="chartmeta.labels[shard]"
 								colours="chartmeta.colors[shard]"></canvas>
 							<p align="center"><b>{{shard}} : {{chunks.length}}</b></p>
+						</div>
+						<div ng-show="mongo.selectedNS == undefined" style="width:75%; height:40vh; margin: 0 auto;
+							border-radius:25px; background:white url(images/mongo-spinner.gif) no-repeat center center;">
+							<img src="images/mongo-small.png" style="display:block; margin:auto; position: relative; top: 50%; transform: translateY(-50%);" />
 						</div>
 					</div>
 				</div>
