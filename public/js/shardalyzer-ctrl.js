@@ -191,7 +191,7 @@ shardalyze.controller("updateCharts", function($scope)
 
       segmentShowStroke : true,
       segmentStrokeColor : '#fff',
-      segmentStrokeWidth : 1,
+      segmentStrokeWidth : 0.25,
 
       percentageInnerCutout : 75, // This is 0 for Pie charts
 
