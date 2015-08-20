@@ -54,19 +54,22 @@
 			</div>
 
 			<nav id="navmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
-				<span class="navmenu-brand">Connect to Server</span>
-					<ul class="nav navmenu-nav">
-					<li class="active"><a href="#"><small>Specify connection parameters</small></a></li>
+				<span class="navmenu-brand" style="padding-top:15px"><strong>Connect to Server</strong></span>
+					<ul class="nav navmenu-nav" ng-controller="serverNsCtrl">
+					<li class="active"><a href="#"><small>1. Specify server location</small></a></li>
 					<li><a href="#">Host
-							<input type="text" class="form-control" style="color: #333; font-weight:normal" ng-model="mongo.host" ng-model-options="{updateOn : 'change blur'}" />
+							<input type="text" class="form-control" style="color: #333; font-weight:normal"
+								ng-model="mongo.host" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
 						</a>
 					</li>
 					<li><a href="#">Port
-							<input type="text" class="form-control" style="color: #333; font-weight:normal" ng-model="mongo.port" ng-model-options="{updateOn : 'change blur'}" />
+							<input type="text" class="form-control" style="color: #333; font-weight:normal"
+								ng-model="mongo.port" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
 						</a>
 					</li>
-					<li><a href="#">Namespace
-							<select class="form-control" style="color: #333; font-weight:normal" ng-controller="nsList" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
+					<li class="active"><a href="#"><small>2. Choose a namespace to visualise</small></a></li>
+					<li><a href="#">
+							<select class="form-control" style="color: #333; font-weight:normal" ng-model="mongo.selectedNS" ng-options="ns as ns for ns in mongo.nsList">
 								<option value="">[namespace]</option>
 							</select>
 						</a>

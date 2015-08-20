@@ -9,7 +9,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo.host = "localhost";
 		$rootScope.mongo.port = 27017;
 
-		$rootScope.mongo.selectedNS = null;
+		$rootScope.mongo.selectedNS = undefined;
 		$rootScope.mongo.collList = [];
 		$rootScope.mongo.nsList = [];
 
@@ -72,11 +72,11 @@ function pathify(components)
 	return path;
 }
 
-shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $http, growl)
+shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
-	var updateNSList = function(selected)
+	$scope.updateNSList = function()
 	{
-		$scope.mongo.selectedNS = null;
+		$scope.mongo.selectedNS = undefined;
 
 		var url = '/mongo/namespaces/'
 			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port);
@@ -107,9 +107,6 @@ shardalyze.controller('nsList', [ '$scope', '$http', 'growl', function($scope, $
 			}
 		);
 	};
-
-	$scope.$watch('mongo.host', updateNSList);
-	$scope.$watch('mongo.port', updateNSList);
 
 	$scope.$watch('mongo.selectedNS', function(selected)
 	{
