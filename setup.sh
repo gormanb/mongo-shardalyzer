@@ -10,7 +10,7 @@ elif [[ ! -z $(which brew) ]]; then
 elif [[ ! -z $(which port) ]]; then
 	port install nodejs npm
 elif [[ -z $(which npm) ]]; then
-	echo "Can't find node.js npm; exiting..."
+	echo "Can't find or install node.js npm; exiting..."
 	exit 1;
 fi
 
