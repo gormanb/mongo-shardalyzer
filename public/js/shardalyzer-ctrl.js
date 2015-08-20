@@ -205,7 +205,7 @@ shardalyze.controller("updateCharts", function($scope)
       },
 
       // disable animation after initial loading
-      onAnimationProgress : function()
+      onAnimationComplete : function()
       {
     	  $scope.chartmeta.options.animateRotate = false;
     	  $scope.chartmeta.options.animationSteps = 1;
