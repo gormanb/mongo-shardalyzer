@@ -51,3 +51,17 @@ body {
   text-align: center;
   color: white;
 }
+
+.slider-track {
+  background-image: -webkit-linear-gradient(top, #cccccc 0%, #f9f9f9 100%);
+  background-image: -o-linear-gradient(top, #cccccc 0%, #f9f9f9 100%);
+  background-image: linear-gradient(to bottom, #cccccc 0%, #f9f9f9 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffcccccc', endColorstr='#fff9f9f9', GradientType=0);
+}
+
+.slider-tick {
+  background-image: -webkit-linear-gradient(top, #ffebeb 0%, #ffcccc 100%);
+  background-image: -o-linear-gradient(top, #ffebeb 0%, #ffcccc 100%);
+  background-image: linear-gradient(to bottom, #ffebeb 0%, #ffcccc 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffebeb', endColorstr='#ffffcccc', GradientType=0);
+}
