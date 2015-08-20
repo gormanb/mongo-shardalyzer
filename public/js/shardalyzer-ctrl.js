@@ -17,7 +17,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 
 		$rootScope.mongo.ui.selectedchange = "0";
 		$rootScope.mongo.ui.changelog = [];
-		$rootScope.mongo.ui.logwindow = 25;
+		$rootScope.mongo.ui.logwindow = 18;
 		$rootScope.mongo.ui.errors = [];
 		$rootScope.mongo.ui.slider = 0;
 
