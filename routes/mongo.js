@@ -4,9 +4,9 @@
 
 var mongodb = require('mongodb');
 
-var MongoClient = mongodb.MongoClient;
+var RJSON = require('relaxed-json');
 
-var s = JSON.stringify;
+var MongoClient = mongodb.MongoClient;
 
 exports.namespaces =
 	function(req, res)
@@ -131,7 +131,7 @@ exports.query =
 
 		try
 		{
-			var query = JSON.parse(req.param('query'));
+			var query = RJSON.parse(req.param('query'));
 		}
 		catch(err)
 		{

@@ -182,6 +182,14 @@
 										<input type="text" class="form-control" ng-model="query.query" ng-model-options="{updateOn : 'default'}" ng-enter="query.submit()" />
 
 										<span class="input-group-btn">
+											<select class="form-control"
+												ng-model="query.andreAgg"
+												ng-options="value as key for (key, value) in query.andre_aggregrassi">
+												<option value="">[Predefined Aggregations]</option>
+											</select>
+										</span>
+
+										<span class="input-group-btn">
 											<button type="button" class="btn btn-primary" ng-click="query.submit()" value="?">
 												<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
 											</button>

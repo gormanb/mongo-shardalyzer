@@ -110,6 +110,9 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 
 	$scope.$watch('mongo.selectedNS', function(selected)
 	{
+		if($scope.mongo.selectedNS == undefined)
+			return;
+
 		var url = '/mongo/metadata/'
 			.concat($scope.mongo.host).concat('/')
 				.concat($scope.mongo.port).concat('/')
@@ -384,23 +387,6 @@ shardalyze.controller("changelogControl", function($scope)
 	// nothing to do at present
 });
 
-function quote(jsol)
-{
-	if(jsol == undefined)
-		return "";
-
-	jsol = jsol.replace(/\s/g, "");
-
-	jsol = jsol.replace(/\{/g, "{\"")
-		.replace(/,/g, ",\"")
-		.replace(/\:/g, "\":")
-		.replace(/\"\"/g, "\"")
-		.replace(/,\"\{/g, ",{")
-		.replace(/\{\"\}/g, "{}");
-
-	return jsol;
-}
-
 shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
 	$scope.query = {};
@@ -410,11 +396,21 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 
 	$scope.query.selectedColl = undefined;
 
+	$scope.query.andre_aggregrassi = {};
+
+	$scope.query.andre_aggregrassi["Number of changelog operations"] = "[{ $group : { _id : { what : '$what', note : '$details.note' }, total : { $sum : 1  } } }]";
+	$scope.query.andre_aggregrassi["Number of changelog operations by hour"] = "[{ $project : { day : { $dayOfYear : '$time' }, time : { $hour : '$time' }, what : '$what', note : '$details.note' } }, { $group : { _id : { day : '$day', time : '$time', what : '$what', note : '$note' }, count : { $sum : 1 } } }, { $sort : { '_id.day' : 1, '_id.time' : 1 } }]";
+	$scope.query.andre_aggregrassi["Number of changelog operations by hour that are not aborted"] = "[{ $match : { 'details.note' : { $ne : 'aborted' } } }, { $project : { day : { $dayOfYear : '$time' }, time : { $hour : '$time' }, what : '$what' } }, { $group : { _id : { day : '$day', time : '$time', what : '$what' }, count : { $sum : 1 } } }, { $sort : { '_id.day' : 1, '_id.time' : 1 } }]";
+	$scope.query.andre_aggregrassi["Nmber of changelog operations by namespace"] = "[{ $group : { _id : { what : '$what', ns : '$ns', note : '$details.note' }, total : { $sum : 1  } } }, { $sort : { '_id.ns' : 1, '_id.what' : 1 } }]";
+	$scope.query.andre_aggregrassi["Number of splits, migration attempts, successes and failures by namespace"] = "[{ $group: {_id:'$ns', splits:{$sum:{$cond:[{$eq:['$what','split']},1,0]}}, migrationAttempts:{$sum:{$cond:[{$eq:['$what','moveChunk.from']},1,0]}}, migrationFailures:{$sum:{$cond:[ {$eq:['$details.note','aborted' ]} ,1,0]}}, migrations:{$sum:{$cond:[{$eq:['$what','moveChunk.commit']},1,0]}} } }]";
+
+	$scope.query.andreAgg = undefined;
+
 	$scope.query.submit = function()
 	{
 		var url = '/mongo/query/'
 			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port)
-				.concat('/config/').concat($scope.query.selectedColl).concat('/').concat(quote($scope.query.query));
+				.concat('/config/').concat($scope.query.selectedColl).concat('/').concat($scope.query.query);
 
 		$http
 		({
@@ -442,6 +438,9 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 	// obviously will be mostly the same but may only have subset of collections
 	$scope.$watch('mongo.nsList', function(list)
 	{
+		if($scope.mongo.nsList.length === 0)
+			return;
+
 		var url = '/mongo/collections/'
 			.concat($scope.mongo.host).concat('/')
 				.concat($scope.mongo.port).concat('/config');
@@ -466,5 +465,14 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 					$scope.mongo.host + ":" + $scope.mongo.port, err.message));
 			}
 		);
+	});
+
+	$scope.$watch('query.andreAgg', function(andre)
+	{
+		$scope.query.selectedColl = 'changelog';
+		$scope.query.query = andre;
+
+		if(andre !== undefined)
+			$scope.query.submit();
 	});
 }]);
