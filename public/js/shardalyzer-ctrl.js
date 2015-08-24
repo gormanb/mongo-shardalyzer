@@ -148,7 +148,6 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.$watch('mongo.shardalyzer.position', function(position)
 	{
 		$scope.chartmeta.data = {};
-		$scope.chartmeta.labels = {};
 		$scope.chartmeta.colors = {};
 
 		var shards = $scope.mongo.shardalyzer.shards;
@@ -156,24 +155,20 @@ shardalyze.controller("updateCharts", function($scope)
 		for(var s in shards)
 		{
 			$scope.chartmeta.data[s] = [];
-			$scope.chartmeta.labels[s] = [];
 			$scope.chartmeta.colors[s] = [];
 
-			for(var chunk in shards[s])
+			for(var chunk = 0; chunk < shards[s].length; chunk++)
 			{
-				var color = $scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status];
-				var label = JSON.stringify(shards[s][chunk], null, 2);
+				$scope.chartmeta.data[s][chunk] = 1;
 
-				$scope.chartmeta.data[s].push(1);
-				$scope.chartmeta.labels[s].push(label);
-				$scope.chartmeta.colors[s].push(color);
+				$scope.chartmeta.colors[s][chunk] =
+					$scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status];
 			}
 
 			if($scope.chartmeta.data[s].length == 0)
 			{
-				$scope.chartmeta.data[s].push(1);
-				$scope.chartmeta.labels[s].push('Empty');
-				$scope.chartmeta.colors[s].push('#EEEEEE');
+				$scope.chartmeta.data[s][0] = 1;
+				$scope.chartmeta.colors[s][0] = '#EEEEEE';
 			}
 		}
 

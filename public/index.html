@@ -87,9 +87,9 @@
 							<canvas id="doughnut_shard" class="chart chart-doughnut"
 								options="chartmeta.options"
 								data="chunks"
-								labels="chartmeta.labels[shard]"
+								labels="mongo.shardalyzer.shards[shard]"
 								colours="chartmeta.colors[shard]"></canvas>
-							<p align="center"><b>{{shard}} : {{chunks.length}}</b></p>
+							<p align="center"><b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b></p>
 						</div>
 						<div ng-show="mongo.selectedNS == undefined" style="width:75%; height:40vh; margin: 0 auto;
 							border-radius:25px; background:white url(images/mongo-spinner.gif) no-repeat center center;">

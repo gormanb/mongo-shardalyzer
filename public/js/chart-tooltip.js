@@ -14,8 +14,11 @@ Chart.defaults.global.customTooltips = function(tooltip)
     tooltipEl.removeClass('above below');
     tooltipEl.addClass('center');
 
+    // "text" field is actually chunk object
+    var text = JSON.stringify(tooltip.text, null, 2);
+
     // set text content
-    tooltipEl.html("<pre>".concat(tooltip.text).concat("</pre>"));
+    tooltipEl.html("<pre>".concat(text).concat("</pre>"));
 
     // get y-location of tooltip
     var top = tooltip.y + tooltip.caretHeight + tooltip.caretPadding;

@@ -140,7 +140,7 @@ var Shardalyzer =
 		for(var k in minShardKey)
 			newId = newId.concat("-").concat(k).concat("_").concat(s(minShardKey[k]));
 
-		newId = newId.replace(/\\\"/g, "");
+		newId = newId.replace(/"/g, "");
 
 		return newId;
 	},
