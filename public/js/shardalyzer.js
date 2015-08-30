@@ -93,22 +93,6 @@ var Shardalyzer =
 
 		var currentmove = {};
 
-		// iterate from end to start, i.e. in chronological order
-		// populate "from" & "to" fields in 2.6 moveChunk.from
-		for(var i = this.changes.length-1; i >= 0; i--)
-		{
-			if(this.changes[i].what == OP_START)
-			{
-				currentmove.from = this.changes[i].details.from;
-				currentmove.to = this.changes[i].details.to;
-			}
-			else if(this.changes[i].what == OP_FROM)
-			{
-				this.changes[i].details.from = currentmove.from;
-				this.changes[i].details.to = currentmove.to;
-			}
-		}
-
 		for(var k in chunkdata)
 		{
 			var chunk = chunkdata[k];
@@ -118,6 +102,30 @@ var Shardalyzer =
 
 			this.shards[chunk.shard].push(chunk);
 			this.chunks[s(chunk.min)] = chunk;
+		}
+
+		// iterate from end to start, i.e. in chronological order
+		// populate "from" & "to" fields in 2.6 moveChunk.from
+		for(var i = this.changes.length-1; i >= 0; i--)
+		{
+			if(this.changes[i].what == OP_START)
+			{
+				currentmove.from = this.changes[i].details.from;
+				currentmove.to = this.changes[i].details.to;
+
+				// chunks may have been on shards in past that are empty
+				// in current chunklist; add them to the shard list
+				if(!(currentmove.from in this.shards))
+					this.shards[currentmove.from] = [];
+
+				if(!(currentmove.to in this.shards))
+					this.shards[currentmove.to] = [];
+			}
+			else if(this.changes[i].what == OP_FROM)
+			{
+				this.changes[i].details.from = currentmove.from;
+				this.changes[i].details.to = currentmove.to;
+			}
 		}
 
 		// sort shard map by shard name
