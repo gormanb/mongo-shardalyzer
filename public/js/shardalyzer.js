@@ -145,6 +145,11 @@ var Shardalyzer =
 			this.tag(this.chunks, this.changes[0]);
 	},
 
+	reset : function()
+	{
+		this.initialize([], []);
+	},
+
 	// ns-minkey0_val-minkeyN_val
 	generateChunkId : function(ns, minShardKey)
 	{

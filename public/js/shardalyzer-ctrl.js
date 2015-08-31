@@ -110,6 +110,9 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 
 	$scope.$watch('mongo.selectedNS', function(selected)
 	{
+		// deinit current shardalyzer
+		$scope.mongo.shardalyzer.reset();
+
 		if($scope.mongo.selectedNS == undefined)
 			return;
 
