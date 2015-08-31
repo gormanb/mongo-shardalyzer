@@ -108,7 +108,7 @@ var Shardalyzer =
 		// populate "from" & "to" fields in 2.6 moveChunk.from
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
-			if(this.changes[i].what == OP_START)
+			if(this.changes[i].what == OP_COMMIT)
 			{
 				currentmove.from = this.changes[i].details.from;
 				currentmove.to = this.changes[i].details.to;
@@ -121,10 +121,17 @@ var Shardalyzer =
 				if(!(currentmove.to in this.shards))
 					this.shards[currentmove.to] = [];
 			}
-			else if(this.changes[i].what == OP_FROM)
+			else if(this.changes[i].what == OP_FROM && this.changes[i].details.from == undefined)
 			{
-				this.changes[i].details.from = currentmove.from;
-				this.changes[i].details.to = currentmove.to;
+				if(currentmove.from !== undefined)
+				{
+					this.changes[i].details.from = currentmove.from;
+					this.changes[i].details.to = currentmove.to;
+
+					currentmove.from = currentmove.to = undefined;
+				}
+				else if(success(this.changes[i])) // change is not reproducible
+					this.changes.splice(i, 1);
 			}
 		}
 
