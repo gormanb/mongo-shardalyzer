@@ -27,21 +27,21 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 
 shardalyze.directive('ngEnter', function ()
 {
-    return function (scope, element, attrs)
-    {
-        element.bind("keydown keypress", function (event)
-        {
-            if(event.which === 13)
-            {
-                scope.$apply(function ()
-                {
-                    scope.$eval(attrs.ngEnter);
-                });
+	return function (scope, element, attrs)
+	{
+		element.bind("keydown keypress", function (event)
+		{
+			if(event.which === 13)
+			{
+				scope.$apply(function ()
+				{
+					scope.$eval(attrs.ngEnter);
+				});
  
-                event.preventDefault();
-            }
-        });
-    };
+				event.preventDefault();
+			}
+		});
+	};
 });
 
 shardalyze.config(['growlProvider', function(growlProvider)
@@ -174,41 +174,41 @@ shardalyze.controller("updateCharts", function($scope)
 
 		if(position == undefined)
 		{
-	    	  $scope.chartmeta.options.animateRotate = true;
-	    	  $scope.chartmeta.options.animationSteps = 125;
+			$scope.chartmeta.options.animateRotate = true;
+			$scope.chartmeta.options.animationSteps = 125;
 		}
 	});
 
 	// Chart.js Options
-    $scope.chartmeta.options =
-    {
-      responsive: true,
+	$scope.chartmeta.options =
+	{
+		responsive: true,
 
-      segmentShowStroke : true,
-      segmentStrokeColor : '#fff',
-      segmentStrokeWidth : 0.25,
+		segmentShowStroke : true,
+		segmentStrokeColor : '#fff',
+		segmentStrokeWidth : 0.25,
 
-      percentageInnerCutout : 75, // This is 0 for Pie charts
+		percentageInnerCutout : 75, // This is 0 for Pie charts
 
-      animationEasing : 'easeOutQuint',
-      animationSteps : 125,
-      animateRotate : true,
-      animateScale : false,
+		animationEasing : 'easeOutQuint',
+		animationSteps : 125,
+		animateRotate : true,
+		animateScale : false,
 
-      legendTemplate : '',
+		legendTemplate : '',
 
-      tooltipTemplate : function(label)
-      {
-    	  return label.label;
-      },
+		tooltipTemplate : function(label)
+		{
+			return label.label;
+		},
 
-      // disable animation after initial loading
-      onAnimationComplete : function()
-      {
-    	  $scope.chartmeta.options.animateRotate = false;
-    	  $scope.chartmeta.options.animationSteps = 1;
-      }
-    };
+		// disable animation after initial loading
+		onAnimationComplete : function()
+		{
+			$scope.chartmeta.options.animateRotate = false;
+			$scope.chartmeta.options.animationSteps = 1;
+		}
+	};
 });
 
 shardalyze.controller("sliderControl", function($scope)
@@ -393,10 +393,10 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 
 	$scope.query.andre_aggregrassi = {};
 
-	$scope.query.andre_aggregrassi["Number of changelog operations"] = "[{ $group : { _id : { what : '$what', note : '$details.note' }, total : { $sum : 1  } } }]";
+	$scope.query.andre_aggregrassi["Number of changelog operations"] = "[{ $group : { _id : { what : '$what', note : '$details.note' }, total : { $sum : 1 } } }]";
 	$scope.query.andre_aggregrassi["Number of changelog operations by hour"] = "[{ $project : { day : { $dayOfYear : '$time' }, time : { $hour : '$time' }, what : '$what', note : '$details.note' } }, { $group : { _id : { day : '$day', time : '$time', what : '$what', note : '$note' }, count : { $sum : 1 } } }, { $sort : { '_id.day' : 1, '_id.time' : 1 } }]";
 	$scope.query.andre_aggregrassi["Number of changelog operations by hour that are not aborted"] = "[{ $match : { 'details.note' : { $ne : 'aborted' } } }, { $project : { day : { $dayOfYear : '$time' }, time : { $hour : '$time' }, what : '$what' } }, { $group : { _id : { day : '$day', time : '$time', what : '$what' }, count : { $sum : 1 } } }, { $sort : { '_id.day' : 1, '_id.time' : 1 } }]";
-	$scope.query.andre_aggregrassi["Nmber of changelog operations by namespace"] = "[{ $group : { _id : { what : '$what', ns : '$ns', note : '$details.note' }, total : { $sum : 1  } } }, { $sort : { '_id.ns' : 1, '_id.what' : 1 } }]";
+	$scope.query.andre_aggregrassi["Nmber of changelog operations by namespace"] = "[{ $group : { _id : { what : '$what', ns : '$ns', note : '$details.note' }, total : { $sum : 1 } } }, { $sort : { '_id.ns' : 1, '_id.what' : 1 } }]";
 	$scope.query.andre_aggregrassi["Number of splits, migration attempts, successes and failures by namespace"] = "[{ $group: {_id:'$ns', splits:{$sum:{$cond:[{$eq:['$what','split']},1,0]}}, migrationAttempts:{$sum:{$cond:[{$eq:['$what','moveChunk.from']},1,0]}}, migrationFailures:{$sum:{$cond:[ {$eq:['$details.note','aborted' ]} ,1,0]}}, migrations:{$sum:{$cond:[{$eq:['$what','moveChunk.commit']},1,0]}} } }]";
 
 	$scope.query.andreAgg = undefined;
