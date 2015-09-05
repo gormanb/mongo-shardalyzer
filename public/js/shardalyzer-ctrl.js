@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate']).run
+var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel']).run
 (
 	function($rootScope)
 	{
@@ -147,6 +147,26 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 shardalyze.controller("updateCharts", function($scope)
 {
 	$scope.chartmeta = {};
+
+	$scope.chartmeta.colclasses = ["col-md-1", "col-md-2", "col-md-3", "col-md-4", "col-md-6", "col-md-12"];
+	$scope.chartmeta.currentcol = 3;
+
+	$scope.scaleCharts = function(event, delta, deltaX, deltaY)
+	{
+		if(!event.originalEvent.shiftKey)
+			return;
+
+		var newcol = $scope.chartmeta.currentcol + delta;
+
+		if(newcol >= 0 && newcol < $scope.chartmeta.colclasses.length)
+		{
+			$scope.chartmeta.currentcol = newcol;
+			event.preventDefault();
+
+			// fire resize event; simplest way to redraw charts
+			window.dispatchEvent(new Event('resize'));
+		}
+	};
 
 	$scope.$watch('mongo.shardalyzer.position', function(position)
 	{

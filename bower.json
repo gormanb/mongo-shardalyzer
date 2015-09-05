@@ -23,11 +23,13 @@
   "dependencies": {
     "angular-chart.js": "*",
     "angular-bootstrap-slider": "*",
+    "angular-mousewheel": "*",
     "angular-bootstrap": "*",
     "angular-growl-v2": "*",
     "angular-animate": "*",
     "jasny-bootstrap": "*",
     "json-formatter": "*",
+    "hamsterjs": "*",
     "install": "*"
   }
 }

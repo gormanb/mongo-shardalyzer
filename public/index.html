@@ -31,6 +31,9 @@
 
 		<script src="/bower_components/angular-animate/angular-animate.min.js"></script>
 
+		<script src="/bower_components/hamsterjs/hamster.js"></script>
+		<script src="/bower_components/angular-mousewheel/mousewheel.js"></script>
+
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
 		<link rel="stylesheet" href="stylesheets/navmenu-push.css">
 		<link rel="stylesheet" href="stylesheets/style.css">
@@ -82,9 +85,9 @@
 				<div id="header" class="snug" style="padding:120px 0 0 0;"></div>
 
 				<div id="shardview" class="greedy">
-					<div style="height:40vh; max-height:40vh; overflow:auto" ng-controller="updateCharts">
-						<div ng-show="mongo.selectedNS !== undefined" ng-repeat="(shard, chunks) in chartmeta.data" class="col-md-4 col-centered">
-							<canvas id="doughnut_shard" class="chart chart-doughnut"
+					<div style="height:40vh; max-height:40vh; overflow:auto" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
+						<div ng-show="mongo.selectedNS !== undefined" ng-repeat="(shard, chunks) in chartmeta.data" class="col-centered {{chartmeta.colclasses[chartmeta.currentcol]}}">
+							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
 								options="chartmeta.options"
 								data="chunks"
 								labels="mongo.shardalyzer.shards[shard]"
