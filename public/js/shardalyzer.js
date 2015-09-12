@@ -15,6 +15,8 @@ var	STATUS_SPLIT_SOURCE = OP_SPLIT + SOURCE, STATUS_SPLIT_DEST = OP_SPLIT + DEST
 	STATUS_MULTI_SPLIT_SOURCE = OP_MULTI_SPLIT + SOURCE,
 	STATUS_MULTI_SPLIT_DEST = OP_MULTI_SPLIT + DESTINATION;
 
+var BALANCER_SOURCE_COLOR = '#EE0000', BALANCER_DEST_COLOR = '#00AA00';
+
 var statuscolors = {};
 
 statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#FFB347', statuscolors[STATUS_MULTI_SPLIT_DEST] = '#D19036',
@@ -82,6 +84,7 @@ var Shardalyzer =
 	shards : {},
 	chunks : {},
 	changes : [],
+	balancer : {},
 	position : undefined,
 
 	initialize : function(chunkdata, changedata)
@@ -143,6 +146,8 @@ var Shardalyzer =
 
 		if(this.canRewind())
 			this.tag(this.chunks, this.changes[0]);
+
+		this.updateBalancer();
 	},
 
 	reset : function()
@@ -163,6 +168,38 @@ var Shardalyzer =
 		newId = newId.replace(/"/g, "");
 
 		return newId;
+	},
+
+	updateBalancer : function()
+	{
+		var max = -1, min = Number.MAX_VALUE;
+
+		var current = 0;
+		var total = 0;
+
+		this.balancer = {};
+
+		for(var shard in this.shards)
+		{
+			total += (current = this.shards[shard].length);
+
+			max = Math.max(current, max);
+			min = Math.min(current, min);
+		}
+
+		var diff = max - min;
+
+		/* http://docs.mongodb.org/manual/core/sharding-balancing/#migration-thresholds */
+		if(diff >= 8 || (diff >= 4 && total < 80) || (diff >= 2 && total < 20))
+		{
+			for(var shard in this.shards)
+			{
+				if(this.shards[shard].length == max)
+					this.balancer[shard] = BALANCER_SOURCE_COLOR;
+				else if(this.shards[shard].length == min)
+					this.balancer[shard] = BALANCER_DEST_COLOR;
+			}
+		}
 	},
 
 /*
@@ -651,6 +688,8 @@ var Shardalyzer =
 
 			if(this.position < this.changes.length)
 				this.tag(this.chunks, this.changes[this.position]);
+
+			this.updateBalancer();
 		}
 	},
 
@@ -689,6 +728,7 @@ var Shardalyzer =
 			}
 
 			this.tag(this.chunks, this.changes[this.position]);
+			this.updateBalancer();
 		}
 	},
 
