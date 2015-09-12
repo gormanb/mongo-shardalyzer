@@ -107,6 +107,15 @@
 
 				<div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 
+				<div id="chart_legend" class="snug" style="width:75%; margin: 0 auto">
+					<table style="width:100%">
+						<tr>
+							<td ng-repeat="(status, color) in mongo.shardalyzer.statuscolors" ng-if="status !== 'undefined'" ng-readonly="true"
+								style="color:white; padding-left:1em; padding-right:1em; text-align:center; background-color:{{color}}">{{status}}</td>
+						</tr>
+					</table>
+				</div>
+
 				<div id="shardcontrols" class="snug" style="margin: 15px 0 15px 0">
 					<div class="flexh" style="width:75%; margin:0 auto;">
 						<div class="btn-group snug" style="min-width:350px" role="group" ng-controller="playControl">
