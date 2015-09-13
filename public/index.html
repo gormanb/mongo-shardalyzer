@@ -107,42 +107,45 @@
 
 				<div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 
-				<div id="chart_legend" class="snug" style="width:75%; margin: 0 auto">
-					<table style="width:100%">
-						<tr>
-							<td ng-repeat="(status, color) in mongo.shardalyzer.statuscolors" ng-if="status !== 'undefined'" ng-readonly="true"
-								style="color:white; padding-left:1em; padding-right:1em; text-align:center; background-color:{{color}}">{{status}}</td>
-						</tr>
-					</table>
-				</div>
-
 				<div id="shardcontrols" class="snug" style="margin: 15px 0 15px 0">
 					<div class="flexh" style="width:75%; margin:0 auto;">
-						<div class="btn-group snug" style="min-width:350px" role="group" ng-controller="playControl">
-							<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
-								<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
+						<div class="snug" style="min-width:375px" ng-controller="playControl">
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
+									<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-info" ng-click="playctrl.fastforward();" value="<<">
+									<span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-danger" ng-click="playctrl.forwardError();" value="! <">
+									<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-default" ng-click="playctrl.forward();" value="<">
+									<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-default" ng-click="playctrl.back();" value=">">
+									<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-danger" ng-click="playctrl.backError();" value="> !">
+									<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-info" ng-click="playctrl.rewind();" value=">>">
+									<span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-primary" ng-click="playctrl.end();" value=">|">
+									<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+								</button>
+							</div>
+
+							<button popover-template="'chunklegend.html'" popover-title="Chunk Legend" popover-trigger="mouseenter" type="button" class="btn btn-default">
+								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 							</button>
-							<button type="button" class="btn btn-info" ng-click="playctrl.fastforward();" value="<<">
-								<span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
-							</button>
-							<button type="button" class="btn btn-danger" ng-click="playctrl.forwardError();" value="! <">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							</button>
-							<button type="button" class="btn btn-default" ng-click="playctrl.forward();" value="<">
-								<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-							</button>
-							<button type="button" class="btn btn-default" ng-click="playctrl.back();" value=">">
-								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-							</button>
-							<button type="button" class="btn btn-danger" ng-click="playctrl.backError();" value="> !">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-							</button>
-							<button type="button" class="btn btn-info" ng-click="playctrl.rewind();" value=">>">
-								<span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
-							</button>
-							<button type="button" class="btn btn-primary" ng-click="playctrl.end();" value=">|">
-								<span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
-							</button>
+
+							<script type="text/ng-template" id="chunklegend.html">
+								<div ng-repeat="(status, color) in mongo.shardalyzer.statuscolors" ng-if="status !== 'undefined'" ng-readonly="true"
+									style="color:{{color}};"><strong>{{status}}</strong></div>
+							</script>
+
 						</div>
 
 						<div class="greedy" ng-controller="sliderControl">
