@@ -23,6 +23,7 @@
   "dependencies": {
     "angular-chart.js": "*",
     "angular-bootstrap-slider": "*",
+    "angular-ui-sortable": "*",
     "angular-mousewheel": "*",
     "angular-bootstrap": "*",
     "angular-growl-v2": "*",

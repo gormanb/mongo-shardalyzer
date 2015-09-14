@@ -34,6 +34,13 @@
 		<script src="/bower_components/hamsterjs/hamster.js"></script>
 		<script src="/bower_components/angular-mousewheel/mousewheel.js"></script>
 
+		<script src="/bower_components/jquery-ui/ui/minified/core.min.js"></script>
+		<script src="/bower_components/jquery-ui/ui/minified/widget.min.js"></script>
+		<script src="/bower_components/jquery-ui/ui/minified/mouse.min.js"></script>
+		<script src="/bower_components/jquery-ui/ui/minified/sortable.min.js"></script>
+
+		<script src="/bower_components/angular-ui-sortable/sortable.min.js"></script>
+
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
 		<link rel="stylesheet" href="stylesheets/navmenu-push.css">
 		<link rel="stylesheet" href="stylesheets/style.css">
@@ -85,15 +92,17 @@
 				<div id="header" class="snug" style="padding:120px 0 0 0;"></div>
 
 				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-show="mongo.selectedNS !== undefined" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
-					<div ng-repeat="(shard, chunks) in chartmeta.data" class="{{chartmeta.colclasses[chartmeta.currentcol]}}">
-						<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
-							options="chartmeta.options"
-							data="chunks"
-							labels="mongo.shardalyzer.shards[shard]"
-							colours="chartmeta.colors[shard]"></canvas>
-						<p align="center" style="color:{{mongo.shardalyzer.balancer[shard]}};">
-							<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
-						</p>
+					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="mongo.ui.shardlist">
+						<div ng-repeat="shard in mongo.ui.shardlist" class="{{chartmeta.colclasses[chartmeta.currentcol]}}">
+							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
+								options="chartmeta.options"
+								data="chartmeta.data[shard]"
+								labels="mongo.shardalyzer.shards[shard]"
+								colours="chartmeta.colors[shard]"></canvas>
+							<p align="center" style="color:{{mongo.shardalyzer.balancer[shard]}};">
+								<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
+							</p>
+						</div>
 					</div>
 				</div>
 

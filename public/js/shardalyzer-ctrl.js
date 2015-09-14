@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel']).run
+var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel', 'ui.sortable']).run
 (
 	function($rootScope)
 	{
@@ -20,6 +20,8 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo.ui.logwindow = 18;
 		$rootScope.mongo.ui.errors = [];
 		$rootScope.mongo.ui.slider = 0;
+
+		$rootScope.mongo.ui.shardlist = [];
 
 		$rootScope.mongo.shardalyzer = Shardalyzer;
 	}
@@ -112,6 +114,7 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 	{
 		// deinit current shardalyzer
 		$scope.mongo.shardalyzer.reset();
+		$scope.mongo.ui.shardlist = [];
 
 		if($scope.mongo.selectedNS == undefined)
 			return;
@@ -131,6 +134,7 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 			function(result)
 			{
 				$scope.mongo.shardalyzer.initialize(result.chunks, result.changelog);
+				$scope.mongo.ui.shardlist = Object.keys($scope.mongo.shardalyzer.shards);
 			}
 		)
 		.error
@@ -201,6 +205,14 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.options.animationSteps = 125;
 		}
 	});
+
+	$scope.chartmeta.sortopts =
+	{
+		tolerance : "pointer",
+		opacity : 0.25,
+		revert : true,
+		distance : 25
+	};
 
 	// Chart.js Options
 	$scope.chartmeta.options =

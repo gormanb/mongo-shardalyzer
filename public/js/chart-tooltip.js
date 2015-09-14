@@ -36,7 +36,7 @@ Chart.defaults.global.customTooltips = function(tooltip)
         opacity: 1,
         visibility: 'visible',
         left: tooltip.chart.canvas.offsetParent.offsetLeft + tooltip.chart.canvas.offsetLeft + tooltip.x + 'px',
-        top: tooltip.chart.canvas.offsetParent.offsetTop - tooltip.chart.canvas.offsetParent.parentElement.scrollTop + tooltip.chart.canvas.offsetTop + top + 'px',
+        top: tooltip.chart.canvas.offsetParent.offsetTop - tooltip.chart.canvas.offsetParent.parentElement.parentElement.scrollTop + tooltip.chart.canvas.offsetTop + top + 'px',
         fontFamily: tooltip.fontFamily,
         fontSize: tooltip.fontSize,
         fontStyle: tooltip.fontStyle,
