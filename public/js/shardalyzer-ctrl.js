@@ -21,8 +21,6 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo.ui.errors = [];
 		$rootScope.mongo.ui.slider = 0;
 
-		$rootScope.mongo.ui.shardlist = [];
-
 		$rootScope.mongo.shardalyzer = Shardalyzer;
 	}
 );
@@ -114,7 +112,6 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 	{
 		// deinit current shardalyzer
 		$scope.mongo.shardalyzer.reset();
-		$scope.mongo.ui.shardlist = [];
 
 		if($scope.mongo.selectedNS == undefined)
 			return;
@@ -134,7 +131,6 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 			function(result)
 			{
 				$scope.mongo.shardalyzer.initialize(result.chunks, result.changelog);
-				$scope.mongo.ui.shardlist = Object.keys($scope.mongo.shardalyzer.shards);
 			}
 		)
 		.error
@@ -154,6 +150,8 @@ shardalyze.controller("updateCharts", function($scope)
 
 	$scope.chartmeta.colclasses = ["col-md-1", "col-md-2", "col-md-3", "col-md-4", "col-md-6", "col-md-12"];
 	$scope.chartmeta.currentcol = 3;
+
+	$scope.chartmeta.shardlist = [];
 
 	$scope.scaleCharts = function(event, delta, deltaX, deltaY)
 	{
@@ -204,6 +202,11 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.options.animateRotate = true;
 			$scope.chartmeta.options.animationSteps = 125;
 		}
+	});
+
+	$scope.$watch('mongo.shardalyzer.shards', function(shards)
+	{
+		$scope.chartmeta.shardlist = Object.keys(shards);
 	});
 
 	$scope.chartmeta.sortopts =

@@ -92,13 +92,13 @@
 				<div id="header" class="snug" style="padding:120px 0 0 0;"></div>
 
 				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-show="mongo.selectedNS !== undefined" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
-					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="mongo.ui.shardlist">
-						<div ng-repeat="shard in mongo.ui.shardlist" class="{{chartmeta.colclasses[chartmeta.currentcol]}}">
+					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist">
+						<div ng-repeat="shard in chartmeta.shardlist" class="{{chartmeta.colclasses[chartmeta.currentcol]}}">
 							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
-								options="chartmeta.options"
-								data="chartmeta.data[shard]"
-								labels="mongo.shardalyzer.shards[shard]"
-								colours="chartmeta.colors[shard]"></canvas>
+								chart-options="chartmeta.options"
+								chart-data="chartmeta.data[shard]"
+								chart-labels="mongo.shardalyzer.shards[shard]"
+								chart-colours="chartmeta.colors[shard]"></canvas>
 							<p align="center" style="color:{{mongo.shardalyzer.balancer[shard]}};">
 								<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
 							</p>
