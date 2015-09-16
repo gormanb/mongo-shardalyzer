@@ -39,6 +39,10 @@
 		<script src="/bower_components/jquery-ui/ui/minified/mouse.min.js"></script>
 		<script src="/bower_components/jquery-ui/ui/minified/sortable.min.js"></script>
 
+		<link rel="stylesheet" href="/bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css">
+		<script src="/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
+		<script src="/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js"></script>
+
 		<script src="/bower_components/angular-ui-sortable/sortable.min.js"></script>
 
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
@@ -102,6 +106,9 @@
 							<p align="center" style="color:{{mongo.shardalyzer.balancer[shard]}};">
 								<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
 							</p>
+							<div style="position:absolute; top:5px; right:5px">
+								<input type="checkbox" bs-switch ng-model="chartmeta.shardenabled">
+							</div>
 						</div>
 					</div>
 				</div>

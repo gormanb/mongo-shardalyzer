@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel', 'ui.sortable']).run
+var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel', 'ui.sortable', 'frapontillo.bootstrap-switch']).run
 (
 	function($rootScope)
 	{
@@ -152,6 +152,8 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta.currentcol = 3;
 
 	$scope.chartmeta.shardlist = [];
+
+	$scope.chartmeta.shardenabled = true;
 
 	$scope.scaleCharts = function(event, delta, deltaX, deltaY)
 	{
