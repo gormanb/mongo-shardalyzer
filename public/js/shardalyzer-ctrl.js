@@ -216,6 +216,12 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.shardenabled[k] = true;
 	});
 
+	$scope.chartmeta.enableall = function(enable)
+	{
+		for(var k in $scope.chartmeta.shardenabled)
+			$scope.chartmeta.shardenabled[k] = enable;
+	}
+
 	$scope.chartmeta.sortopts =
 	{
 		tolerance : "pointer",
