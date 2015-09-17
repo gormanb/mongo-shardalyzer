@@ -151,9 +151,10 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta.colclasses = ["col-md-1", "col-md-2", "col-md-3", "col-md-4", "col-md-6", "col-md-12"];
 	$scope.chartmeta.currentcol = 3;
 
-	$scope.chartmeta.shardlist = [];
+	$scope.chartmeta.shardedit = false;
 
-	$scope.chartmeta.shardenabled = true;
+	$scope.chartmeta.shardenabled = {};
+	$scope.chartmeta.shardlist = [];
 
 	$scope.scaleCharts = function(event, delta, deltaX, deltaY)
 	{
@@ -209,6 +210,10 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.$watch('mongo.shardalyzer.shards', function(shards)
 	{
 		$scope.chartmeta.shardlist = Object.keys(shards);
+		$scope.chartmeta.shardenabled = {};
+
+		for(var k in shards)
+			$scope.chartmeta.shardenabled[k] = true;
 	});
 
 	$scope.chartmeta.sortopts =
