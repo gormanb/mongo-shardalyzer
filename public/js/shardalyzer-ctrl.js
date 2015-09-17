@@ -216,6 +216,11 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.shardenabled[k] = true;
 	});
 
+	$scope.chartmeta.toggleedit = function()
+	{
+		$scope.chartmeta.shardedit = (!$scope.chartmeta.shardedit);
+	};
+
 	$scope.chartmeta.enableall = function(enable)
 	{
 		for(var k in $scope.chartmeta.shardenabled)
