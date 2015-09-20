@@ -97,7 +97,7 @@
 
 				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-show="mongo.selectedNS !== undefined" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
 					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist">
-						<div ng-repeat="shard in chartmeta.shardlist" ng-if="chartmeta.shardenabled[shard] || chartmeta.shardedit" class="{{chartmeta.colclasses[chartmeta.currentcol]}}">
+						<div ng-repeat="shard in chartmeta.shardlist" ng-if="chartmeta.shardenabled[shard] || chartmeta.shardedit" class="{{chartmeta.colclasses[chartmeta.currentcol]}}" style="opacity: {{chartmeta.shardenabled[shard] ? 1 : 0.25}}">
 							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
 								chart-options="chartmeta.options"
 								chart-data="chartmeta.data[shard]"
