@@ -9,7 +9,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo.host = "localhost";
 		$rootScope.mongo.port = 27017;
 
-		$rootScope.mongo.selectedNS = undefined;
+		$rootScope.mongo.selectedNS = null;
 		$rootScope.mongo.collList = [];
 		$rootScope.mongo.nsList = [];
 
@@ -77,7 +77,7 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 {
 	$scope.updateNSList = function()
 	{
-		$scope.mongo.selectedNS = undefined;
+		$scope.mongo.selectedNS = null;
 
 		var url = '/mongo/namespaces/'
 			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port);
@@ -114,7 +114,7 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 		// deinit current shardalyzer
 		$scope.mongo.shardalyzer.reset();
 
-		if($scope.mongo.selectedNS == undefined)
+		if($scope.mongo.selectedNS == null)
 			return;
 
 		var url = '/mongo/metadata/'
@@ -201,7 +201,7 @@ shardalyze.controller("updateCharts", function($scope)
 			}
 		}
 
-		if(position == undefined)
+		if(position == null)
 		{
 			$scope.chartmeta.options.animateRotate = true;
 			$scope.chartmeta.options.animationSteps = 125;
@@ -443,10 +443,10 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 {
 	$scope.query = {};
 
-	$scope.query.result = undefined;
-	$scope.query.query = undefined;
+	$scope.query.result = null;
+	$scope.query.query = null;
 
-	$scope.query.selectedColl = undefined;
+	$scope.query.selectedColl = null;
 
 	$scope.query.andre_aggregrassi = {};
 
@@ -456,7 +456,7 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 	$scope.query.andre_aggregrassi["Nmber of changelog operations by namespace"] = "[{ $group : { _id : { what : '$what', ns : '$ns', note : '$details.note' }, total : { $sum : 1 } } }, { $sort : { '_id.ns' : 1, '_id.what' : 1 } }]";
 	$scope.query.andre_aggregrassi["Number of splits, migration attempts, successes and failures by namespace"] = "[{ $group: {_id:'$ns', splits:{$sum:{$cond:[{$eq:['$what','split']},1,0]}}, migrationAttempts:{$sum:{$cond:[{$eq:['$what','moveChunk.from']},1,0]}}, migrationFailures:{$sum:{$cond:[ {$eq:['$details.note','aborted' ]} ,1,0]}}, migrations:{$sum:{$cond:[{$eq:['$what','moveChunk.commit']},1,0]}} } }]";
 
-	$scope.query.andreAgg = undefined;
+	$scope.query.andreAgg = null;
 
 	$scope.query.submit = function()
 	{
@@ -524,7 +524,7 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 		$scope.query.selectedColl = 'changelog';
 		$scope.query.query = andre;
 
-		if(andre !== undefined)
+		if(andre !== null)
 			$scope.query.submit();
 	});
 }]);

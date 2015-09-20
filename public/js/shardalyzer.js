@@ -93,7 +93,7 @@ var Shardalyzer =
 	chunks : {},
 	changes : [],
 	balancer : {},
-	position : undefined,
+	position : null,
 
 	initialize : function(chunkdata, changedata)
 	{
@@ -149,7 +149,7 @@ var Shardalyzer =
 		// sort shard map by shard name
 		this.shards = sortObject(this.shards);
 
-		this.position = (changedata.length > 0 ? 0 : undefined);
+		this.position = (changedata.length > 0 ? 0 : null);
 		this.statuscolors = statuscolors;
 
 		if(this.canRewind())
@@ -742,7 +742,7 @@ var Shardalyzer =
 
 	bttf : function(instant)
 	{
-		while(this.position !== undefined && instant >= 0 && instant <= this.changes.length && instant !== this.position)
+		while(this.position !== null && instant >= 0 && instant <= this.changes.length && instant !== this.position)
 		{
 			if(instant > this.position)
 				this.rewind();
