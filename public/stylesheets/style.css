@@ -65,3 +65,16 @@ body {
   background-image: linear-gradient(to bottom, #ffebeb 0%, #ffcccc 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffebeb', endColorstr='#ffffcccc', GradientType=0);
 }
+
+.row-centered {
+    text-align:center;
+}
+
+.col-centered {
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+}
