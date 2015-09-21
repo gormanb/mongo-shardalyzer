@@ -1,12 +1,12 @@
 shardalyzer
 ===========
 
-Visualisation and analysis tool for MongoDB sharded clusters, written as a Bootcamp project using the MEAN stack. Visualise a cluster's current topology, roll back the view to any point in its history, step through the splitting and migration of chunks, or jump directly to points in time where errors occurred. Also includes a builtin query interface for performing find() or aggregate() on any collection in the config database.
+Visualisation and analysis tool for MongoDB sharded clusters, written as a Bootcamp project using the MEAN stack. Visualise a cluster's current topology, roll back the view to any point in its history, step through the splitting and migration of chunks, or jump directly to points in time where errors occurred. Also includes a builtin query interface for performing `find()` or `aggregate()` on any collection in the config database.
 
 Setup
 -----
 
-Run setup.sh; this will attempt to find your package manager (yum, apt-get, brew or port) in order to install node, npm, and then the project dependencies. Note that, depending on your OS, this may prompt for your sudo password.
+Running `setup.sh` will attempt to find your package manager (`yum`, `apt-get`, `brew` or `port`) in order to install `node`, `npm`, and then the project dependencies. Note that, depending on your OS, this may prompt for your `sudo` password.
 
 To install manually, first install npm and then run the following from the project directory:
 
@@ -18,9 +18,13 @@ Operation
 
 From the project directory, start the Express server with:
 
+	./start.sh
+
+Or, run it manually as follows:
+
 	node mongo-shardalyzer.js
 
-Then open localhost:3000 in your browser. Click the Menu icon in the top-left to set server connection options, then select a namespace to pull data from the mongod/s.
+Then open `localhost:3000` in your browser. Click the Menu icon in the top-left to set server connection options, then select a namespace to pull data from the `mongod/s`.
 
 ToDo
 -----
