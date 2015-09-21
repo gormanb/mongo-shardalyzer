@@ -286,10 +286,8 @@ shardalyze.controller("sliderControl", function($scope)
 			return value;
 	};
 
-	$scope.$watch('mongo.ui.slider', function(position)
+	var updateChangelog = function(position)
 	{
-		$scope.mongo.shardalyzer.bttf(position);
-
 		var changes = $scope.mongo.shardalyzer.changes;
 		var window = $scope.mongo.ui.logwindow;
 		var offset = Math.floor(window / 2);
@@ -298,12 +296,20 @@ shardalyze.controller("sliderControl", function($scope)
 		var end = Math.max(Math.min(position+offset, changes.length), window);
 
 		$scope.mongo.ui.selectedchange = (position - start).toString();
+		$scope.mongo.ui.changelog.length = 0;
 
 		for(var k = 0; k < (end-start); k++)
 		{
 			if(changes[start + k] !== undefined)
 				$scope.mongo.ui.changelog[k] = changes[start + k];
 		}
+	}
+
+	$scope.$watch('mongo.ui.slider', function(position)
+	{
+		$scope.mongo.shardalyzer.bttf(position);
+		updateChangelog(position);
+
 	});
 
 	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
@@ -336,6 +342,8 @@ shardalyze.controller("sliderControl", function($scope)
 			$scope.mongo.ui.errors.push($scope.slidermeta.max);
 			$scope.slidermeta.ticklabels.push("");
 		}
+
+		updateChangelog(0);
 	});
 });
 
