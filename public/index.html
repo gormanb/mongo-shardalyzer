@@ -113,7 +113,7 @@
 							</button>
 						</div>
 					</div>
-					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist" class="row-centered">
+					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist" ng-readonly="true" class="row-centered">
 						<div ng-repeat="shard in chartmeta.shardlist" ng-if="chartmeta.shardenabled[shard] || chartmeta.shardedit" class="{{chartmeta.colclasses[chartmeta.currentcol]}} col-centered" style="opacity: {{chartmeta.shardenabled[shard] ? 1 : 0.25}}">
 							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
 								chart-options="chartmeta.options"
@@ -138,7 +138,7 @@
 
 				<div id="shardcontrols" class="snug" style="margin: 15px 0 15px 0">
 					<div class="flexh" style="width:75%; margin:0 auto;">
-						<div class="snug" style="min-width:375px" ng-controller="playControl">
+						<div class="snug" style="padding-right:15px" ng-controller="playControl">
 							<div class="btn-group" role="group">
 								<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
 									<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
@@ -166,13 +166,21 @@
 								</button>
 							</div>
 
-							<button popover-template="'chunklegend.html'" popover-title="Chunk Legend" popover-trigger="mouseenter" type="button" class="btn btn-default">
+							<button popover-template="'chunklegend.html'" popover-title="Chunk Legend" type="button" class="btn btn-default">
 								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 							</button>
 
 							<script type="text/ng-template" id="chunklegend.html">
 								<div ng-repeat="(status, color) in mongo.shardalyzer.statuscolors" ng-if="status !== 'undefined'" ng-readonly="true"
 									style="color:{{color}};"><strong>{{status}}</strong></div>
+							</script>
+
+							<button popover-template="'searchwidget.html'" popover-title="Search by Timestamp" type="button" class="btn btn-default">
+								<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+							</button>
+
+							<script type="text/ng-template" id="searchwidget.html">
+								<input type="text" ng-model="searchbar.search" typeahead="change as change.time for change in mongo.shardalyzer.changes | filter:$viewValue | limitTo:10" class="form-control">
 							</script>
 
 						</div>

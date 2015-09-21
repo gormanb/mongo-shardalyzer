@@ -349,6 +349,9 @@ shardalyze.controller("sliderControl", function($scope)
 
 shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $interval)
 {
+	$scope.searchbar = {};
+	$scope.searchbar.search = null;
+
 	var updateSlider = function(offset)
 	{
 		var newpos = $scope.mongo.ui.slider + offset;
@@ -356,6 +359,14 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 		if(newpos >= 0 && newpos <= $scope.mongo.shardalyzer.changes.length)
 			$scope.mongo.ui.slider = newpos;
 	}
+
+	$scope.$watch('searchbar.search', function(change)
+	{
+		var pos = $scope.mongo.shardalyzer.changes.indexOf(change);
+
+		if(pos >= 0)
+			updateSlider(pos - $scope.mongo.ui.slider);
+	});
 
 	$scope.playctrl =
 	{
