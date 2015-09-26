@@ -1,14 +1,18 @@
 shardalyzer
 ===========
 
-Visualisation and analysis tool for MongoDB sharded clusters, written as a Bootcamp project using the MEAN stack. Visualise a cluster's current topology, roll back the view to any point in its history, step through the splitting and migration of chunks, or jump directly to points in time where errors occurred. Also includes a builtin query interface for performing `find()` or `aggregate()` on any collection in the config database.
+Visualisation and analysis tool for MongoDB sharded clusters. Visualise a cluster's current topology, roll back the view to any point in its history, step through the splitting and migration of chunks, or jump directly to points in time where errors occurred. Also includes a builtin query interface for performing `find()` or `aggregate()` on any collection in the config database.
 
 Setup
 -----
 
-Running `setup.sh` will attempt to find your package manager (`yum`, `apt-get`, `brew` or `port`) in order to install `node`, `npm`, and then the project dependencies. Note that, depending on your OS, this may prompt for your `sudo` password.
+Run the setup script from the project directory:
 
-To install manually, first install npm and then run the following from the project directory:
+`./setup.sh`
+
+This will attempt to find your package manager (`yum`, `apt-get`, `brew` or `port`) in order to install `node`, `npm`, and then the project dependencies. Note that, depending on your OS, this may prompt for your `sudo` password.
+
+To install manually, first install `npm` and then run the following from the project directory:
 
 	npm install
 	./node_modules/bower/bin/bower install
@@ -24,7 +28,9 @@ Or, run it manually as follows:
 
 	node mongo-shardalyzer.js
 
-Then open `localhost:3000` in your browser. Click the Menu icon in the top-left to set server connection options, then select a namespace to pull data from the `mongod/s`.
+Then open `localhost:3000` in your browser. Click the Menu icon in the top-left to set server connection options, hit Return, and select a namespace to visualise.
+
+Shardalyzer can pull data from a standalone `mongod` containing a config dump, directly from a config server, or via a `mongos`.
 
 ToDo
 -----
