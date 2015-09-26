@@ -98,25 +98,38 @@ exports.metadata =
 
 		var meta = {};
 
-		meta['chunks'] = [];
-		meta['changelog'] = [];
-
 		MongoClient.connect(url, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
 			else
 			{
-				var chunkcoll = db.collection('chunks');
-				var stream = chunkcoll.find({ ns : namespace }).stream();
-
-				stream.on("data", function(chunk) { meta['chunks'].push(chunk); });
-
 			    var changecoll = db.collection('changelog');
-			    stream = changecoll.find({ ns : namespace, what : /moveChunk|split/ }).sort({ time : -1 }).stream();
+				var chunkcoll = db.collection('chunks');
 
-			    stream.on("data", function(change){ meta['changelog'].push(change) });
-			    stream.on("end", function(){ res.json(meta) });
+				var changecursor = changecoll.find({ ns : namespace, what : /moveChunk|split/ }).sort({ time : -1 });
+				var chunkcursor = chunkcoll.find({ ns : namespace });
+
+				changecursor.toArray(function(err, changelog)
+				{
+					if(err)
+						res.status(500).send(err);
+					else
+					{
+						meta.changelog = changelog;
+
+						chunkcursor.toArray(function(err, chunks)
+						{
+							if(err)
+								res.status(500).send(err);
+							else
+							{
+								meta.chunks = chunks;
+								res.json(meta);
+							}
+						});
+					}
+				});
 			}
 		});
 	};
