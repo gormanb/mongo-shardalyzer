@@ -143,22 +143,22 @@
 								<button type="button" class="btn btn-primary" ng-click="playctrl.start();" value="|<">
 									<span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
 								</button>
-								<button type="button" class="btn btn-info" ng-click="playctrl.fastforward();" value="<<">
+								<button type="button" class="btn btn-info" ng-click="playctrl.rewind();" value="<<">
 									<span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
 								</button>
-								<button type="button" class="btn btn-danger" ng-click="playctrl.forwardError();" value="! <">
+								<button type="button" class="btn btn-danger" ng-click="playctrl.backError();" value="! <">
 									<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 								</button>
-								<button type="button" class="btn btn-default" ng-click="playctrl.forward();" value="<">
+								<button type="button" class="btn btn-default" ng-click="playctrl.back();" value="<">
 									<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 								</button>
-								<button type="button" class="btn btn-default" ng-click="playctrl.back();" value=">">
+								<button type="button" class="btn btn-default" ng-click="playctrl.forward();" value=">">
 									<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 								</button>
-								<button type="button" class="btn btn-danger" ng-click="playctrl.backError();" value="> !">
+								<button type="button" class="btn btn-danger" ng-click="playctrl.forwardError();" value="> !">
 									<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 								</button>
-								<button type="button" class="btn btn-info" ng-click="playctrl.rewind();" value=">>">
+								<button type="button" class="btn btn-info" ng-click="playctrl.fastforward();" value=">>">
 									<span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
 								</button>
 								<button type="button" class="btn btn-primary" ng-click="playctrl.end();" value=">|">
@@ -187,6 +187,7 @@
 
 						<div class="greedy" ng-controller="sliderControl">
 							<slider ng-model="mongo.ui.slider"
+								reversed="{{mongo.shardalyzer.changes.length > 0}}"
 								min="slidermeta.min"
 								max="slidermeta.max"
 								value="mongo.ui.slider"

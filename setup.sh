@@ -16,3 +16,6 @@ fi
 
 npm install
 ./node_modules/bower/bin/bower install
+
+cd bower_components
+patch -p1 < ../seiyria-bootstrap-slider.patch

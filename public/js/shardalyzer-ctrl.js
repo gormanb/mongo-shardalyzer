@@ -398,7 +398,7 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 		start : function()
 		{
 			this.cancel();
-			updateSlider(-$scope.mongo.ui.slider);
+			updateSlider($scope.mongo.shardalyzer.changes.length - $scope.mongo.ui.slider);
 		},
 
 		forwardError : function()
@@ -448,7 +448,7 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 		end : function()
 		{
 			this.cancel();
-			updateSlider($scope.mongo.shardalyzer.changes.length - $scope.mongo.ui.slider)
+			updateSlider(-$scope.mongo.ui.slider);
 		}
 	}
 }]);
