@@ -18,4 +18,4 @@ npm install
 ./node_modules/bower/bin/bower install
 
 cd bower_components
-patch -p1 < ../seiyria-bootstrap-slider.patch
+patch -f --fuzz=0 -r - -p1 < ../seiyria-bootstrap-slider.patch > /dev/null 2>&1
