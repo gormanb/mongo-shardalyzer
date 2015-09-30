@@ -3,6 +3,11 @@ shardalyzer
 
 Visualisation and analysis tool for MongoDB sharded clusters. Visualise a cluster's current topology, roll back the view to any point in its history, step through the splitting and migration of chunks, or jump directly to points in time where errors occurred. Also includes a builtin query interface for performing `find()` or `aggregate()` on any collection in the config database.
 
+Demo
+-----
+
+[![MongoDB Shardalyzer](http://img.youtube.com/vi/HOmRfV1JQg8/0.jpg)](https://www.youtube.com/watch?v=HOmRfV1JQg8 "MongoDB Shardalyzer")
+
 Setup
 -----
 
