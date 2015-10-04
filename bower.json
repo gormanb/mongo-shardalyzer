@@ -24,6 +24,7 @@
     "angular-chart.js": "*",
     "angular-bootstrap-slider": "*",
     "angular-bootstrap-switch": "*",
+    "seiyria-bootstrap-slider": "^5.2.1",
     "angular-ui-sortable": "*",
     "angular-mousewheel": "*",
     "angular-bootstrap": "*",
@@ -33,5 +34,8 @@
     "json-formatter": "*",
     "hamsterjs": "*",
     "install": "*"
+  },
+  "resolutions": {
+    "seiyria-bootstrap-slider": "^5.2.1"
   }
 }
