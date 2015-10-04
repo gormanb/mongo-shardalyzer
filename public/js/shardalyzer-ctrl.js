@@ -312,11 +312,68 @@ shardalyze.controller("sliderControl", function($scope)
 
 	});
 
-	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
+	$scope.errorparams =
 	{
-		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
-		$scope.mongo.ui.slider = 0;
+		slow_move_threshold :
+		{
+			name : "Slow Move Threshold",
+			value : 15*(1000*60)
+		}
+	};
 
+	$scope.erroropts =
+	{
+		failedmoves :
+	 	{
+	 		name : "Failed moves",
+	 		enabled : true,
+	 		error : function(change, params)
+	 		{
+	 			return change.details.note === "aborted";
+	 		}
+	 	},
+
+	 	slowmoves :
+	 	{
+	 		name : "Slow moves",
+	 		enabled : false,
+	 		error : function(change, params)
+	 		{
+	 			if(change.what == "moveChunk.from")
+	 			{
+	 				var sum = 0;
+
+	 				for(var i = 1; i < 6; i++)
+	 				{
+	 					var time = change.details["step " + i + " of 6"];
+
+	 					if(time !== undefined)
+	 						sum += time;
+	 				}
+
+	 				return sum >= params.slow_move_threshold.value;
+	 			}
+
+	 			return false;
+	 		}
+	 	}
+	};
+
+	isError = function(change)
+	{
+		var error = false;
+
+		for(var k in $scope.erroropts)
+		{
+			if((!error) && $scope.erroropts[k].enabled)
+				error = $scope.erroropts[k].error(change, $scope.errorparams);
+		}
+
+		return error;
+	};
+
+	setErrorTicks = function()
+	{
 		$scope.mongo.ui.errors = [];
 		$scope.slidermeta.ticklabels = [];
 
@@ -324,7 +381,7 @@ shardalyze.controller("sliderControl", function($scope)
 		{
 			var change = $scope.mongo.shardalyzer.changes[i];
 
-			if(change.details.note === "aborted")
+			if(isError(change))
 			{
 				$scope.mongo.ui.errors.push(i);
 				$scope.slidermeta.ticklabels.push(i);
@@ -342,6 +399,14 @@ shardalyze.controller("sliderControl", function($scope)
 			$scope.mongo.ui.errors.push($scope.slidermeta.max);
 			$scope.slidermeta.ticklabels.push("");
 		}
+	}
+
+	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
+	{
+		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
+		$scope.mongo.ui.slider = 0;
+
+		setErrorTicks();
 
 		updateChangelog(0);
 	});
