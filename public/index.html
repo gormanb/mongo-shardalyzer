@@ -197,11 +197,11 @@
 								ticks_snap_bounds="slidermeta.snap"
 								formatter="slidermeta.formatter">
 							</slider>
-							<span style="padding:5px; float:left" ng-repeat="(name, opts) in erroropts">
+							<span style="padding:5px; float:left" ng-repeat="(name, opts) in errorconfig.opts">
 								<input type="checkbox" ng-model="opts.enabled" id="opts.name">
 								<label for="{{opts.name}}">{{opts.name}}</label>
 							</span>
-							<span style="padding:5px; float:right" ng-repeat="(name, param) in errorparams">
+							<span style="padding:5px; float:right" ng-repeat="(name, param) in errorconfig.params">
 								<label for="{{param.name}}">{{param.name}}</label>
 								<input type="number" ng-model="param.value" id="param.name" min=0>
 							</span>

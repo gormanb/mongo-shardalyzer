@@ -314,61 +314,64 @@ shardalyze.controller("sliderControl", function($scope)
 
 	});
 
-	$scope.errorparams =
+	$scope.errorconfig =
 	{
-		slow_move_threshold :
+		params :
 		{
-			name : "Slow Move Threshold",
-			value : 15*(1000*60)
+			slow_move_threshold :
+			{
+				name : "Slow Move Threshold",
+				value : 15*(1000*60)
+			}
+		},
+
+		opts :
+		{
+			failedmoves :
+		 	{
+		 		name : "Failed moves",
+		 		enabled : true,
+		 		error : function(change, params)
+		 		{
+		 			return change.details.note === "aborted";
+		 		}
+		 	},
+
+		 	slowmoves :
+		 	{
+		 		name : "Slow moves",
+		 		enabled : false,
+		 		error : function(change, params)
+		 		{
+		 			if(change.what == "moveChunk.from")
+		 			{
+		 				var sum = 0;
+
+		 				for(var i = 1; i < 6; i++)
+		 				{
+		 					var time = change.details["step " + i + " of 6"];
+
+		 					if(time !== undefined)
+		 						sum += time;
+		 				}
+
+		 				return sum >= params.slow_move_threshold.value;
+		 			}
+
+		 			return false;
+		 		}
+		 	}
 		}
-	};
-
-	$scope.erroropts =
-	{
-		failedmoves :
-	 	{
-	 		name : "Failed moves",
-	 		enabled : true,
-	 		error : function(change, params)
-	 		{
-	 			return change.details.note === "aborted";
-	 		}
-	 	},
-
-	 	slowmoves :
-	 	{
-	 		name : "Slow moves",
-	 		enabled : false,
-	 		error : function(change, params)
-	 		{
-	 			if(change.what == "moveChunk.from")
-	 			{
-	 				var sum = 0;
-
-	 				for(var i = 1; i < 6; i++)
-	 				{
-	 					var time = change.details["step " + i + " of 6"];
-
-	 					if(time !== undefined)
-	 						sum += time;
-	 				}
-
-	 				return sum >= params.slow_move_threshold.value;
-	 			}
-
-	 			return false;
-	 		}
-	 	}
-	};
+	}
 
 	isError = function(change)
 	{
 		var error = false;
 
-		for(var k in $scope.erroropts)
+		for(var k in $scope.errorconfig.opts)
 		{
-			if((!error) && $scope.erroropts[k].enabled)
-				error = $scope.erroropts[k].error(change, $scope.errorparams);
+			if((!error) && $scope.errorconfig.opts[k].enabled)
+				error = $scope.errorconfig.opts[k].error(change, $scope.errorconfig.params);
 		}
 
 		return error;
@@ -416,7 +419,7 @@ shardalyze.controller("sliderControl", function($scope)
 		updateChangelog(0);
 	});
 
-	$scope.$watch('errorparams', setErrorTicks, true);
+	$scope.$watch('errorconfig', setErrorTicks, true);
 });
 
 shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $interval)
