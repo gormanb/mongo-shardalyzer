@@ -17,6 +17,8 @@ var	STATUS_SPLIT_SOURCE = OP_SPLIT + SOURCE, STATUS_SPLIT_DEST = OP_SPLIT + DEST
 
 var BALANCER_SOURCE_COLOR = '#EE0000', BALANCER_DEST_COLOR = '#00AA00';
 
+var DEFAULT_CHUNK_COLOR = '#AEC6CF';
+
 var statuscolors = {};
 
 statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#FFB347',
@@ -28,7 +30,7 @@ statuscolors[STATUS_TO_SOURCE] = '#55CC55',
 statuscolors[STATUS_COMMIT] = '#0000AA',
 statuscolors[STATUS_FROM_SUCCESS] = '#00AA00',
 statuscolors[STATUS_FROM_FAILURE] = '#EE0000',
-statuscolors.undefined = '#AEC6CF';
+statuscolors.undefined = DEFAULT_CHUNK_COLOR;
 
 /*
 statuscolors[STATUS_START_DEST] = '#AAAAAA',
