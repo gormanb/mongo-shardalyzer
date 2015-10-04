@@ -190,12 +190,21 @@
 								reversed="{{mongo.shardalyzer.changes.length > 0}}"
 								min="slidermeta.min"
 								max="slidermeta.max"
+								scale="slidermeta.scale"
 								value="mongo.ui.slider"
 								ticks="mongo.ui.errors"
 								ticksLabels="slidermeta.ticklabels"
 								ticks_snap_bounds="slidermeta.snap"
 								formatter="slidermeta.formatter">
 							</slider>
+							<span style="padding:5px; float:left" ng-repeat="(name, opts) in erroropts">
+								<input type="checkbox" ng-model="opts.enabled" id="opts.name">
+								<label for="{{opts.name}}">{{opts.name}}</label>
+							</span>
+							<span style="padding:5px; float:right" ng-repeat="(name, param) in errorparams">
+								<label for="{{param.name}}">{{param.name}}</label>
+								<input type="number" ng-model="param.value" id="param.name" min=0>
+							</span>
 						</div>
 					</div>
 

@@ -278,6 +278,8 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.mongo.ui.errors = [];
 	$scope.slidermeta.snap = 1;
 
+	$scope.slidermeta.scale = null;
+
 	$scope.slidermeta.formatter = function(value)
 	{
 		if($scope.mongo.shardalyzer.changes[value] !== undefined)
@@ -399,6 +401,9 @@ shardalyze.controller("sliderControl", function($scope)
 			$scope.mongo.ui.errors.push($scope.slidermeta.max);
 			$scope.slidermeta.ticklabels.push("");
 		}
+
+		// slider doesn't $watch ticks; force it to refresh itself
+		$scope.slidermeta.scale = (	$scope.slidermeta.scale == null ? "linear" : null);
 	}
 
 	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
@@ -410,6 +415,8 @@ shardalyze.controller("sliderControl", function($scope)
 
 		updateChangelog(0);
 	});
+
+	$scope.$watch('errorparams', setErrorTicks, true);
 });
 
 shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $interval)
