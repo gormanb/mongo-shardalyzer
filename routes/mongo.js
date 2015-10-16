@@ -107,28 +107,39 @@ exports.metadata =
 			    var changecoll = db.collection('changelog');
 				var chunkcoll = db.collection('chunks');
 
-				var changecursor = changecoll.find({ ns : namespace, what : /moveChunk|split/ }).sort({ time : -1 });
-				var chunkcursor = chunkcoll.find({ ns : namespace });
-
-				changecursor.toArray(function(err, changelog)
+				// guard against collections that were dropped and recreated; only take changelog entries since the most recent sharding
+				changecoll.find({ ns : namespace, what : "shardCollection" }).sort({ time : -1 }).limit(1).toArray(function(err, shardevent)
 				{
+					var start = new Date(0);
+
 					if(err)
 						res.status(500).send(err);
-					else
-					{
-						meta.changelog = changelog;
+					else if(shardevent && shardevent.length > 0)
+						start = shardevent[0].time;
 
-						chunkcursor.toArray(function(err, chunks)
+					var changecursor = changecoll.find({ ns : namespace, what : /moveChunk|split/, time : { $gt : start } }).sort({ time : -1 });
+					var chunkcursor = chunkcoll.find({ ns : namespace });
+
+					changecursor.toArray(function(err, changelog)
+					{
+						if(err)
+							res.status(500).send(err);
+						else
 						{
-							if(err)
-								res.status(500).send(err);
-							else
+							meta.changelog = changelog;
+
+							chunkcursor.toArray(function(err, chunks)
 							{
-								meta.chunks = chunks;
-								res.json(meta);
-							}
-						});
-					}
+								if(err)
+									res.status(500).send(err);
+								else
+								{
+									meta.chunks = chunks;
+									res.json(meta);
+								}
+							});
+						}
+					});
 				});
 			}
 		});
