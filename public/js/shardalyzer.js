@@ -97,7 +97,8 @@ var Shardalyzer =
 	balancer : {},
 	position : null,
 
-	initialize : function(chunkdata, changedata)
+	// arguments are arrays of documents (objects) in original format
+	initialize : function(sharddata, chunkdata, changedata)
 	{
 		this.changes = changedata;
 
@@ -106,12 +107,12 @@ var Shardalyzer =
 
 		var currentmove = {};
 
+		for(var k in sharddata)
+			this.shards[sharddata[k]._id] = [];
+
 		for(var k in chunkdata)
 		{
 			var chunk = chunkdata[k];
-
-			if(!(chunk.shard in this.shards))
-				this.shards[chunk.shard] = [];
 
 			this.shards[chunk.shard].push(chunk);
 			this.chunks[s(chunk.min)] = chunk;
@@ -125,14 +126,6 @@ var Shardalyzer =
 			{
 				currentmove.from = this.changes[i].details.from;
 				currentmove.to = this.changes[i].details.to;
-
-				// chunks may have been on shards in past that are empty
-				// in current chunklist; add them to the shard list
-				if(!(currentmove.from in this.shards))
-					this.shards[currentmove.from] = [];
-
-				if(!(currentmove.to in this.shards))
-					this.shards[currentmove.to] = [];
 			}
 			else if(this.changes[i].what == OP_FROM && this.changes[i].details.from == undefined)
 			{
@@ -162,7 +155,7 @@ var Shardalyzer =
 
 	reset : function()
 	{
-		this.initialize([], []);
+		this.initialize([], [], []);
 	},
 
 	// ns-minkey0_val-minkeyN_val
