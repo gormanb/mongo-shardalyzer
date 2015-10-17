@@ -157,6 +157,9 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta.shardenabled = {};
 	$scope.chartmeta.shardlist = [];
 
+	$scope.chartmeta.colors = {};
+	$scope.chartmeta.data = {};
+
 	$scope.scaleCharts = function(event, delta, deltaX, deltaY)
 	{
 		if(!event.originalEvent.shiftKey)
@@ -176,15 +179,15 @@ shardalyze.controller("updateCharts", function($scope)
 
 	$scope.$watch('mongo.shardalyzer.position', function(position)
 	{
-		$scope.chartmeta.data = {};
-		$scope.chartmeta.colors = {};
-
 		var shards = $scope.mongo.shardalyzer.shards;
 
 		for(var s in shards)
 		{
-			$scope.chartmeta.data[s] = [];
-			$scope.chartmeta.colors[s] = [];
+			if(!$scope.chartmeta.data[s])
+			{
+				$scope.chartmeta.data[s] = [];
+				$scope.chartmeta.colors[s] = [];
+			}
 
 			for(var chunk = 0; chunk < shards[s].length; chunk++)
 			{
@@ -194,9 +197,12 @@ shardalyze.controller("updateCharts", function($scope)
 					$scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status];
 			}
 
+			$scope.chartmeta.colors[s].length = shards[s].length;
+			$scope.chartmeta.data[s].length = shards[s].length;
+
 			if($scope.chartmeta.data[s].length == 0)
 			{
-				$scope.chartmeta.data[s][0] = 1;
+				$scope.chartmeta.data[s][0] = 0;
 				$scope.chartmeta.colors[s][0] = '#EEEEEE';
 			}
 		}
@@ -205,6 +211,9 @@ shardalyze.controller("updateCharts", function($scope)
 		{
 			$scope.chartmeta.options.animateRotate = true;
 			$scope.chartmeta.options.animationSteps = 125;
+
+			$scope.chartmeta.data = {};
+			$scope.chartmeta.colors = {};
 		}
 	});
 

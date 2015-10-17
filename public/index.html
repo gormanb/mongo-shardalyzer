@@ -116,10 +116,10 @@
 					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist" ng-readonly="true" class="row-centered">
 						<div ng-repeat="shard in chartmeta.shardlist" ng-if="chartmeta.shardenabled[shard] || chartmeta.shardedit" class="{{chartmeta.colclasses[chartmeta.currentcol]}} col-centered" style="opacity: {{chartmeta.shardenabled[shard] ? 1 : 0.25}}">
 							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
-								chart-options="chartmeta.options"
-								chart-data="chartmeta.data[shard]"
-								chart-labels="mongo.shardalyzer.shards[shard]"
-								chart-colours="chartmeta.colors[shard]"></canvas>
+								options="chartmeta.options"
+								data="chartmeta.data[shard]"
+								labels="mongo.shardalyzer.shards[shard]"
+								colours="chartmeta.colors[shard]"></canvas>
 							<p align="center" style="color:{{mongo.shardalyzer.balancer[shard]}};">
 								<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
 							</p>
