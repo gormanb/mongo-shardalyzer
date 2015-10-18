@@ -1,0 +1,34 @@
+--- a/bower_components/angular-chart.js/dist/angular-chart.js	2015-10-18 03:45:21.000000000 +0100
++++ b/bower_components/angular-chart.js/dist/angular-chart.js	2015-10-18 03:45:13.000000000 +0100
+@@ -133,7 +133,7 @@
+           aliasVar('chartHover', 'hover');
+ 
+           // Order of setting "watch" matter
+-
++/*
+           scope.$watch('data', function (newVal, oldVal) {
+             if (! newVal || ! newVal.length || (Array.isArray(newVal[0]) && ! newVal[0].length)) return;
+             var chartType = type || scope.chartType;
+@@ -150,6 +150,7 @@
+           scope.$watch('series', resetChart, true);
+           scope.$watch('labels', resetChart, true);
+           scope.$watch('options', resetChart, true);
++*/
+           scope.$watch('colours', resetChart, true);
+ 
+           scope.$watch('chartType', function (newVal, oldVal) {
+@@ -184,11 +185,11 @@
+             }
+             if (! scope.data || ! scope.data.length) return;
+             scope.getColour = typeof scope.getColour === 'function' ? scope.getColour : getRandomColour;
+-            scope.colours = getColours(type, scope);
++            var convcolours = getColours(type, scope);
+             var cvs = elem[0], ctx = cvs.getContext('2d');
+             var data = Array.isArray(scope.data[0]) ?
+-              getDataSets(scope.labels, scope.data, scope.series || [], scope.colours) :
+-              getData(scope.labels, scope.data, scope.colours);
++              getDataSets(scope.labels, scope.data, scope.series || [], convcolours) :
++              getData(scope.labels, scope.data, convcolours);
+             var options = angular.extend({}, ChartJs.getOptions(type), scope.options);
+             chart = new ChartJs.Chart(ctx)[type](data, options);
+             scope.$emit('create', chart);
