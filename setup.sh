@@ -16,5 +16,3 @@ fi
 
 npm install
 ./node_modules/bower/bin/bower install
-
-patch -f --fuzz=0 -r - -p1 < angular-chart.patch > /dev/null 2>&1

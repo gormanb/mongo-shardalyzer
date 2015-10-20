@@ -17,7 +17,7 @@
 		<script src="/bower_components/angular-bootstrap-slider/slider.js"></script>
 
 		<link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">
-		<script src="/bower_components/angular-chart.js/dist/angular-chart.js"></script>
+		<!--<script src="/bower_components/angular-chart.js/dist/angular-chart.js"></script>-->
 
 		<link rel="stylesheet" href="/bower_components/json-formatter/dist/json-formatter.min.css">
 		<script src="/bower_components/json-formatter/dist/json-formatter.min.js"></script>
@@ -48,7 +48,9 @@
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
 		<link rel="stylesheet" href="stylesheets/navmenu-push.css">
 		<link rel="stylesheet" href="stylesheets/style.css">
-		<script src="js/chart-tooltip.js"></script>
+
+		<script src="js/lib/chart-tooltip.js"></script>
+		<script src="js/lib/angular-chart-fork.js"></script>
 
 		<script src="js/shardalyzer.js"></script>
 		<script src="js/shardalyzer-ctrl.js"></script>
@@ -119,7 +121,8 @@
 								options="chartmeta.options"
 								data="chartmeta.data[shard]"
 								labels="mongo.shardalyzer.shards[shard]"
-								colours="chartmeta.colors[shard]"></canvas>
+								colours="chartmeta.colors[shard]"
+								watch="['colours']"></canvas>
 							<p align="center" style="color:{{mongo.shardalyzer.balancer[shard]}};">
 								<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
 							</p>
