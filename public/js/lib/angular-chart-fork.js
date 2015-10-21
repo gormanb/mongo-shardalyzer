@@ -143,30 +143,9 @@
           if(!scope.watch)
              scope.watch = ['data', 'series', 'labels', 'options', 'colours'];
 
-          // Order of setting "watch" matter
-
-          if(scope.watch.indexOf('data') >= 0)
-          {
-              scope.$watch('data', function (newVal, oldVal) {
-                if (! newVal || ! newVal.length || (Array.isArray(newVal[0]) && ! newVal[0].length)) return;
-                var chartType = type || scope.chartType;
-                if (! chartType) return;
-
-                if (chart) {
-                  if (canUpdateChart(newVal, oldVal)) return updateChart(chart, newVal, scope, elem);
-                  chart.destroy();
-                }
-
-                createChart(chartType);
-              }, true);
-          }
-
           // series, labels, options, colours
           for(var k in scope.watch)
-          {
-              if(scope.watch[k] !== 'data')
-                  scope.$watch(scope.watch[k], resetChart, true);
-          }
+        	  scope.$watchCollection(scope.watch[k], resetChart);
 
           // always watch chartType
           scope.$watch('chartType', function (newVal, oldVal) {
@@ -182,7 +161,7 @@
 
           function resetChart (newVal, oldVal) {
             if (isEmpty(newVal)) return;
-            if (angular.equals(newVal, oldVal)) return;
+
             var chartType = type || scope.chartType;
             if (! chartType) return;
 
