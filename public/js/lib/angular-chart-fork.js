@@ -102,16 +102,6 @@
           legend: '@',
           click: '=?',
           hover: '=?',
-
-          chartData: '=?',
-          chartLabels: '=?',
-          chartOptions: '=?',
-          chartSeries: '=?',
-          chartColours: '=?',
-          chartWatch: '=?',
-          chartLegend: '@',
-          chartClick: '=?',
-          chartHover: '=?'
         },
         link: function (scope, elem/*, attrs */) {
           var chart, container = document.createElement('div');
@@ -120,25 +110,6 @@
           container.appendChild(elem[0]);
 
           if (usingExcanvas) window.G_vmlCanvasManager.initElement(elem[0]);
-
-          ['data', 'labels', 'options', 'series', 'colours', 'legend', 'click', 'hover', 'watch'].forEach(deprecated);
-          function aliasVar (fromName, toName) {
-            scope.$watch(fromName, function (newVal) {
-              if (typeof newVal === 'undefined') return;
-              scope[toName] = newVal;
-            });
-          }
-          /* provide backward compatibility to "old" directive names, by
-           * having an alias point from the new names to the old names. */
-          aliasVar('chartData', 'data');
-          aliasVar('chartLabels', 'labels');
-          aliasVar('chartOptions', 'options');
-          aliasVar('chartSeries', 'series');
-          aliasVar('chartColours', 'colours');
-          aliasVar('chartLegend', 'legend');
-          aliasVar('chartWatch', 'watch');
-          aliasVar('chartClick', 'click');
-          aliasVar('chartHover', 'hover');
 
           if(!scope.watch)
              scope.watch = ['data', 'series', 'labels', 'options', 'colours'];
@@ -193,16 +164,6 @@
             cvs.onmousemove = scope.hover ? getEventHandler(scope, chart, 'hover', true) : angular.noop;
 
             if (scope.legend && scope.legend !== 'false') setLegend(elem, chart);
-          }
-
-          function deprecated (attr) {
-            if (typeof console !== 'undefined' && ChartJs.getOptions().env !== 'test') {
-              var warn = typeof console.warn === 'function' ? console.warn : console.log;
-              if (!! scope[attr]) {
-                warn.call(console, '"%s" is deprecated and will be removed in a future version. ' +
-                  'Please use "chart-%s" instead.', attr, attr);
-              }
-            }
           }
         }
       };
