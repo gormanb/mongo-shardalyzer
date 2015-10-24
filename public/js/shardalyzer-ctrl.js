@@ -192,19 +192,26 @@ shardalyze.controller("updateCharts", function($scope)
 				$scope.chartmeta.labels[s] = [];
 			}
 
-			for(var chunk = 0; chunk < shards[s].length; chunk++)
+			var inc = Math.max(1.0, shards[s].length/$scope.mongo.ui.granularity);
+			var seq = 0;
+
+			for(var chunk = 0; chunk < shards[s].length; chunk+=inc)
 			{
-				$scope.chartmeta.data[s][chunk] = 1;
+				var cur = (chunk|0);
 
-				$scope.chartmeta.colors[s][chunk] =
-					$scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status];
+				$scope.chartmeta.data[s][seq] = 1;
 
-				$scope.chartmeta.labels[s][chunk] = shards[s][chunk];
+				$scope.chartmeta.colors[s][seq] =
+					$scope.mongo.shardalyzer.statuscolors[shards[s][cur].status];
+
+				$scope.chartmeta.labels[s][seq] = shards[s][cur];
+
+				seq++;
 			}
 
-			$scope.chartmeta.labels[s].length = shards[s].length;
-			$scope.chartmeta.colors[s].length = shards[s].length;
-			$scope.chartmeta.data[s].length = shards[s].length;
+			$scope.chartmeta.labels[s].length = seq;
+			$scope.chartmeta.colors[s].length = seq;
+			$scope.chartmeta.data[s].length = seq;
 
 			if($scope.chartmeta.data[s].length == 0)
 			{
