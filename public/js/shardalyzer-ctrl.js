@@ -17,6 +17,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 
 		$rootScope.mongo.ui.selectedchange = "0";
 		$rootScope.mongo.ui.showchangelog = true;
+		$rootScope.mongo.ui.granularity = 100;
 		$rootScope.mongo.ui.changelog = [];
 		$rootScope.mongo.ui.logwindow = 18;
 		$rootScope.mongo.ui.errors = [];
@@ -157,6 +158,7 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta.shardenabled = {};
 	$scope.chartmeta.shardlist = [];
 
+	$scope.chartmeta.labels = {};
 	$scope.chartmeta.colors = {};
 	$scope.chartmeta.data = {};
 
@@ -187,6 +189,7 @@ shardalyze.controller("updateCharts", function($scope)
 			{
 				$scope.chartmeta.data[s] = [];
 				$scope.chartmeta.colors[s] = [];
+				$scope.chartmeta.labels[s] = [];
 			}
 
 			for(var chunk = 0; chunk < shards[s].length; chunk++)
@@ -195,8 +198,11 @@ shardalyze.controller("updateCharts", function($scope)
 
 				$scope.chartmeta.colors[s][chunk] =
 					$scope.mongo.shardalyzer.statuscolors[shards[s][chunk].status];
+
+				$scope.chartmeta.labels[s][chunk] = shards[s][chunk];
 			}
 
+			$scope.chartmeta.labels[s].length = shards[s].length;
 			$scope.chartmeta.colors[s].length = shards[s].length;
 			$scope.chartmeta.data[s].length = shards[s].length;
 
@@ -204,6 +210,7 @@ shardalyze.controller("updateCharts", function($scope)
 			{
 				$scope.chartmeta.data[s][0] = 0;
 				$scope.chartmeta.colors[s][0] = '#EEEEEE';
+				$scope.chartmeta.labels[s][0] = { contents : "Empty" };
 			}
 		}
 
@@ -214,6 +221,7 @@ shardalyze.controller("updateCharts", function($scope)
 
 			$scope.chartmeta.data = {};
 			$scope.chartmeta.colors = {};
+			$scope.chartmeta.labels = {};
 		}
 	});
 

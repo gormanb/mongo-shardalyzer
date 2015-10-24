@@ -120,7 +120,7 @@
 							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
 								options="chartmeta.options"
 								data="chartmeta.data[shard]"
-								labels="mongo.shardalyzer.shards[shard]"
+								labels="chartmeta.labels[shard]"
 								colours="chartmeta.colors[shard]"
 								watch="['colours']"></canvas>
 							<p align="center" style="color:{{mongo.shardalyzer.balancer[shard]}};">
