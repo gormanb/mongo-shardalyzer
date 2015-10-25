@@ -13,15 +13,15 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo.collList = [];
 		$rootScope.mongo.nsList = [];
 
-		$rootScope.mongo.ui = {};
-
-		$rootScope.mongo.ui.selectedchange = "0";
-		$rootScope.mongo.ui.showchangelog = true;
-		$rootScope.mongo.ui.granularity = 100;
-		$rootScope.mongo.ui.changelog = [];
-		$rootScope.mongo.ui.logwindow = 18;
-		$rootScope.mongo.ui.errors = [];
-		$rootScope.mongo.ui.slider = 0;
+		$rootScope.mongo.ui =
+		{
+			selectedchange : "0",
+			showchangelog : true,
+			changelog : [],
+			logwindow : 18,
+			errors : [],
+			slider : 0
+		};
 
 		$rootScope.mongo.shardalyzer = Shardalyzer;
 	}
@@ -162,6 +162,24 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta.colors = {};
 	$scope.chartmeta.data = {};
 
+	$scope.chartmeta.granularity =
+	{
+		min : 1,
+		max : 150,
+		value : 150,
+		enabled : true,
+		valChanged : function(value)
+		{
+			$scope.chartmeta.granularity.enabled =
+				(value !== $scope.chartmeta.granularity.max);
+		},
+		format : function(value)
+		{
+			return "Granularity: " +
+				(100*(value/$scope.chartmeta.granularity.max)).toFixed(2) + "%";
+		}
+	};
+
 	$scope.scaleCharts = function(event, delta, deltaX, deltaY)
 	{
 		if(!event.originalEvent.shiftKey)
@@ -201,8 +219,10 @@ shardalyze.controller("updateCharts", function($scope)
 		return 1;
 	}
 
-	$scope.$watch('mongo.shardalyzer.position', function(position)
+	$scope.$watchGroup(['mongo.shardalyzer.position', 'chartmeta.granularity.value'], function(posgran)
 	{
+		var position = posgran[0], granularity = posgran[1];
+
 		var shards = $scope.mongo.shardalyzer.shards;
 
 		for(var s in shards)
@@ -214,7 +234,9 @@ shardalyze.controller("updateCharts", function($scope)
 				$scope.chartmeta.labels[s] = [];
 			}
 
-			var inc = Math.max(1, shards[s].length/$scope.mongo.ui.granularity);
+			var inc = $scope.chartmeta.granularity.enabled ?
+				Math.max(1, shards[s].length/granularity) : 1;
+
 			var seq = 0;
 
 			for(var skip = 0; skip < shards[s].length; skip+=inc)
@@ -262,7 +284,12 @@ shardalyze.controller("updateCharts", function($scope)
 		$scope.chartmeta.shardenabled = {};
 
 		for(var k in shards)
+		{
 			$scope.chartmeta.shardenabled[k] = true;
+
+			$scope.chartmeta.granularity.max =
+				Math.max($scope.chartmeta.granularity.max, shards[k].length);
+		}
 	});
 
 	$scope.chartmeta.toggleedit = function()

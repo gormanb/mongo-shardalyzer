@@ -117,15 +117,16 @@
 							</div>
 						</span>
 						<span id="shardgranularity" style="display:inline-block">
-							<slider ng-model="mongo.ui.granularity" ng-show="chartmeta.shardedit"
-								value="mongo.ui.granularity"
+							<slider ng-model="chartmeta.granularity.value" ng-show="chartmeta.shardedit"
+								onStopSlide="chartmeta.granularity.valChanged"
+								formatter="chartmeta.granularity.format"
+								min="chartmeta.granularity.min"
+								max="chartmeta.granularity.max"
 								orientation="vertical"
-								reversed="true"
-								max="100"
-								min="1">
+								scale="'logarithmic'"
+								reversed="true">
 							</slider>
 						</span>
-						<input type="checkbox" ng-show="chartmeta.shardedit">
 					</div>
 					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist" ng-readonly="true" class="row-centered">
 						<div ng-repeat="shard in chartmeta.shardlist" ng-if="chartmeta.shardenabled[shard] || chartmeta.shardedit" class="{{chartmeta.colclasses[chartmeta.currentcol]}} col-centered" style="opacity: {{chartmeta.shardenabled[shard] ? 1 : 0.25}}">
@@ -206,7 +207,6 @@
 								min="slidermeta.min"
 								max="slidermeta.max"
 								scale="slidermeta.scale"
-								value="mongo.ui.slider"
 								ticks="mongo.ui.errors"
 								ticksLabels="slidermeta.ticklabels"
 								ticks_snap_bounds="slidermeta.snap"
