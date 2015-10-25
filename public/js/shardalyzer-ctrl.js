@@ -191,8 +191,12 @@ shardalyze.controller("updateCharts", function($scope)
 		$scope.chartmeta.colors[shard][index] =
 			$scope.mongo.shardalyzer.statuscolors[shards[shard][lower].status];
 
-		$scope.chartmeta.labels[shard][index] =
-			$scope.mongo.shardalyzer.shards[shard][lower];
+		if(!$scope.chartmeta.labels[shard][index])
+			$scope.chartmeta.labels[shard][index] = [];
+
+		$scope.chartmeta.labels[shard][index][0] = shard;
+		$scope.chartmeta.labels[shard][index][1] = lower;
+		$scope.chartmeta.labels[shard][index][2] = upper;
 
 		return 1;
 	}
@@ -210,7 +214,7 @@ shardalyze.controller("updateCharts", function($scope)
 				$scope.chartmeta.labels[s] = [];
 			}
 
-			var inc = Math.max(1.0, shards[s].length/$scope.mongo.ui.granularity);
+			var inc = Math.max(1, shards[s].length/$scope.mongo.ui.granularity);
 			var seq = 0;
 
 			for(var skip = 0; skip < shards[s].length; skip+=inc)
@@ -236,12 +240,9 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.colors[s].length = seq;
 			$scope.chartmeta.data[s].length = seq;
 
+			// trigger redraw of empty shard
 			if($scope.chartmeta.data[s].length == 0)
-			{
-				$scope.chartmeta.data[s][0] = 0;
 				$scope.chartmeta.colors[s][0] = '#EEEEEE';
-				$scope.chartmeta.labels[s][0] = { contents : "Empty" };
-			}
 		}
 
 		if(position == null)
