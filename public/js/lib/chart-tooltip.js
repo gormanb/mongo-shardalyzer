@@ -21,22 +21,24 @@ Chart.defaults.global.customTooltips = function(tooltip)
 		lower = tooltip.text[1],
 		upper = tooltip.text[2];
 
+	var numChunks = (upper-lower);
 	var text;
 
-	if(upper - lower == 1)
+	if(numChunks == 1)
 		text = JSON.stringify(shards[shard][lower], null, 2);
-	else if(upper-lower <= 10)
-	{
-		var docs = {};
-		docs._ids = [];
-
-		for(var i = lower; i < upper; i++)
-			docs._ids.push(shards[shard][i]._id);
-
-		text = JSON.stringify(docs, null, 2);
-	}
 	else
-		text = (upper - lower) + " docs";
+	{
+		var chunks = {};
+		chunks._ids = [];
+
+		for(var i = 0; i < numChunks && i < 10; i++)
+			chunks._ids.push(shards[shard][lower+i]._id);
+
+		if(numChunks > 10)
+			chunks.more = numChunks-10;
+
+		text = JSON.stringify(chunks, null, 2);
+	}
 
 	// set text content
 	tooltipEl.html("<pre>" + text + "</pre>");
