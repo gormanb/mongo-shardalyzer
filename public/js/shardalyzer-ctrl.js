@@ -162,16 +162,33 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta.colors = {};
 	$scope.chartmeta.data = {};
 
+	var GRANULARITY_DEFAULT = 200;
+
 	$scope.chartmeta.granularity =
 	{
 		min : 1,
-		max : 150,
-		value : 150,
-		enabled : true,
-		valChanged : function(value)
+		max : GRANULARITY_DEFAULT,
+		value : GRANULARITY_DEFAULT,
+		update : function(shards)
 		{
-			$scope.chartmeta.granularity.enabled =
-				(value !== $scope.chartmeta.granularity.max);
+			var granularity = $scope.chartmeta.granularity;
+			var maxcand = 0;
+
+			for(var s in shards)
+				maxcand = Math.max(maxcand, shards[s].length);
+
+			if(maxcand > granularity.max)
+			{
+				setTimeout(function() // don't trigger apply()
+				{
+					// if set to 100%, value auto-adjusts upwards to min(max, GRANULARITY_DEFAULT)
+					granularity.value = (granularity.value == granularity.max &&
+						maxcand <= GRANULARITY_DEFAULT) ? maxcand : granularity.value;
+
+					granularity.max = maxcand;
+
+				}, 50);
+			}
 		},
 		format : function(value)
 		{
@@ -234,9 +251,7 @@ shardalyze.controller("updateCharts", function($scope)
 				$scope.chartmeta.labels[s] = [];
 			}
 
-			var inc = $scope.chartmeta.granularity.enabled ?
-				Math.max(1, shards[s].length/granularity) : 1;
-
+			var inc = Math.max(1, shards[s].length/granularity);
 			var seq = 0;
 
 			for(var skip = 0; skip < shards[s].length; skip+=inc)
@@ -276,6 +291,9 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.colors = {};
 			$scope.chartmeta.labels = {};
 		}
+
+		// update granularity max and (possibly) value
+		$scope.chartmeta.granularity.update(shards);
 	});
 
 	$scope.$watch('mongo.shardalyzer.shards', function(shards)
