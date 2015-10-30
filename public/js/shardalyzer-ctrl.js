@@ -181,9 +181,11 @@ shardalyze.controller("updateCharts", function($scope)
 			{
 				setTimeout(function() // don't trigger apply()
 				{
-					// if set to 100%, value auto-adjusts upwards to min(max, GRANULARITY_DEFAULT)
-					granularity.value = (granularity.value == granularity.max &&
-						maxcand <= GRANULARITY_DEFAULT) ? maxcand : granularity.value;
+					// value auto-adjusts upwards to min(max, GRANULARITY_DEFAULT)
+					// if user has manually set it to 100% beyond this, also adjust
+					granularity.value = (granularity.value == granularity.max ?
+						(granularity.value > GRANULARITY_DEFAULT ? maxcand :
+							Math.min(maxcand, GRANULARITY_DEFAULT)) : granularity.value);
 
 					granularity.max = maxcand;
 
