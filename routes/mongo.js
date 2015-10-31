@@ -8,6 +8,8 @@ var RJSON = require('relaxed-json');
 
 var MongoClient = mongodb.MongoClient;
 
+var mongoopts = { server : { poolSize : 1 } };
+
 exports.namespaces =
 	function(req, res)
 	{
@@ -16,7 +18,7 @@ exports.namespaces =
 
 		url = 'mongodb://'.concat(url);
 
-		MongoClient.connect(url, function(err, db)
+		MongoClient.connect(url, mongoopts, function(err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -30,6 +32,8 @@ exports.namespaces =
 						res.status(500).send(err);
 					else
 						res.json(namespaces);
+
+					db.close();
 				});
 			}
 		})
@@ -44,7 +48,7 @@ exports.dbs =
 
 		url = 'mongodb://'.concat(url);
 
-		MongoClient.connect(url, function (err, db)
+		MongoClient.connect(url, mongoopts, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -56,6 +60,8 @@ exports.dbs =
 						res.status(500).send(err);
 					else
 						res.json(dbs);
+
+					db.close();
 				});
 			}
 		});
@@ -69,7 +75,7 @@ exports.collections =
 
 		url = 'mongodb://'.concat(url);
 
-		MongoClient.connect(url, function (err, db)
+		MongoClient.connect(url, mongoopts, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -81,6 +87,8 @@ exports.collections =
 						res.status(500).send(err);
 					else
 						res.json(colls);
+
+					db.close();
 				});
 			}
 		});
@@ -98,7 +106,7 @@ exports.metadata =
 
 		var meta = {};
 
-		MongoClient.connect(url, function (err, db)
+		MongoClient.connect(url, mongoopts, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -115,7 +123,12 @@ exports.metadata =
 					var start = new Date(0);
 
 					if(err)
+					{
 						res.status(500).send(err);
+						db.close();
+
+						return;
+					}
 					else if(shardevent && shardevent.length > 0)
 						start = shardevent[0].time;
 
@@ -126,7 +139,10 @@ exports.metadata =
 					changecursor.toArray(function(err, changelog)
 					{
 						if(err)
+						{
 							res.status(500).send(err);
+							db.close();
+						}
 						else
 						{
 							meta.changelog = changelog;
@@ -134,7 +150,10 @@ exports.metadata =
 							chunkcursor.toArray(function(err, chunks)
 							{
 								if(err)
+								{
 									res.status(500).send(err);
+									db.close();
+								}
 								else
 								{
 									meta.chunks = chunks;
@@ -148,6 +167,8 @@ exports.metadata =
 											meta.shards = shards;
 											res.json(meta);
 										}
+
+										db.close();
 									});
 								}
 							});
@@ -180,7 +201,7 @@ exports.query =
 
 		var result = [];
 
-		MongoClient.connect(url, function (err, db)
+		MongoClient.connect(url, mongoopts, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -196,7 +217,7 @@ exports.query =
 					stream = coll.find(query).stream();
 
 				stream.on("data", function(document) { result.push(document) });
-			    stream.on("end", function(){ res.json(result) });
+			    stream.on("end", function(){ res.json(result); db.close(); });
 			}
 		});
 	}
