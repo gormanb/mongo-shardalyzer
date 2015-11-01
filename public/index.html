@@ -97,7 +97,7 @@
 
 				<div id="header" class="snug" style="padding:120px 0 0 0;"></div>
 
-				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-show="mongo.selectedNS !== null" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
+				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-show="mongo.shardalyzer.position !== null" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
 					<div id="shardedit" style="position:absolute; z-index:2">
 						<span id="shardeditbuttons" style="display:inline-block">
 							<div style="padding:5px">
@@ -145,8 +145,13 @@
 					</div>
 				</div>
 
-				<div id="mongospinner" ng-show="mongo.selectedNS == null" class="greedy" style="width:75%; margin: 0 auto; border-radius:25px;
+				<div id="mongospinner" ng-show="(mongo.selectedNS == null || mongo.shardalyzer.position == null)" class="greedy" style="position: relative; width:75%; margin: 0 auto; border-radius:25px;
 					background: url('images/mongo-small.png') center no-repeat, url('images/mongo-spinner.gif') center no-repeat; background-color:white;">
+
+					<div class="progress" ng-show="(mongo.selectedNS !== null && mongo.shardalyzer.position == null)" style="width:10%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+						<div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+						</div>
+					</div>
 				</div>
 
 				<div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
