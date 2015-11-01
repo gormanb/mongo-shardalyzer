@@ -504,7 +504,7 @@ shardalyze.controller("sliderControl", function($scope)
 		$scope.slidermeta.scale = (	$scope.slidermeta.scale == null ? "linear" : null);
 	}
 
-	$scope.$watch('mongo.shardalyzer.changes.length', function(length)
+	$scope.$watch('mongo.shardalyzer.changes', function(changes)
 	{
 		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
 		$scope.mongo.ui.slider = 0;

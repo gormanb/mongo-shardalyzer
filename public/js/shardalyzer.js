@@ -144,7 +144,9 @@ var Shardalyzer =
 		// sort shard map by shard name
 		this.shards = sortObject(this.shards);
 
-		this.position = (changedata.length > 0 ? 0 : null);
+		// if chunkdata is empty, position is null else 0
+		// clusters with no changelog entries still valid
+		this.position = (chunkdata.length > 0 ? 0 : null);
 		this.statuscolors = statuscolors;
 
 		if(this.canRewind())
