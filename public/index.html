@@ -145,11 +145,17 @@
 					</div>
 				</div>
 
-				<div id="mongospinner" ng-show="(mongo.selectedNS == null || mongo.shardalyzer.position == null)" class="greedy" style="position: relative; width:75%; margin: 0 auto; border-radius:25px;
-					background: url('images/mongo-small.png') center no-repeat, url('images/mongo-spinner.gif') center no-repeat; background-color:white;">
+				<div id="mongowaiting" ng-show="(mongo.selectedNS == null || mongo.shardalyzer.position == null)" class="greedy" style="position: relative; width:75%; margin: 0 auto; border-radius:25px;
+					background: url('images/mongo-small.png') center no-repeat; background-color:white;">
 
-					<div class="progress" ng-show="(mongo.selectedNS !== null && mongo.shardalyzer.position == null)" style="width:10%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-						<div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+					<img id="mongospinner" src="images/mongo-spinner-trans.gif" ng-show="(mongo.selectedNS !== null && mongo.shardalyzer.position == null)"
+						style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+
+					<div class="mongoloading" style="position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%);">
+						<div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; padding:5px 10px 5px 10px">
+							<strong>
+								{{mongo.selectedNS == null ? 'WAITING FOR DATA...' : 'LOADING DATA...'}}
+							</strong>
 						</div>
 					</div>
 				</div>
