@@ -47,6 +47,7 @@
 
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
 		<link rel="stylesheet" href="stylesheets/navmenu-push.css">
+		<link rel="stylesheet" href="stylesheets/spinner.css">
 		<link rel="stylesheet" href="stylesheets/style.css">
 
 		<script src="js/lib/angular-chart-fork.js"></script>
@@ -148,10 +149,26 @@
 				<div id="mongowaiting" ng-show="(mongo.selectedNS == null || mongo.shardalyzer.position == null)" class="greedy" style="position: relative; width:75%; margin: 0 auto; border-radius:25px;
 					background: url('images/mongo-small.png') center no-repeat; background-color:white;">
 
-					<img id="mongospinner" src="images/mongo-spinner-trans.gif" ng-show="(mongo.selectedNS !== null && mongo.shardalyzer.position == null)"
+					<div id="mongospinner" class="mongoloader" ng-show="(mongo.selectedNS !== null && mongo.shardalyzer.position == null)"
 						style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+						<div class="loaderBall" id="loaderBall_1">
+							<div class="innerBall"></div>
+						</div>
+						<div class="loaderBall" id="loaderBall_2">
+							<div class="innerBall"></div>
+						</div>
+						<div class="loaderBall" id="loaderBall_3">
+							<div class="innerBall"></div>
+						</div>
+						<div class="loaderBall" id="loaderBall_4">
+							<div class="innerBall"></div>
+						</div>
+						<div class="loaderBall" id="loaderBall_5">
+							<div class="innerBall"></div>
+						</div>
+					</div>
 
-					<div class="mongoloading" style="position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%);">
+					<div class="mongoprogress" style="position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%);">
 						<div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; padding:5px 10px 5px 10px">
 							<strong>
 								{{mongo.selectedNS == null ? 'WAITING FOR DATA...' : 'LOADING DATA...'}}
