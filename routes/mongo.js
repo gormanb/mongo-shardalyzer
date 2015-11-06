@@ -116,6 +116,7 @@ exports.metadata =
 				var chunkcoll = db.collection('chunks');
 
 				var shardcoll = db.collection('shards');
+				var tagcoll = db.collection('tags');
 
 				// guard against collections that were dropped and recreated; only take changelog entries since the most recent sharding
 				changecoll.find({ ns : namespace, what : "shardCollection" }).sort({ time : -1 }).limit(1).toArray(function(err, shardevent)
@@ -134,6 +135,8 @@ exports.metadata =
 
 					var changecursor = changecoll.find({ ns : namespace, what : /moveChunk|split/, time : { $gt : start } }).sort({ time : -1 });
 					var chunkcursor = chunkcoll.find({ ns : namespace });
+
+					var tagcursor = tagcoll.find({ ns : namespace });
 					var shardcursor = shardcoll.find({});
 
 					changecursor.toArray(function(err, changelog)
@@ -161,14 +164,27 @@ exports.metadata =
 									shardcursor.toArray(function(err, shards)
 									{
 										if(err)
+										{
 											res.status(500).send(err);
+											db.close();
+										}
 										else
 										{
 											meta.shards = shards;
-											res.json(meta);
-										}
 
-										db.close();
+											tagcursor.toArray(function(err, tags)
+											{
+												if(err)
+													res.status(500).send(err);
+												else
+												{
+													meta.tags = tags;
+													res.json(meta);
+												}
+
+												db.close();
+											})
+										}
 									});
 								}
 							});
