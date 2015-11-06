@@ -92,23 +92,45 @@ function success(change)
 var Shardalyzer =
 {
 	shards : {},
+	tags : {},
 	chunks : {},
 	changes : [],
 	balancer : {},
 	position : null,
 
-	// arguments are arrays of documents (objects) in original format
-	initialize : function(sharddata, chunkdata, changedata)
+	// arguments are objects in original format from the config database
+	initialize : function(sharddata, tagdata, chunkdata, changedata)
 	{
 		this.changes = changedata;
 
 		this.shards = {};
 		this.chunks = {};
+		this.tags = {};
 
 		var currentmove = {};
 
 		for(var k in sharddata)
+		{
 			this.shards[sharddata[k]._id] = [];
+
+			var shardtags = this.tags[sharddata[k]._id] = { tags : {} };
+
+			for(var st in sharddata[k].tags)
+			{
+				var tag = sharddata[k].tags[st];
+
+				shardtags.tags[tag] = {};
+
+				for(var t in tagdata)
+				{
+					if(tagdata[t].tag == tag)
+					{
+						shardtags.tags[tag].min = tagdata[t].min;
+						shardtags.tags[tag].max = tagdata[t].max;
+					}
+				}
+			}
+		}
 
 		for(var k in chunkdata)
 		{
@@ -157,7 +179,7 @@ var Shardalyzer =
 
 	reset : function()
 	{
-		this.initialize([], [], []);
+		this.initialize([], [], [], []);
 	},
 
 	// ns-minkey0_val-minkeyN_val
