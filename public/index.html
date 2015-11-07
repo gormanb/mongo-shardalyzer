@@ -136,9 +136,18 @@
 								labels="chartmeta.labels[shard]"
 								colours="chartmeta.colors[shard]"
 								watch="['colours']"></canvas>
-							<p align="center" style="color:{{mongo.shardalyzer.balancer[shard]}};">
-								<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
+							<p align="center">
+								<a href="#" uib-tooltip-template="'tooltip.html'" tooltip-placement="bottom" tooltip-append-to-body="true" style="color:{{mongo.shardalyzer.balancer[shard]}};">
+									<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
+								</a>
 							</p>
+							<script type="text/ng-template" id="tooltip.html">
+								<div>
+									<pre style="font-size:10px">
+										{{shardtags(shard)}}
+									</pre>
+								</div>
+							</script>
 							<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-100%);" ng-show="chartmeta.shardedit">
 								<input type="checkbox" bs-switch ng-model="chartmeta.shardenabled[shard]">
 							</div>

@@ -216,6 +216,13 @@ shardalyze.controller("updateCharts", function($scope)
 		}
 	};
 
+	$scope.shardtags = function(shard)
+	{
+		var tagtip = JSON.stringify($scope.mongo.shardalyzer.tags[shard], null, 4);
+
+		return tagtip.substring(1, tagtip.length-2);
+	}
+
 	// lower (inclusive) to upper (exclusive)
 	function addWedge(shard, lower, upper, index)
 	{
