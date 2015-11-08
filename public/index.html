@@ -244,7 +244,6 @@
 								max="slidermeta.max"
 								scale="slidermeta.scale"
 								ticks="mongo.ui.errors"
-								ticksLabels="slidermeta.ticklabels"
 								ticks_snap_bounds="slidermeta.snap"
 								formatter="slidermeta.formatter">
 							</slider>
@@ -259,8 +258,8 @@
 						</div>
 					</div>
 
-					<div style="width:75%; margin:0 auto;" ng-style="{ 'visibility' : (mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg != undefined ? 'visible' : 'hidden') }">
-						<uib-alert type="danger" style="margin: 15px 0 0 0">{{mongo.shardalyzer.changes[mongo.ui.slider].details.errmsg}}&nbsp;</uib-alert>
+					<div style="width:75%; margin:0 auto;" ng-style="{ 'visibility' : (mongo.ui.errmsg[mongo.ui.slider] != undefined ? 'visible' : 'hidden') }">
+						<uib-alert type="{{mongo.ui.errmsg[mongo.ui.slider].type}}" style="margin: 15px 0 0 0">{{mongo.ui.errmsg[mongo.ui.slider].msg}}&nbsp;</uib-alert>
 					</div>
 				</div>
 

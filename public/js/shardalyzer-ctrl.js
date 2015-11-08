@@ -20,6 +20,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 			changelog : [],
 			logwindow : 18,
 			errors : [],
+			errmsg : [],
 			slider : 0
 		};
 
@@ -378,6 +379,8 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.slidermeta.max = 0;
 
 	$scope.mongo.ui.errors = [];
+	$scope.mongo.ui.errmsg = [];
+
 	$scope.slidermeta.snap = 1;
 
 	$scope.slidermeta.scale = null;
@@ -436,6 +439,10 @@ shardalyze.controller("sliderControl", function($scope)
 		 		error : function(change, params)
 		 		{
 		 			return change.details.note === "aborted";
+		 		},
+		 		errmsg : function(change, params)
+		 		{
+		 			return { type : "danger", msg : change.details.errmsg };
 		 		}
 		 	},
 
@@ -461,6 +468,22 @@ shardalyze.controller("sliderControl", function($scope)
 		 			}
 
 		 			return false;
+		 		},
+		 		errmsg : function(change, params)
+		 		{
+		 			var msg = {};
+
+		 			for(var i = 1; i < 6; i++)
+	 				{
+		 				var step = "step " + i + " of 6";
+
+		 				var time = change.details["step " + i + " of 6"];
+
+		 				if(time !== undefined)
+		 					msg[step] = time;
+	 				}
+
+	 				return { type : "warning", msg : JSON.stringify(msg) };
 		 		}
 		 	}
 		}
@@ -468,21 +491,38 @@ shardalyze.controller("sliderControl", function($scope)
 
 	isError = function(change)
 	{
+		var erropts = $scope.errorconfig.opts;
+		var params = $scope.errorconfig.params;
+
 		var error = false;
 
-		for(var k in $scope.errorconfig.opts)
+		for(var k in erropts)
 		{
-			if((!error) && $scope.errorconfig.opts[k].enabled)
-				error = $scope.errorconfig.opts[k].error(change, $scope.errorconfig.params);
+			if((!error) && erropts[k].enabled)
+				error = erropts[k].error(change, params);
 		}
 
 		return error;
 	};
 
+	errorMsg = function(change)
+	{
+		var erropts = $scope.errorconfig.opts;
+		var params = $scope.errorconfig.params;
+
+		for(var k in erropts)
+		{
+			if(erropts[k].enabled && erropts[k].error(change, params))
+				return erropts[k].errmsg(change, params);
+		}
+
+		return undefined;
+	};
+
 	setErrorTicks = function()
 	{
 		$scope.mongo.ui.errors = [];
-		$scope.slidermeta.ticklabels = [];
+		$scope.mongo.ui.errmsg = [];
 
 		for(var i in $scope.mongo.shardalyzer.changes)
 		{
@@ -490,22 +530,16 @@ shardalyze.controller("sliderControl", function($scope)
 
 			if(isError(change))
 			{
+				$scope.mongo.ui.errmsg[i] = errorMsg(change);
 				$scope.mongo.ui.errors.push(i);
-				$scope.slidermeta.ticklabels.push(i);
 			}
 		}
 
 		if($scope.mongo.ui.errors[0] !== 0)
-		{
-			$scope.slidermeta.ticklabels.unshift("");
 			$scope.mongo.ui.errors.unshift(0);
-		}
 
 		if($scope.mongo.ui.errors[$scope.mongo.ui.errors.length-1] !== $scope.slidermeta.max)
-		{
 			$scope.mongo.ui.errors.push($scope.slidermeta.max);
-			$scope.slidermeta.ticklabels.push("");
-		}
 
 		// slider doesn't $watch ticks; force it to refresh itself
 		$scope.slidermeta.scale = (	$scope.slidermeta.scale == null ? "linear" : null);
