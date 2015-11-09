@@ -144,7 +144,7 @@ var Shardalyzer =
 		// populate "from" & "to" fields in 2.6 moveChunk.from
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
-			if(this.changes[i].what == OP_COMMIT)
+			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
 			{
 				currentmove.from = this.changes[i].details.from;
 				currentmove.to = this.changes[i].details.to;
