@@ -413,19 +413,11 @@ shardalyze.controller("sliderControl", function($scope)
 		}
 	}
 
-	$scope.$watch('mongo.ui.slider', function(position, oldpos)
+	$scope.$watch('mongo.ui.slider', function(position)
 	{
-		var dir = (position - oldpos > 0 ? 1 : -1);
-
-		var shardfilter = $scope.mongo.ui.shardenabled;
-		var shardalyzer = $scope.mongo.shardalyzer;
-
-		while((!shardalyzer.filterChange(position, shardfilter)) && position >= 0 && position <= shardalyzer.changes.length)
-			position += dir;
-
-		$scope.mongo.shardalyzer.bttf(position);
-		$scope.mongo.ui.slider = position;
-		updateChangelog(position);
+		$scope.mongo.shardalyzer.bttf(position, $scope.mongo.ui.shardenabled);
+		$scope.mongo.ui.slider = $scope.mongo.shardalyzer.position;
+		updateChangelog($scope.mongo.shardalyzer.position);
 	});
 
 	$scope.errorconfig =

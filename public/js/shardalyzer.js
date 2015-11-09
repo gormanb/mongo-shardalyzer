@@ -759,30 +759,41 @@ var Shardalyzer =
 		}
 	},
 
-	bttf : function(instant)
+	bttf : function(instant, shardfilter)
 	{
-		while(this.position !== null && instant >= 0 && instant <= this.changes.length && instant !== this.position)
-		{
-			if(instant > this.position)
-				this.rewind();
-			else
-				this.fastforward();
-		}
+		if(this.position == null || instant < 0 || instant > this.changes.length || instant == this.position)
+			return;
+
+		var dir = (this.position - instant > 0 ? 1 : -1);
+
+		while(instant !== this.position)
+			this.step(dir);
+
+		while(!this.filter(shardfilter) && !this.eof())
+			this.step(dir);
 	},
 
-	filterChange : function(changenum, shardfilter)
+	step : function(dir)
 	{
-		var change = this.changes[changenum];
+		if(dir < 0)
+			this.rewind();
+		else if(dir > 0)
+			this.fastforward();
+	},
 
-		if(!change)
+	filter : function(shardfilter)
+	{
+		var change = this.changes[this.position];
+
+		if(!change || !shardfilter)
 			return true;
 
 		switch(change.what)
 		{
-//			case OP_MULTI_SPLIT:
-//			case OP_SPLIT:
-//				var chunk = this.chunks[s(change.details.before.min)];
-//				return shardfilter[chunk.shard];
+			case OP_MULTI_SPLIT:
+			case OP_SPLIT:
+				var chunk = this.chunks[s(change.details.before.min)];
+				return shardfilter[chunk.shard];
 
 			case OP_FROM:
 				return shardfilter[change.details.from] || shardfilter[change.details.to];
@@ -791,12 +802,17 @@ var Shardalyzer =
 			case OP_COMMIT:
 				return shardfilter[change.details.from];
 
-//			case OP_TO:
-//				var chunk = this.chunks[s(change.details.min)];
-//				return shardfilter[chunk.shard];
+			case OP_TO:
+				var chunk = this.chunks[s(change.details.min)];
+				return shardfilter[chunk.shard];
 
 			default:
-				return false;
+				return true;
 		}
+	},
+
+	eof : function()
+	{
+		return (this.position == 0 || this.position == this.changes.length);
 	}
 };
