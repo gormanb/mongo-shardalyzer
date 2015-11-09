@@ -17,6 +17,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		{
 			selectedchange : "0",
 			showchangelog : true,
+			shardenabled : {},
 			changelog : [],
 			logwindow : 18,
 			errors : [],
@@ -156,7 +157,7 @@ shardalyze.controller("updateCharts", function($scope)
 
 	$scope.chartmeta.shardedit = false;
 
-	$scope.chartmeta.shardenabled = {};
+	$scope.mongo.ui.shardenabled = {};
 	$scope.chartmeta.shardlist = [];
 
 	$scope.chartmeta.labels = {};
@@ -309,11 +310,11 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.$watch('mongo.shardalyzer.shards', function(shards)
 	{
 		$scope.chartmeta.shardlist = Object.keys(shards);
-		$scope.chartmeta.shardenabled = {};
+		$scope.mongo.ui.shardenabled = {};
 
 		for(var k in shards)
 		{
-			$scope.chartmeta.shardenabled[k] = true;
+			$scope.mongo.ui.shardenabled[k] = true;
 
 			$scope.chartmeta.granularity.max =
 				Math.max($scope.chartmeta.granularity.max, shards[k].length);
@@ -327,8 +328,8 @@ shardalyze.controller("updateCharts", function($scope)
 
 	$scope.chartmeta.enableall = function(enable)
 	{
-		for(var k in $scope.chartmeta.shardenabled)
-			$scope.chartmeta.shardenabled[k] = enable;
+		for(var k in $scope.mongo.ui.shardenabled)
+			$scope.mongo.ui.shardenabled[k] = enable;
 	}
 
 	$scope.chartmeta.sortopts =
@@ -412,11 +413,19 @@ shardalyze.controller("sliderControl", function($scope)
 		}
 	}
 
-	$scope.$watch('mongo.ui.slider', function(position)
+	$scope.$watch('mongo.ui.slider', function(position, oldpos)
 	{
-		$scope.mongo.shardalyzer.bttf(position);
-		updateChangelog(position);
+		var dir = (position - oldpos > 0 ? 1 : -1);
 
+		var shardfilter = $scope.mongo.ui.shardenabled;
+		var shardalyzer = $scope.mongo.shardalyzer;
+
+		while((!shardalyzer.filterChange(position, shardfilter)) && position >= 0 && position <= shardalyzer.changes.length)
+			position += dir;
+
+		$scope.mongo.shardalyzer.bttf(position);
+		$scope.mongo.ui.slider = position;
+		updateChangelog(position);
 	});
 
 	$scope.errorconfig =

@@ -768,5 +768,35 @@ var Shardalyzer =
 			else
 				this.fastforward();
 		}
+	},
+
+	filterChange : function(changenum, shardfilter)
+	{
+		var change = this.changes[changenum];
+
+		if(!change)
+			return true;
+
+		switch(change.what)
+		{
+//			case OP_MULTI_SPLIT:
+//			case OP_SPLIT:
+//				var chunk = this.chunks[s(change.details.before.min)];
+//				return shardfilter[chunk.shard];
+
+			case OP_FROM:
+				return shardfilter[change.details.from] || shardfilter[change.details.to];
+
+			case OP_START:
+			case OP_COMMIT:
+				return shardfilter[change.details.from];
+
+//			case OP_TO:
+//				var chunk = this.chunks[s(change.details.min)];
+//				return shardfilter[chunk.shard];
+
+			default:
+				return false;
+		}
 	}
 };
