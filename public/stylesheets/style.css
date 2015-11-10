@@ -105,3 +105,29 @@ body {
 pre {
     font-size: 12px;
 }
+
+.fadein.ng-enter,
+.fadeout.ng-leave {
+    -webkit-transition: all linear 0.25s;
+    -moz-transition: all linear 0.25s;
+    -o-transition: all linear 0.25s;
+    transition: all linear 0.25s;
+    display: block !important;
+}
+
+.fadein.ng-enter {
+    opacity: 0;
+}
+
+.fadeout.ng-leave {
+    opacity: 1;
+}
+
+.fadein.ng-enter.ng-enter-active {
+    opacity: 1;
+}
+
+.fadeout.ng-leave-active {
+	transition-delay: 0.25s;
+    opacity: 0;
+}

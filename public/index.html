@@ -57,6 +57,40 @@
 		<script src="js/shardalyzer.js"></script>
 	</head>
 
+	<div id="mongowaiting" ng-if="(mongo.selectedNS == null || mongo.shardalyzer.position == null)" class="fadein fadeout" style="position: absolute; width:100vw; height:100vh; z-index: 999;
+		background: url('images/mongo-small.png') center no-repeat; background-color:white;">
+
+		<div id="mongoloading"
+			style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+
+			<div id="mongospinner" class="mongoloader" ng-show="(mongo.selectedNS !== null && mongo.shardalyzer.position == null)">
+				<div class="loaderBall" id="loaderBall_1">
+					<div class="innerBall"></div>
+				</div>
+				<div class="loaderBall" id="loaderBall_2">
+					<div class="innerBall"></div>
+				</div>
+				<div class="loaderBall" id="loaderBall_3">
+					<div class="innerBall"></div>
+				</div>
+				<div class="loaderBall" id="loaderBall_4">
+					<div class="innerBall"></div>
+				</div>
+				<div class="loaderBall" id="loaderBall_5">
+					<div class="innerBall"></div>
+				</div>
+			</div>
+
+			<div class="mongoprogress">
+				<div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; padding:5px 10px 5px 10px">
+					<strong>
+						{{mongo.selectedNS == null ? 'WAITING FOR DATA...' : 'LOADING DATA...'}}
+					</strong>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<body ng-cloak>
 		<div growl limit-messages="5"></div>
 
@@ -98,7 +132,7 @@
 
 				<div id="header" class="snug" style="padding:120px 0 0 0;"></div>
 
-				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-show="mongo.shardalyzer.position !== null" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
+				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
 					<div id="shardedit" style="position:absolute; z-index:2">
 						<span id="shardeditbuttons" style="display:inline-block">
 							<div style="padding:5px">
@@ -151,37 +185,6 @@
 							<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-100%);" ng-show="chartmeta.shardedit">
 								<input type="checkbox" bs-switch ng-model="mongo.ui.shardenabled[shard]">
 							</div>
-						</div>
-					</div>
-				</div>
-
-				<div id="mongowaiting" ng-show="(mongo.selectedNS == null || mongo.shardalyzer.position == null)" class="greedy" style="position: relative; width:75%; margin: 0 auto; border-radius:25px;
-					background: url('images/mongo-small.png') center no-repeat; background-color:white;">
-
-					<div id="mongospinner" class="mongoloader" ng-show="(mongo.selectedNS !== null && mongo.shardalyzer.position == null)"
-						style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-						<div class="loaderBall" id="loaderBall_1">
-							<div class="innerBall"></div>
-						</div>
-						<div class="loaderBall" id="loaderBall_2">
-							<div class="innerBall"></div>
-						</div>
-						<div class="loaderBall" id="loaderBall_3">
-							<div class="innerBall"></div>
-						</div>
-						<div class="loaderBall" id="loaderBall_4">
-							<div class="innerBall"></div>
-						</div>
-						<div class="loaderBall" id="loaderBall_5">
-							<div class="innerBall"></div>
-						</div>
-					</div>
-
-					<div class="mongoprogress" style="position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%);">
-						<div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%; padding:5px 10px 5px 10px">
-							<strong>
-								{{mongo.selectedNS == null ? 'WAITING FOR DATA...' : 'LOADING DATA...'}}
-							</strong>
 						</div>
 					</div>
 				</div>
