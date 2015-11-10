@@ -388,10 +388,11 @@ shardalyze.controller("sliderControl", function($scope)
 
 	$scope.slidermeta.formatter = function(value)
 	{
-		if($scope.mongo.shardalyzer.changes[value] !== undefined)
-			return $scope.mongo.shardalyzer.changes[value].time;
-		else
-			return value;
+		var changes = $scope.mongo.shardalyzer.changes;
+
+		value = Math.max(Math.min(value, changes.length-1), 0);
+
+		return (changes[value] ? changes[value].time : value);
 	};
 
 	var updateChangelog = function(position)
@@ -403,7 +404,7 @@ shardalyze.controller("sliderControl", function($scope)
 		var start = Math.max(Math.min(position, changes.length-offset)-offset, 0);
 		var end = Math.max(Math.min(position+offset, changes.length), window);
 
-		$scope.mongo.ui.selectedchange = (position - start).toString();
+		$scope.mongo.ui.selectedchange = Math.min(position-start, end-start-1).toString();
 		$scope.mongo.ui.changelog.length = 0;
 
 		for(var k = 0; k < (end-start); k++)
