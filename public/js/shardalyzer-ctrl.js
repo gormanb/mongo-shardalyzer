@@ -171,6 +171,15 @@ shardalyze.controller("updateCharts", function($scope)
 		min : 1,
 		max : GRANULARITY_DEFAULT,
 		value : GRANULARITY_DEFAULT,
+		reset : function(shards)
+		{
+			var granularity = $scope.chartmeta.granularity;
+
+			granularity.value = GRANULARITY_DEFAULT;
+			granularity.max = GRANULARITY_DEFAULT;
+
+			granularity.update(shards);
+		},
 		update : function(shards)
 		{
 			var granularity = $scope.chartmeta.granularity;
@@ -313,12 +322,9 @@ shardalyze.controller("updateCharts", function($scope)
 		$scope.mongo.ui.shardenabled = {};
 
 		for(var k in shards)
-		{
 			$scope.mongo.ui.shardenabled[k] = true;
 
-			$scope.chartmeta.granularity.max =
-				Math.max($scope.chartmeta.granularity.max, shards[k].length);
-		}
+		$scope.chartmeta.granularity.reset(shards);
 	});
 
 	$scope.chartmeta.toggleedit = function()
