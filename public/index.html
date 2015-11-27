@@ -155,7 +155,7 @@
 						</span>
 						<span id="shardgranularity" style="display:inline-block">
 							<slider ng-model="chartmeta.granularity.value" ng-show="chartmeta.shardedit"
-								formatter="chartmeta.granularity.format"
+								formatter="chartmeta.granularity.format(value)"
 								min="chartmeta.granularity.min"
 								max="chartmeta.granularity.max"
 								orientation="vertical"
@@ -250,7 +250,7 @@
 								scale="slidermeta.scale"
 								ticks="mongo.ui.errors"
 								ticks_snap_bounds="slidermeta.snap"
-								formatter="slidermeta.formatter">
+								formatter="slidermeta.formatter(value)">
 							</slider>
 							<span style="padding:5px; float:left" ng-repeat="(name, opts) in errorconfig.opts">
 								<input type="checkbox" ng-model="opts.enabled" id="opts.name">
