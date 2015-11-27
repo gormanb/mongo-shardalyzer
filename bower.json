@@ -1,10 +1,10 @@
 {
-  "name": "shardalyzer",
-  "version": "0.0.1",
+  "name": "mongo-shardalyzer",
+  "version": "0.1.1",
   "authors": [
     "Bernard Gorman <bernard.gorman@mongodb.com>"
   ],
-  "description": "MongoDB Sharded Cluster Analyzer",
+  "description": "Visualisation and analysis tool for MongoDB sharded clusters.",
   "keywords": [
     "mongo",
     "mongodb",

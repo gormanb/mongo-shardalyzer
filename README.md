@@ -29,9 +29,10 @@ From the project directory, start the Express server with:
 
 	./start.sh
 
-Or, run it manually as follows:
+Or, run it manually using either of the following:
 
 	node mongo-shardalyzer.js
+	npm start
 
 Then open `localhost:3000` in your browser. Click the Menu icon in the top-left to set server connection options, hit Return, and select a namespace to visualise.
 

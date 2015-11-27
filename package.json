@@ -1,9 +1,9 @@
 {
   "name": "mongo-shardalyzer",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
-    "start": "node shardalyzer-ui.js"
+    "start": "node mongo-shardalyzer.js"
   },
   "dependencies": {
     "express": "3.21.1",
