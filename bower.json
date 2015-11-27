@@ -21,18 +21,18 @@
     "tests"
   ],
   "dependencies": {
-    "angular-chart.js": "^0.8.5",
-    "angular-bootstrap-slider": "^0.1.18",
-    "angular-bootstrap-switch": "^0.4.1",
-    "seiyria-bootstrap-slider": "^5.2.1",
-    "angular-ui-sortable": "^0.13.4",
-    "angular-mousewheel": "^1.0.4",
-    "angular-bootstrap": "^0.14.2",
-    "angular-growl-v2": "^0.7.5",
-    "angular-animate": "^1.4.7",
-    "jasny-bootstrap": "^3.1.3",
-    "json-formatter": "^0.4.0",
-    "hamsterjs": "^1.1.0"
+    "angular-chart.js": "0.8.6",
+    "angular-bootstrap-slider": "0.1.21",
+    "angular-bootstrap-switch": "0.4.1",
+    "seiyria-bootstrap-slider": "5.2.6",
+    "angular-ui-sortable": "0.13.4",
+    "angular-mousewheel": "1.0.4",
+    "angular-bootstrap": "0.14.3",
+    "angular-growl-v2": "0.7.9",
+    "angular-animate": "1.4.8",
+    "jasny-bootstrap": "3.1.3",
+    "json-formatter": "0.4.1",
+    "hamsterjs": "1.1.0"
   },
   "resolutions": {
     "seiyria-bootstrap-slider": "^5.2.1"
