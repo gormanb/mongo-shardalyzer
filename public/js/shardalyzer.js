@@ -95,6 +95,7 @@ var Shardalyzer =
 	tags : {},
 	chunks : {},
 	changes : [],
+	watched : {},
 	balancer : {},
 	position : null,
 
@@ -105,6 +106,8 @@ var Shardalyzer =
 
 		this.shards = {};
 		this.chunks = {};
+
+		this.watched = {};
 		this.tags = {};
 
 		var currentmove = {};
@@ -227,6 +230,36 @@ var Shardalyzer =
 					this.balancer[shard] = BALANCER_DEST_COLOR;
 			}
 		}
+	},
+
+	chunkContains : function(chunk, shardkey)
+	{
+		return (shardkey && s(shardkey) >= s(chunk.min) && s(shardkey) < s(chunk.max));
+	},
+
+	watchChunk : function(shardkey)
+	{
+		var chunk = undefined;
+		var skey = s(shardkey);
+
+		for(var min in this.chunks)
+		{
+			var max = s(this.chunks[min].max);
+
+			if(skey >= min && skey < max)
+			{
+				chunk = this.chunks[min];
+				this.watched[skey] = chunk;
+				break;
+			}
+		}
+
+		return chunk;
+	},
+
+	unwatchChunk : function(shardkey)
+	{
+		delete(this.watched[s(shardkey)]);
 	},
 
 /*
