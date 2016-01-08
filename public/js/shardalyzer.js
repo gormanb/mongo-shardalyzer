@@ -232,34 +232,28 @@ var Shardalyzer =
 		}
 	},
 
-	chunkContains : function(chunk, shardkey)
-	{
-		return (shardkey && s(shardkey) >= s(chunk.min) && s(shardkey) < s(chunk.max));
-	},
-
 	watchChunk : function(shardkey)
 	{
-		var chunk = undefined;
-		var skey = s(shardkey);
+		var skey = (typeof shardkey === 'string' ? shardkey : s(shardkey));
 
-		for(var min in this.chunks)
-		{
-			var max = s(this.chunks[min].max);
-
-			if(skey >= min && skey < max)
-			{
-				chunk = this.chunks[min];
-				this.watched[skey] = chunk;
-				break;
-			}
-		}
-
-		return chunk;
+		this.watched[skey] = (this.watched[skey] ||
+			('#'+Math.floor(Math.random()*16777215).toString(16)));
 	},
 
 	unwatchChunk : function(shardkey)
 	{
-		delete(this.watched[s(shardkey)]);
+		var skey = (typeof shardkey === 'string' ? shardkey : s(shardkey));
+		if(this.chunks[skey]) delete this.chunks[skey].watched;
+		delete(this.watched[skey]);
+	},
+
+	updateWatchlist : function()
+	{
+		for(var skey in this.watched)
+		{
+			if(this.chunks[skey])
+				this.chunks[skey].watched = this.watched[skey];
+		}
 	},
 
 /*
@@ -749,6 +743,7 @@ var Shardalyzer =
 			if(this.position < this.changes.length)
 				this.tag(this.chunks, this.changes[this.position]);
 
+			this.updateWatchlist();
 			this.updateBalancer();
 		}
 	},
@@ -788,6 +783,7 @@ var Shardalyzer =
 			}
 
 			this.tag(this.chunks, this.changes[this.position]);
+			this.updateWatchlist();
 			this.updateBalancer();
 		}
 	},
