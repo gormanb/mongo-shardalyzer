@@ -243,8 +243,13 @@ shardalyze.controller("updateCharts", function($scope)
 
 		$scope.chartmeta.data[shard][index] = 1;
 
+		// status color takes prio if currently involved in an operation
 		$scope.chartmeta.colors[shard][index] =
 			$scope.mongo.shardalyzer.statuscolors[shards[shard][lower].status];
+
+		// set watch color if watched and not involved in operation
+		if(!shards[shard][lower].status && shards[shard][lower].watched)
+			$scope.chartmeta.colors[shard][index] = shards[shard][lower].watched;
 
 		if(!$scope.chartmeta.labels[shard][index])
 			$scope.chartmeta.labels[shard][index] = [];
@@ -282,7 +287,7 @@ shardalyze.controller("updateCharts", function($scope)
 				// lower (inclusive) to upper (exclusive)
 				for(var chunk = lower; chunk < upper; chunk++)
 				{
-					if(shards[s][chunk].status)
+					if(shards[s][chunk].status || shards[s][chunk].watched)
 					{
 						seq += addWedge(s, lower, chunk, seq);
 						seq += addWedge(s, chunk, chunk+1, seq);

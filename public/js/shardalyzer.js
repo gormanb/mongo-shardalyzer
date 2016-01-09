@@ -52,9 +52,14 @@ function remove(array, object)
 		array.splice(pos, 1);
 }
 
-function clone(orig)
+function clone(orig) // varargs fields NOT to clone
 {
-	return jQuery.extend(true, {}, orig);
+	var clone = jQuery.extend(true, {}, orig);
+
+	for(var i = 1; i < arguments.length; i++)
+		delete clone[arguments[i]];
+
+	return clone;
 }
 
 function putAll(to, from)
@@ -311,7 +316,7 @@ var Shardalyzer =
 		putAll(chunk, left);
 
 		// create new chunk based on old
-		var newChunk = clone(chunk);
+		var newChunk = clone(chunk, "watched");
 
 		// update the new chunk's details
 		putAll(newChunk, right);
@@ -424,7 +429,7 @@ var Shardalyzer =
 		else
 		{
 			// subsequent splits create new chunks
-			var newChunk = clone(chunk);
+			var newChunk = clone(chunk, "watched");
 			putAll(newChunk, newMeta);
 
 			// generate an ID for the new chunk
