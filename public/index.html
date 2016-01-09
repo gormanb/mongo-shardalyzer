@@ -173,7 +173,8 @@
 								data="chartmeta.data[shard]"
 								labels="chartmeta.labels[shard]"
 								colours="chartmeta.colors[shard]"
-								watch="['colours']"></canvas>
+								watch="['colours']"
+								click="wedgeClick"></canvas>
 							<p align="center">
 								<a href="#" uib-tooltip-template="'tooltip.html'" tooltip-placement="bottom" tooltip-append-to-body="true" style="color:{{mongo.shardalyzer.balancer[shard]}};">
 									<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
@@ -225,7 +226,7 @@
 								</button>
 							</div>
 
-							<button popover-template="'chunklegend.html'" popover-title="Chunk Legend" type="button" class="btn btn-default">
+							<button popover-template="'chunklegend.html'" popover-title="Chunk Legend" popover-append-to-body="true" type="button" class="btn btn-default">
 								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 							</button>
 
@@ -234,17 +235,21 @@
 									style="color:{{color}};"><strong>{{status}}</strong></div>
 							</script>
 
-							<button popover-template="'watchchunks.html'" popover-title="Watch Chunks" type="button" class="btn btn-default">
+							<button popover-template="'watchchunks.html'" popover-title="Watch Chunks" popover-append-to-body="true" type="button" class="btn btn-default">
 								<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
 							</button>
 
 							<script type="text/ng-template" id="watchchunks.html">
-								<div ng-repeat="(shardkey, color) in mongo.shardalyzer.watched" ng-if="shardkey !== 'undefined'" ng-readonly="true"
-									style="color:{{color}};"><strong>{{shardkey}}</strong></div>
-								<input type="text" ng-model="watchbox.watch" ng-enter="watchbox.watchChunk()" class="form-control">
+									<a href="#" class="list-group-item" ng-repeat="(shardkey, color) in mongo.shardalyzer.watched" ng-if="shardkey !== 'undefined'" ng-readonly="true" style="color:{{color}}; width:100%">
+										<strong>{{shardkey}}</strong>
+										<button type="button" class="btn btn-default" ng-click="watchbox.unwatchChunk(shardkey)" value="x" style="vertical-align:middle; display:inline-block; margin-left:10px; white-space:inherit!important">
+											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										</button>
+									</a>
+								<input type="text" placeholder="Min shardkey of chunk" ng-model="watchbox.watch" ng-enter="watchbox.watchChunk(watchbox.watch)" class="form-control">
 							</script>
 
-							<button popover-template="'searchwidget.html'" popover-title="Search by Timestamp" type="button" class="btn btn-default">
+							<button popover-template="'searchwidget.html'" popover-title="Search by Timestamp" popover-append-to-body="true" type="button" class="btn btn-default">
 								<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 							</button>
 

@@ -227,6 +227,19 @@ shardalyze.controller("updateCharts", function($scope)
 		}
 	};
 
+	$scope.wedgeClick = function(points, event)
+	{
+		// label[0][1][2] = shard, startindex, endindex
+		var numChunks = points[0].label[2] - points[0].label[1];
+		var label = points[0].label;
+
+		if(numChunks == 1 && event.altKey)
+		{
+			$scope.mongo.shardalyzer.watchChunk
+				($scope.mongo.shardalyzer.shards[label[0]][label[1]].min);
+		}
+	}
+
 	$scope.shardtags = function(shard)
 	{
 		var tagtip = JSON.stringify($scope.mongo.shardalyzer.tags[shard], null, 4);
@@ -261,9 +274,13 @@ shardalyze.controller("updateCharts", function($scope)
 		return 1;
 	}
 
-	$scope.$watchGroup(['mongo.shardalyzer.position', 'chartmeta.granularity.value'], function(posgran)
+	$scope.$watchGroup(['mongo.shardalyzer.position', 'chartmeta.granularity.value'], generateChartData);
+	$scope.$watch('mongo.shardalyzer.watched', generateChartData, true);
+
+	function generateChartData(posgran)
 	{
-		var position = posgran[0], granularity = posgran[1];
+		var granularity = $scope.chartmeta.granularity.value;
+		var position = $scope.mongo.shardalyzer.position;
 
 		var shards = $scope.mongo.shardalyzer.shards;
 
@@ -319,7 +336,7 @@ shardalyze.controller("updateCharts", function($scope)
 
 		// update granularity max and (possibly) value
 		$scope.chartmeta.granularity.update(shards);
-	});
+	};
 
 	$scope.$watch('mongo.shardalyzer.shards', function(shards)
 	{
@@ -595,11 +612,11 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 			updateSlider(pos - $scope.mongo.ui.slider);
 	});
 
-	$scope.watchbox.watchChunk = function()
+	$scope.watchbox.watchChunk = function(shardkey)
 	{
 		try
 		{
-			var skey = RJSON.parse($scope.watchbox.watch);
+			var skey = RJSON.parse(shardkey);
 		}
 		catch(err)
 		{
@@ -609,6 +626,11 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 
 		$scope.mongo.shardalyzer.watchChunk(skey);
 	};
+
+	$scope.watchbox.unwatchChunk = function(shardkey)
+	{
+		$scope.mongo.shardalyzer.unwatchChunk(shardkey);
+	}
 
 	$scope.playctrl =
 	{

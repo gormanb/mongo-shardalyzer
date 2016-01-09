@@ -131,3 +131,7 @@ pre {
 	transition-delay: 0.25s;
     opacity: 0;
 }
+
+.popover {
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+}
