@@ -45,6 +45,8 @@
 
 		<script src="/bower_components/angular-ui-sortable/sortable.min.js"></script>
 
+		<script src="/node_modules/relaxed-json/relaxed-json.js"></script>
+
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
 		<link rel="stylesheet" href="stylesheets/navmenu-push.css">
 		<link rel="stylesheet" href="stylesheets/spinner.css">
@@ -230,6 +232,16 @@
 							<script type="text/ng-template" id="chunklegend.html">
 								<div ng-repeat="(status, color) in mongo.shardalyzer.statuscolors" ng-if="status !== 'undefined'" ng-readonly="true"
 									style="color:{{color}};"><strong>{{status}}</strong></div>
+							</script>
+
+							<button popover-template="'watchchunks.html'" popover-title="Watch Chunks" type="button" class="btn btn-default">
+								<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+							</button>
+
+							<script type="text/ng-template" id="watchchunks.html">
+								<div ng-repeat="(shardkey, color) in mongo.shardalyzer.watched" ng-if="shardkey !== 'undefined'" ng-readonly="true"
+									style="color:{{color}};"><strong>{{shardkey}}</strong></div>
+								<input type="text" ng-model="watchbox.watch" ng-enter="watchbox.watchChunk()" class="form-control">
 							</script>
 
 							<button popover-template="'searchwidget.html'" popover-title="Search by Timestamp" type="button" class="btn btn-default">

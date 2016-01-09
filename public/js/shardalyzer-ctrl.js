@@ -566,10 +566,13 @@ shardalyze.controller("sliderControl", function($scope)
 	$scope.$watch('errorconfig', setErrorTicks, true);
 });
 
-shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $interval)
+shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($scope, $interval, growl)
 {
 	$scope.searchbar = {};
 	$scope.searchbar.search = null;
+
+	$scope.watchbox = {};
+	$scope.watchbox.watch = null;
 
 	var updateSlider = function(offset)
 	{
@@ -586,6 +589,21 @@ shardalyze.controller("playControl", ['$scope', '$interval', function($scope, $i
 		if(pos >= 0)
 			updateSlider(pos - $scope.mongo.ui.slider);
 	});
+
+	$scope.watchbox.watchChunk = function()
+	{
+		try
+		{
+			var skey = RJSON.parse($scope.watchbox.watch);
+		}
+		catch(err)
+		{
+			growl.error(growlmsg("Invalid Shardkey", "The document you entered is not valid JSON", err.message));
+			return;
+		}
+
+		$scope.mongo.shardalyzer.watchChunk(skey);
+	};
 
 	$scope.playctrl =
 	{
