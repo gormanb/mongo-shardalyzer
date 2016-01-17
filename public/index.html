@@ -240,12 +240,20 @@
 							</button>
 
 							<script type="text/ng-template" id="watchchunks.html">
-									<a href="#" class="list-group-item" ng-repeat="(shardkey, color) in mongo.shardalyzer.watched" ng-if="shardkey !== 'undefined'" ng-readonly="true" style="color:{{color}}; width:100%">
-										<strong>{{shardkey}}</strong>
-										<button type="button" class="btn btn-default" ng-click="watchbox.unwatchChunk(shardkey)" value="x" style="vertical-align:middle; display:inline-block; margin-left:10px; white-space:inherit!important">
+								<a href="#" class="list-group-item" ng-repeat="(shardkey, color) in mongo.shardalyzer.watched" ng-if="shardkey !== 'undefined'" ng-readonly="true" style="color:{{color}}; width:100%">
+									<strong>{{shardkey}}</strong>
+									<div class="btn-group" role="group" style="margin-left:10px">
+										<button type="button" class="btn btn-default" ng-click="watchbox.prev(shardkey)" value="<" style="vertical-align:middle; display:inline-block; white-space:inherit!important">
+											<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+										</button>
+										<button type="button" class="btn btn-default" ng-click="watchbox.next(shardkey)" value=">" style="vertical-align:middle; display:inline-block; white-space:inherit!important">
+											<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+										</button>
+										<button type="button" class="btn btn-danger" ng-click="watchbox.unwatchChunk(shardkey)" value="x" style="vertical-align:middle; display:inline-block; white-space:inherit!important">
 											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 										</button>
-									</a>
+									</div>
+								</a>
 								<input type="text" placeholder="Min shardkey of chunk" ng-model="watchbox.watch" ng-enter="watchbox.watchChunk(watchbox.watch)" class="form-control">
 							</script>
 

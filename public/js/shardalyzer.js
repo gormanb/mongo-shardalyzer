@@ -793,7 +793,7 @@ var Shardalyzer =
 		}
 	},
 
-	bttf : function(instant, shardfilter)
+	bttf : function(instant, shardfilter, chunkfilter)
 	{
 		if(this.position == null || instant < 0 || instant > this.changes.length || instant == this.position)
 			return;
@@ -803,7 +803,7 @@ var Shardalyzer =
 		while(instant !== this.position)
 			this.step(dir);
 
-		while(!this.filter(shardfilter) && !this.eof())
+		while(!this.filter(shardfilter, chunkfilter) && !this.eof())
 			this.step(dir);
 	},
 
@@ -815,7 +815,7 @@ var Shardalyzer =
 			this.fastforward();
 	},
 
-	filter : function(shardfilter)
+	filter : function(shardfilter, chunkfilter)
 	{
 		var change = this.changes[this.position];
 
@@ -826,23 +826,24 @@ var Shardalyzer =
 		{
 			case OP_MULTI_SPLIT:
 			case OP_SPLIT:
-				var chunk = this.chunks[s(change.details.before.min)];
-				return shardfilter[chunk.shard];
+				var skey = s(change.details.before.min);
+				break;
 
 			case OP_FROM:
-				return shardfilter[change.details.from] || shardfilter[change.details.to];
-
 			case OP_START:
 			case OP_COMMIT:
-				return shardfilter[change.details.from];
-
 			case OP_TO:
-				var chunk = this.chunks[s(change.details.min)];
-				return shardfilter[chunk.shard];
+				var skey = s(change.details.min);
+				break;
 
 			default:
 				return true;
 		}
+
+		var chunk = this.chunks[skey];
+
+		return ((!chunkfilter || chunkfilter[skey]) &&
+			(shardfilter[chunk.shard] || shardfilter[change.details.from] || shardfilter[change.details.to]));
 	},
 
 	eof : function()

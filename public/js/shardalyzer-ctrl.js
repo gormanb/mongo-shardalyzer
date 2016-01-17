@@ -91,6 +91,26 @@ function arrayEquals(arr1, arr2)
 	return true;
 }
 
+// update changelog to reflect given timestep
+var updateChangelog = function($scope, position)
+{
+	var changes = $scope.mongo.shardalyzer.changes;
+	var window = $scope.mongo.ui.logwindow;
+	var offset = Math.floor(window / 2);
+
+	var start = Math.max(Math.min(position, changes.length-offset)-offset, 0);
+	var end = Math.max(Math.min(position+offset, changes.length), window);
+
+	$scope.mongo.ui.selectedchange = Math.min(position-start, end-start-1).toString();
+	$scope.mongo.ui.changelog.length = 0;
+
+	for(var k = 0; k < (end-start); k++)
+	{
+		if(changes[start + k] !== undefined)
+			$scope.mongo.ui.changelog[k] = changes[start + k];
+	}
+}
+
 shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
 	$scope.updateNSList = function()
@@ -457,30 +477,11 @@ shardalyze.controller("sliderControl", function($scope)
 		return (changes[value] ? changes[value].time : value);
 	};
 
-	var updateChangelog = function(position)
-	{
-		var changes = $scope.mongo.shardalyzer.changes;
-		var window = $scope.mongo.ui.logwindow;
-		var offset = Math.floor(window / 2);
-
-		var start = Math.max(Math.min(position, changes.length-offset)-offset, 0);
-		var end = Math.max(Math.min(position+offset, changes.length), window);
-
-		$scope.mongo.ui.selectedchange = Math.min(position-start, end-start-1).toString();
-		$scope.mongo.ui.changelog.length = 0;
-
-		for(var k = 0; k < (end-start); k++)
-		{
-			if(changes[start + k] !== undefined)
-				$scope.mongo.ui.changelog[k] = changes[start + k];
-		}
-	}
-
 	$scope.$watch('mongo.ui.slider', function(position)
 	{
 		$scope.mongo.shardalyzer.bttf(position, $scope.mongo.ui.shardenabled);
 		$scope.mongo.ui.slider = $scope.mongo.shardalyzer.position;
-		updateChangelog($scope.mongo.shardalyzer.position);
+		updateChangelog($scope, $scope.mongo.shardalyzer.position);
 	});
 
 	$scope.errorconfig =
@@ -616,7 +617,7 @@ shardalyze.controller("sliderControl", function($scope)
 
 		setErrorTicks();
 
-		updateChangelog(0);
+		updateChangelog($scope, 0);
 	});
 
 	$scope.$watch('errorconfig', setErrorTicks, true);
@@ -676,6 +677,24 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 	$scope.watchbox.unwatchChunk = function(shardkey)
 	{
 		$scope.mongo.shardalyzer.unwatchChunk(shardkey);
+	}
+
+	$scope.watchbox.prev = function(shardkey)
+	{
+		var position = $scope.mongo.ui.slider;
+
+		$scope.mongo.shardalyzer.bttf(position+1, $scope.mongo.ui.shardenabled, { [shardkey] : true });
+		$scope.mongo.ui.slider = $scope.mongo.shardalyzer.position;
+		updateChangelog($scope, $scope.mongo.shardalyzer.position);
+	}
+
+	$scope.watchbox.next = function(shardkey)
+	{
+		var position = $scope.mongo.ui.slider;
+
+		$scope.mongo.shardalyzer.bttf(position-1, $scope.mongo.ui.shardenabled, { [shardkey] : true });
+		$scope.mongo.ui.slider = $scope.mongo.shardalyzer.position;
+		updateChangelog($scope, $scope.mongo.shardalyzer.position);
 	}
 
 	$scope.playctrl =
