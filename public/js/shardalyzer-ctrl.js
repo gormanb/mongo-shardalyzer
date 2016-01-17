@@ -238,6 +238,8 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.mongo.shardalyzer.watchChunk
 				($scope.mongo.shardalyzer.shards[label[0]][label[1]].min);
 		}
+		else if(numChunks > 1 && !(event.altKey || event.shiftKey || event.ctrlKey))
+			generateChart(label[0], label[1], label[2]);
 	}
 
 	$scope.shardtags = function(shard)
@@ -274,14 +276,12 @@ shardalyze.controller("updateCharts", function($scope)
 		return 1;
 	}
 
-	$scope.$watchGroup(['mongo.shardalyzer.position', 'chartmeta.granularity.value'], generateChartData);
-	$scope.$watch('mongo.shardalyzer.watched', generateChartData, true);
+	$scope.$watchGroup(['mongo.shardalyzer.position', 'chartmeta.granularity.value'], generateCharts);
+	$scope.$watch('mongo.shardalyzer.watched', generateCharts, true);
 
-	function generateChartData(posgran)
+	function generateCharts(posgran)
 	{
-		var granularity = $scope.chartmeta.granularity.value;
 		var position = $scope.mongo.shardalyzer.position;
-
 		var shards = $scope.mongo.shardalyzer.shards;
 
 		for(var s in shards)
@@ -293,35 +293,7 @@ shardalyze.controller("updateCharts", function($scope)
 				$scope.chartmeta.labels[s] = [];
 			}
 
-			var inc = Math.max(1, shards[s].length/granularity);
-			var seq = 0;
-
-			for(var skip = 0; skip < shards[s].length; skip+=inc)
-			{
-				var lower = (skip|0);
-				var upper = Math.min((skip+inc)|0, shards[s].length);
-
-				// lower (inclusive) to upper (exclusive)
-				for(var chunk = lower; chunk < upper; chunk++)
-				{
-					if(shards[s][chunk].status || shards[s][chunk].watched)
-					{
-						seq += addWedge(s, lower, chunk, seq);
-						seq += addWedge(s, chunk, chunk+1, seq);
-						lower = chunk+1;
-					}
-					else if(chunk == upper-1)
-						seq += addWedge(s, lower, upper, seq);
-				}
-			}
-
-			$scope.chartmeta.labels[s].length = seq;
-			$scope.chartmeta.colors[s].length = seq;
-			$scope.chartmeta.data[s].length = seq;
-
-			// trigger redraw of empty shard
-			if($scope.chartmeta.data[s].length == 0)
-				$scope.chartmeta.colors[s][0] = '#EEEEEE';
+			generateChart(s);
 		}
 
 		if(position == null)
@@ -337,6 +309,48 @@ shardalyze.controller("updateCharts", function($scope)
 		// update granularity max and (possibly) value
 		$scope.chartmeta.granularity.update(shards);
 	};
+
+	// start (inclusive) to end (exclusive)
+	function generateChart(shardname, start, end)
+	{
+		var shard = $scope.mongo.shardalyzer.shards[shardname];
+		var granularity = $scope.chartmeta.granularity.value;
+
+		end = (end || shard.length);
+		start = (start || 0);
+
+		var length = (end-start);
+
+		var inc = Math.max(1, length/granularity);
+		var seq = 0;
+
+		for(var skip = start; skip < end; skip+=inc)
+		{
+			var lower = (skip|0);
+			var upper = Math.min((skip+inc)|0, end);
+
+			// lower (inclusive) to upper (exclusive)
+			for(var chunk = lower; chunk < upper; chunk++)
+			{
+				if(shard[chunk].status || shard[chunk].watched)
+				{
+					seq += addWedge(shardname, lower, chunk, seq);
+					seq += addWedge(shardname, chunk, chunk+1, seq);
+					lower = chunk+1;
+				}
+				else if(chunk == upper-1)
+					seq += addWedge(shardname, lower, upper, seq);
+			}
+		}
+
+		$scope.chartmeta.labels[shardname].length = seq;
+		$scope.chartmeta.colors[shardname].length = seq;
+		$scope.chartmeta.data[shardname].length = seq;
+
+		// trigger redraw of empty shard
+		if($scope.chartmeta.data[shardname].length == 0)
+			$scope.chartmeta.colors[shardname][0] = '#EEEEEE';		
+	}
 
 	$scope.$watch('mongo.shardalyzer.shards', function(shards)
 	{
