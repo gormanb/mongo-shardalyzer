@@ -76,6 +76,21 @@ function pathify(components)
 	return path;
 }
 
+// shallow array compare convenience function
+function arrayEquals(arr1, arr2)
+{
+	if(!arr1 || !arr2 || (arr1.length !== arr2.length))
+		return false;
+
+	for(var i = 0; i < arr1.length; i++)
+	{
+		if(arr2[i] !== arr1[i])
+			return false;
+	}
+
+	return true;
+}
+
 shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
 	$scope.updateNSList = function()
@@ -643,7 +658,19 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 			return;
 		}
 
-		$scope.mongo.shardalyzer.watchChunk(skey);
+		for(var c in $scope.mongo.shardalyzer.chunks)
+		{
+			var chunk = $scope.mongo.shardalyzer.chunks[c];
+			break;
+		}
+
+		if(!chunk || !arrayEquals(Object.keys(chunk.min), Object.keys(skey)))
+		{
+			growl.error(growlmsg("Invalid Shardkey", "The document does not match the shard key",
+				"Please enter a valid shard key, or Alt-Click a chunk to add it to the watch list"));
+		}
+		else
+			$scope.mongo.shardalyzer.watchChunk(skey);
 	};
 
 	$scope.watchbox.unwatchChunk = function(shardkey)
