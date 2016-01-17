@@ -239,7 +239,11 @@ shardalyze.controller("updateCharts", function($scope)
 				($scope.mongo.shardalyzer.shards[label[0]][label[1]].min);
 		}
 		else if(numChunks > 1 && !(event.altKey || event.shiftKey || event.ctrlKey))
+		{
+			$scope.chartmeta.options.animationSteps = 125;
+			$scope.chartmeta.options.animateScale = true;
 			generateChart(label[0], label[1], label[2]);
+		}
 	}
 
 	$scope.shardtags = function(shard)
@@ -409,6 +413,7 @@ shardalyze.controller("updateCharts", function($scope)
 		onAnimationComplete : function()
 		{
 			$scope.chartmeta.options.animateRotate = false;
+			$scope.chartmeta.options.animateScale = false;
 			$scope.chartmeta.options.animationSteps = 1;
 		}
 	};
