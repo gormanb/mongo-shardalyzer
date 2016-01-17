@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel', 'ui.sortable', 'frapontillo.bootstrap-switch']).run
+var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel', 'ui.sortable', 'frapontillo.bootstrap-switch', 'ui.checkbox']).run
 (
 	function($rootScope)
 	{
@@ -488,9 +488,24 @@ shardalyze.controller("sliderControl", function($scope)
 	{
 		params :
 		{
+			slow_move_units :
+			{
+				name : undefined,
+				type : "select",
+				options :
+				{
+					"days" : 24*(1000*60*60),
+					"hours" : (1000*60*60),
+					"minutes" : (1000*60),
+					"seconds" : 1000,
+					"milliseconds" : 1
+				},
+				value : 1
+			},
 			slow_move_threshold :
 			{
 				name : "Slow Move Threshold",
+				type : "number",
 				value : 15*(1000*60)
 			}
 		},
@@ -500,6 +515,7 @@ shardalyze.controller("sliderControl", function($scope)
 			failedmoves :
 		 	{
 		 		name : "Failed moves",
+		 		severity : "danger",
 		 		enabled : true,
 		 		error : function(change, params)
 		 		{
@@ -514,6 +530,7 @@ shardalyze.controller("sliderControl", function($scope)
 		 	slowmoves :
 		 	{
 		 		name : "Slow moves",
+		 		severity : "warning",
 		 		enabled : false,
 		 		error : function(change, params)
 		 		{

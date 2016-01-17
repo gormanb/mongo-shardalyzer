@@ -43,6 +43,8 @@
 		<script src="/bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
 		<script src="/bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.min.js"></script>
 
+		<script src="/bower_components/angular-bootstrap-checkbox/angular-bootstrap-checkbox.js"></script>
+
 		<script src="/bower_components/angular-ui-sortable/sortable.min.js"></script>
 
 		<script src="/node_modules/relaxed-json/relaxed-json.js"></script>
@@ -277,13 +279,16 @@
 								ticks_snap_bounds="slidermeta.snap"
 								formatter="slidermeta.formatter(value)">
 							</slider>
-							<span style="padding:5px; float:left" ng-repeat="(name, opts) in errorconfig.opts">
-								<input type="checkbox" ng-model="opts.enabled" id="opts.name">
-								<label for="{{opts.name}}">{{opts.name}}</label>
-							</span>
-							<span style="padding:5px; float:right" ng-repeat="(name, param) in errorconfig.params">
-								<label for="{{param.name}}">{{param.name}}</label>
-								<input type="number" ng-model="param.value" id="param.name" min=0>
+							<span id="erroroptions" class="form-inline form-group" style="width:100%">
+								<label ng-repeat="(name, opts) in errorconfig.opts" style="padding:5px; float:left">
+									<checkbox ng-model="opts.enabled" class="btn-{{opts.severity}}"></checkbox>
+									{{opts.name}}
+								</label>
+								<label ng-repeat="(name, param) in errorconfig.params" style="padding:5px; float:right">
+									{{param.name || ''}}
+									<input ng-if="param.type !== 'select'" type="{{param.type}}" ng-model="param.value" id="param.name" min=0 class="form-control">
+									<select ng-if="param.type == 'select'" ng-model="param.value" ng-options="opt as key for (key, opt) in param.options" id="param.name" class="form-control"></select>
+								</label>
 							</span>
 						</div>
 					</div>
