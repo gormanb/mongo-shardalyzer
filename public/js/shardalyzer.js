@@ -843,7 +843,7 @@ var Shardalyzer =
 		var chunk = this.chunks[skey];
 
 		return ((!chunkfilter || chunkfilter[skey]) &&
-			(shardfilter[chunk.shard] || shardfilter[change.details.from] || shardfilter[change.details.to]));
+			(shardfilter[chunk.shard] || (change.what === OP_FROM && shardfilter[change.details.from])));
 	},
 
 	eof : function()
