@@ -500,13 +500,13 @@ shardalyze.controller("sliderControl", function($scope)
 					"seconds" : 1000,
 					"milliseconds" : 1
 				},
-				value : 1
+				value : (1000*60)
 			},
 			slow_move_threshold :
 			{
 				name : "Slow Move Threshold",
 				type : "number",
-				value : 15*(1000*60)
+				value : 15
 			}
 		},
 
@@ -546,7 +546,7 @@ shardalyze.controller("sliderControl", function($scope)
 		 						sum += time;
 		 				}
 
-		 				return sum >= params.slow_move_threshold.value;
+		 				return sum >= params.slow_move_threshold.value * params.slow_move_units.value;
 		 			}
 
 		 			return false;
