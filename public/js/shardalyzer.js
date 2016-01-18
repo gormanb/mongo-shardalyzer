@@ -793,7 +793,8 @@ var Shardalyzer =
 		}
 	},
 
-	bttf : function(instant, shardfilter, chunkfilter)
+	// { shard : bool }, { chunk : bool }, [0, 1, 3, 15, ..., n ]
+	bttf : function(instant, shardfilter, chunkfilter, changefilter)
 	{
 		if(this.position == null || instant < 0 || instant > this.changes.length || instant == this.position)
 			return;
@@ -803,7 +804,7 @@ var Shardalyzer =
 		while(instant !== this.position)
 			this.step(dir);
 
-		while(!this.filter(shardfilter, chunkfilter) && !this.eof())
+		while(!this.eof() && !this.filter(shardfilter, chunkfilter, changefilter))
 			this.step(dir);
 	},
 
@@ -815,11 +816,19 @@ var Shardalyzer =
 			this.fastforward();
 	},
 
-	filter : function(shardfilter, chunkfilter)
+	filter : function(shardfilter, chunkfilter, changefilter)
 	{
+		if(changefilter)
+		{
+			for(var i = 0; i < changefilter.length && changefilter[i] < this.position; i++);
+
+			if(changefilter[i] != this.position)
+				return false;
+		}
+
 		var change = this.changes[this.position];
 
-		if(!change || !shardfilter)
+		if(!change || !(shardfilter || chunkfilter))
 			return true;
 
 		switch(change.what)

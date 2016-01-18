@@ -648,12 +648,15 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 	$scope.watchbox = {};
 	$scope.watchbox.watch = null;
 
-	var updateSlider = function(offset)
+	var updateSlider = function(offset, filter)
 	{
 		var newpos = $scope.mongo.ui.slider + offset;
 
 		if(newpos >= 0 && newpos <= $scope.mongo.shardalyzer.changes.length)
-			$scope.mongo.ui.slider = newpos;
+		{
+			$scope.mongo.shardalyzer.bttf(newpos, $scope.mongo.ui.shardenabled, null, filter);
+			$scope.mongo.ui.slider = $scope.mongo.shardalyzer.position;
+		}
 	}
 
 	$scope.$watch('searchbar.search', function(change)
@@ -702,7 +705,6 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 
 		$scope.mongo.shardalyzer.bttf(position+1, $scope.mongo.ui.shardenabled, { [shardkey] : true });
 		$scope.mongo.ui.slider = $scope.mongo.shardalyzer.position;
-		updateChangelog($scope, $scope.mongo.shardalyzer.position);
 	}
 
 	$scope.watchbox.next = function(shardkey)
@@ -711,7 +713,6 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 
 		$scope.mongo.shardalyzer.bttf(position-1, $scope.mongo.ui.shardenabled, { [shardkey] : true });
 		$scope.mongo.ui.slider = $scope.mongo.shardalyzer.position;
-		updateChangelog($scope, $scope.mongo.shardalyzer.position);
 	}
 
 	$scope.playctrl =
@@ -749,13 +750,8 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 
 		forwardError : function()
 		{
-			var pos = $scope.mongo.ui.errors.filter(function(value) { return value < $scope.mongo.ui.slider; });
-
-			if(pos.length > 0)
-			{
-				pos = pos[pos.length-1];
-				updateSlider(-($scope.mongo.ui.slider - pos));
-			}
+			this.cancel();
+			updateSlider(-1, $scope.mongo.ui.errors);
 		},
 
 		fastforward : function()
@@ -782,13 +778,8 @@ shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($
 
 		backError : function()
 		{
-			var pos = $scope.mongo.ui.errors.filter(function(value) { return value > $scope.mongo.ui.slider; });
-
-			if(pos.length > 0)
-			{
-				pos = pos[0];
-				updateSlider(pos - $scope.mongo.ui.slider);
-			}
+			this.cancel();
+			updateSlider(1, $scope.mongo.ui.errors);
 		},
 
 		end : function()
