@@ -22,7 +22,7 @@
   ],
   "dependencies": {
     "angular-chart.js": "0.8.6",
-    "angular-bootstrap-checkbox": "0.3.1"
+    "angular-bootstrap-checkbox": "0.3.1",
     "angular-bootstrap-slider": "0.1.21",
     "angular-bootstrap-switch": "0.4.1",
     "seiyria-bootstrap-slider": "5.2.6",
