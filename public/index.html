@@ -140,7 +140,7 @@
 
 				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
 					<div id="shardedit" style="position:absolute; z-index:2">
-						<span id="shardeditbuttons" style="display:inline-block">
+						<span id="shardeditbuttons" style="display:inline-block; float:left">
 							<div style="padding:5px">
 								<button type="button" class="{{chartmeta.shardedit ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="chartmeta.toggleedit();" value="Edit">
 									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
@@ -156,8 +156,18 @@
 									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 								</button>
 							</div>
+							<div style="padding:5px">
+								<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, 1)" value="+">
+									<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+								</button>
+							</div>
+							<div style="padding:5px">
+								<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, -1)" value="-">
+									<span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
+								</button>
+							</div>
 						</span>
-						<span id="shardgranularity" style="display:inline-block">
+						<span id="shardgranularity" style="display:inline-block; float:left; padding-top:5px; padding-left:5px">
 							<slider ng-model="chartmeta.granularity.value" ng-show="chartmeta.shardedit"
 								formatter="chartmeta.granularity.format(value)"
 								min="chartmeta.granularity.min"
@@ -168,7 +178,7 @@
 							</slider>
 						</span>
 					</div>
-					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist" ng-readonly="true" class="row-centered">
+					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist" ng-readonly="true" class="row-centered" style="overflow-x:hidden">
 						<div ng-repeat="shard in chartmeta.shardlist" ng-if="mongo.ui.shardenabled[shard] || chartmeta.shardedit" class="{{chartmeta.colclasses[chartmeta.currentcol]}} col-centered" style="opacity: {{mongo.ui.shardenabled[shard] ? 1 : 0.25}}">
 							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
 								options="chartmeta.options"

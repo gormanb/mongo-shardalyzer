@@ -247,15 +247,16 @@ shardalyze.controller("updateCharts", function($scope)
 
 	$scope.scaleCharts = function(event, delta, deltaX, deltaY)
 	{
-		if(!event.originalEvent.shiftKey)
-			return;
+		// !event implies manual call from button click
+		if(event && event.originalEvent.shiftKey)
+			event.preventDefault();
+		else if(event) return;
 
 		var newcol = $scope.chartmeta.currentcol + delta;
 
 		if(newcol >= 0 && newcol < $scope.chartmeta.colclasses.length)
 		{
 			$scope.chartmeta.currentcol = newcol;
-			event.preventDefault();
 
 			// fire resize event; simplest way to redraw charts
 			window.dispatchEvent(new Event('resize'));
