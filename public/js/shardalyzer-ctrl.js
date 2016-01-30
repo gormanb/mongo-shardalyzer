@@ -6,6 +6,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo = {};
 
 		// initial settings
+		$rootScope.mongo.configdb = "config";
 		$rootScope.mongo.host = "localhost";
 		$rootScope.mongo.port = 27017;
 
@@ -113,6 +114,8 @@ var updateChangelog = function($scope, position)
 
 shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
+	$scope.ops = { advanced : false };
+
 	$scope.updateNSList = function()
 	{
 		$scope.mongo.selectedNS = null;

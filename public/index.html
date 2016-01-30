@@ -110,9 +110,9 @@
 				<span class="navbar-brand" href="#"></span>
 			</div>
 
-			<nav id="navmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
+			<nav id="navmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" ng-controller="serverNsCtrl" role="navigation">
 				<span class="navmenu-brand" style="padding-top:15px"><strong>Connect to Server</strong></span>
-					<ul class="nav navmenu-nav" ng-controller="serverNsCtrl">
+				<ul class="nav navmenu-nav">
 					<li class="active"><a href="#"><small>1. Specify server location</small></a></li>
 					<li><a href="#">Host
 							<input type="text" class="form-control" style="color: #333; font-weight:normal"
@@ -132,6 +132,23 @@
 						</a>
 					</li>
 				</ul>
+
+				<div style="position:absolute; bottom:0px; width:100%">
+					<span class="navmenu-brand" style="padding-top:15px" ng-click="opts.advanced = !opts.advanced">
+						<span>
+							<strong>Advanced Options</strong>
+							<span class="glyphicon glyphicon-chevron-{{opts.advanced ? 'down' : 'up'}}" aria-hidden="true" style="float:right"></span>
+						</span>
+					</span>
+					<ul class="nav navmenu-nav" ng-show="opts.advanced">
+						<li class="active"><a href="#"><small>Specify custom config database name</small></a></li>
+						<li><a href="#">Config DB Name
+								<input type="text" class="form-control" style="color: #333; font-weight:normal"
+									ng-model="mongo.configdb" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+							</a>
+						</li>
+					</ul>
+				</div>
 			</nav>
 
 			<div id="contentcontainer" class="flexv">
