@@ -13,10 +13,8 @@ var mongoopts = { server : { poolSize : 1 } };
 exports.namespaces =
 	function(req, res)
 	{
-		var url = req.param('host').concat(':')
-			.concat(req.param('port')).concat('/config');
-
-		url = 'mongodb://'.concat(url);
+		var url = 'mongodb://' + req.param('host') + ':' +
+			req.param('port') + '/' + (req.param('configdb') || 'config');
 
 		MongoClient.connect(url, mongoopts, function(err, db)
 		{
@@ -30,6 +28,8 @@ exports.namespaces =
 				{
 					if(err)
 						res.status(500).send(err);
+					else if(namespaces.length == 0)
+						res.status(404).send( { message : "No sharded namespaces found; wrong config db name or no data" } );
 					else
 						res.json(namespaces);
 
@@ -43,10 +43,7 @@ exports.dbs =
 	function(req, res)
 	{
 		var url =
-			req.param('host').concat(':')
-				.concat(req.param('port'));
-
-		url = 'mongodb://'.concat(url);
+			'mongodb://' + req.param('host') + ':' + req.param('port');
 
 		MongoClient.connect(url, mongoopts, function (err, db)
 		{
@@ -70,10 +67,8 @@ exports.dbs =
 exports.collections =
 	function(req, res)
 	{
-		var url = req.param('host').concat(':')
-			.concat(req.param('port')).concat('/').concat(req.param('db'));
-
-		url = 'mongodb://'.concat(url);
+		var url = 'mongodb://' + req.param('host') +
+			':' + req.param('port') + '/' + req.param('db');
 
 		MongoClient.connect(url, mongoopts, function (err, db)
 		{
@@ -97,10 +92,8 @@ exports.collections =
 exports.metadata =
 	function(req, res)
 	{
-		var url = req.param('host').concat(':')
-			.concat(req.param('port')).concat('/config');
-
-		url = 'mongodb://'.concat(url);
+		var url = 'mongodb://' + req.param('host') + ':' +
+			req.param('port') + '/' + (req.param('configdb') || 'config');
 
 		var namespace = req.param('namespace');
 
@@ -198,10 +191,8 @@ exports.metadata =
 exports.query =
 	function(req, res)
 	{
-		var url = req.param('host').concat(':')
-			.concat(req.param('port')).concat('/').concat(req.param('db'));
-
-		url = 'mongodb://'.concat(url);
+		var url = 'mongodb://' + req.param('host') +
+			':' + req.param('port') + '/' + req.param('db');
 
 		try
 		{

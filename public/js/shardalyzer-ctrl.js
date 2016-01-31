@@ -59,10 +59,11 @@ shardalyze.config(['growlProvider', function(growlProvider)
 
 function growlmsg(headline, source, msg)
 {
-	var message = "<b>" + headline + "</b><br><b>" + source + "</b>";
+	var message = "<h4><b>" + headline +
+		"</b></h4><h5><b>" + source + "</b></h5>";
 
 	if(msg !== undefined)
-		message += "<br><i>" + msg + "</i>";
+		message += "<i>" + msg + "</i>";
 
 	return message;
 }
@@ -120,8 +121,8 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 	{
 		$scope.mongo.selectedNS = null;
 
-		var url = '/mongo/namespaces/'
-			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port);
+		var url = '/mongo/namespaces/' + $scope.mongo.host +
+			'/' + $scope.mongo.port + '/' + $scope.mongo.configdb;
 
 		$http
 		({
@@ -133,7 +134,7 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 			function(result)
 			{
 				growl.success(growlmsg("Connected to mongo server",
-					$scope.mongo.host + ":" + $scope.mongo.port, "Namespace list loaded"));
+					$scope.mongo.host + ":" + $scope.mongo.port, "Sharded namespace list loaded"));
 
 				$scope.mongo.nsList = result;
 			}
@@ -158,10 +159,9 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 		if($scope.mongo.selectedNS == null)
 			return;
 
-		var url = '/mongo/metadata/'
-			.concat($scope.mongo.host).concat('/')
-				.concat($scope.mongo.port).concat('/')
-					.concat($scope.mongo.selectedNS);
+		var url = '/mongo/metadata/' +
+			$scope.mongo.host + '/' + $scope.mongo.port + '/' +
+				$scope.mongo.configdb + '/' + $scope.mongo.selectedNS;
 
 		$http
 		({
@@ -820,9 +820,8 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 
 	$scope.query.submit = function()
 	{
-		var url = '/mongo/query/'
-			.concat($scope.mongo.host).concat('/').concat($scope.mongo.port)
-				.concat('/config/').concat($scope.query.selectedColl).concat('/').concat($scope.query.query);
+		var url = '/mongo/query/' + $scope.mongo.host + '/' + $scope.mongo.port + '/' +
+			$scope.mongo.configdb + '/' + $scope.query.selectedColl + '/' + $scope.query.query;
 
 		$http
 		({
@@ -840,8 +839,8 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 		(
 			function(err)
 			{
-				growl.error(growlmsg("Query failed", $scope.mongo.host + ":" +
-					$scope.mongo.port + "/config/" + $scope.query.selectedColl, err.message));
+				growl.error(growlmsg("Failed to run query", $scope.mongo.host + ":" +
+					$scope.mongo.port + "/" + $scope.mongo.configdb + "/" + $scope.query.selectedColl, err.message));
 			}
 		);
 	};
@@ -853,9 +852,8 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 		if($scope.mongo.nsList.length === 0)
 			return;
 
-		var url = '/mongo/collections/'
-			.concat($scope.mongo.host).concat('/')
-				.concat($scope.mongo.port).concat('/config');
+		var url = '/mongo/collections/' + $scope.mongo.host +
+			'/' + $scope.mongo.port + '/' + $scope.mongo.configdb;
 
 		$http
 		({
