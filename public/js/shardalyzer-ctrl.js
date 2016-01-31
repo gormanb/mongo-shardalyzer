@@ -115,7 +115,7 @@ var updateChangelog = function($scope, position)
 
 shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($scope, $http, growl)
 {
-	$scope.ops = { advanced : false };
+	$scope.opts = { advanced : false };
 
 	$scope.updateNSList = function()
 	{
