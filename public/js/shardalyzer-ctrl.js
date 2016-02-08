@@ -458,6 +458,25 @@ shardalyze.controller("updateCharts", function($scope)
 	};
 });
 
+shardalyze.controller("migrateCtrl", function($scope)
+{
+	$scope.chartmeta = {};
+
+	$scope.chartmeta.colours = [];
+
+	$scope.chartmeta.labels = [];
+	$scope.chartmeta.data = [];
+
+	$scope.$watch('mongo.shardalyzer.changes', function(changes)
+	{
+		$scope.chartmeta.data = $scope.mongo.shardalyzer.migrations;
+		$scope.chartmeta.labels = [];
+
+		for(var i = 0; changes && i < changes.length; i++)
+			$scope.chartmeta.labels[i] = "";
+	});
+});
+
 shardalyze.controller("sliderControl", function($scope)
 {
 	$scope.slidermeta = {};

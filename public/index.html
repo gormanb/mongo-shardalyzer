@@ -223,6 +223,12 @@
 					</div>
 				</div>
 
+				<div style="width:100%" ng-controller="migrateCtrl">
+					<canvas id="line" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels"
+						legend="true" series="['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Total']" watch="['labels']">
+					</canvas>
+				</div>
+
 				<div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 
 				<div id="shardcontrols" class="snug" style="margin: 15px 0 15px 0">

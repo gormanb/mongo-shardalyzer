@@ -102,6 +102,7 @@ var Shardalyzer =
 	changes : [],
 	watched : {},
 	balancer : {},
+	migrations : [ [],[],[],[],[],[],[] ],
 	position : null,
 
 	// arguments are objects in original format from the config database
@@ -114,6 +115,8 @@ var Shardalyzer =
 
 		this.watched = {};
 		this.tags = {};
+
+		this.migrations = [ [],[],[],[],[],[],[] ];
 
 		var currentmove = {};
 
@@ -157,18 +160,39 @@ var Shardalyzer =
 				currentmove.from = this.changes[i].details.from;
 				currentmove.to = this.changes[i].details.to;
 			}
-			else if(this.changes[i].what == OP_FROM && this.changes[i].details.from == undefined)
+			else if(this.changes[i].what == OP_FROM)
 			{
-				if(currentmove.from !== undefined)
+				if(this.changes[i].details.from == undefined)
 				{
-					this.changes[i].details.from = currentmove.from;
-					this.changes[i].details.to = currentmove.to;
+					if(currentmove.from !== undefined)
+					{
+						this.changes[i].details.from = currentmove.from;
+						this.changes[i].details.to = currentmove.to;
 
-					currentmove.from = currentmove.to = undefined;
+						currentmove.from = currentmove.to = undefined;
+					}
+					else if(success(this.changes[i])) // change is not reproducible
+						this.changes.splice(i, 1);
 				}
-				else if(success(this.changes[i])) // change is not reproducible
-					this.changes.splice(i, 1);
+
+				if(success(this.changes[i]))
+				{
+					var sum = 0;
+
+					for(var j = 1; j <= 6; j++)
+					{
+						var dur = this.changes[i].details["step " + j + " of 6"];
+
+						this.migrations[j-1][i] = dur;
+						sum += dur;
+					}
+
+					this.migrations[6][i] = sum;
+				}
 			}
+
+			for(var m in this.migrations)
+				this.migrations[m][i] = (this.migrations[m][i] || null);
 		}
 
 		// sort shard map by shard name
