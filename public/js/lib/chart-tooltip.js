@@ -1,5 +1,5 @@
 
-Chart.defaults.global.customTooltips = function(tooltip)
+var shardSegmentTooltip = function(tooltip)
 {
 	var tooltipEl = $('#chartjs-tooltip-shard');
 

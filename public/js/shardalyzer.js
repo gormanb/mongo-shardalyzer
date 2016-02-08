@@ -105,6 +105,8 @@ var Shardalyzer =
 	migrations : [ [],[],[],[],[],[],[] ],
 	position : null,
 
+	statuscolors : statuscolors,
+
 	// arguments are objects in original format from the config database
 	initialize : function(sharddata, tagdata, chunkdata, changedata)
 	{
@@ -201,7 +203,6 @@ var Shardalyzer =
 		// if chunkdata is empty, position is null else 0
 		// clusters with no changelog entries still valid
 		this.position = (chunkdata.length > 0 ? 0 : null);
-		this.statuscolors = statuscolors;
 
 		if(this.canRewind())
 			this.tag(this.chunks, this.changes[0]);

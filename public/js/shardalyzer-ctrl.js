@@ -443,6 +443,8 @@ shardalyze.controller("updateCharts", function($scope)
 
 		legendTemplate : '',
 
+		customTooltips : shardSegmentTooltip,
+
 		tooltipTemplate : function(label)
 		{
 			return label.label;
@@ -460,12 +462,29 @@ shardalyze.controller("updateCharts", function($scope)
 
 shardalyze.controller("migrateCtrl", function($scope)
 {
+	var scolors = $scope.mongo.shardalyzer.statuscolors;
+
 	$scope.chartmeta = {};
 
-	$scope.chartmeta.colours = [];
+	$scope.chartmeta.colours =
+		[ scolors[STATUS_START_SOURCE], scolors[STATUS_START_SOURCE],
+		  scolors[STATUS_START_SOURCE], scolors[STATUS_TO_SOURCE],
+		  scolors[STATUS_COMMIT], scolors[STATUS_FROM_SUCCESS], DEFAULT_CHUNK_COLOR ];
 
 	$scope.chartmeta.labels = [];
 	$scope.chartmeta.data = [];
+
+	$scope.chartmeta.series =
+		['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Total'];
+
+	$scope.chartmeta.options =
+	{
+		scaleShowVerticalLines: false,
+		maintainAspectRatio : false,
+		pointHitDetectionRadius : 0,
+		//bezierCurve : false,
+		responsive : true
+	}
 
 	$scope.$watch('mongo.shardalyzer.changes', function(changes)
 	{
