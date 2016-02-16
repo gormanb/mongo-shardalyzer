@@ -17,6 +17,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo.ui =
 		{
 			selectedchange : "0",
+			showmigrations : false,
 			showchangelog : true,
 			shardenabled : {},
 			changelog : [],
@@ -406,11 +407,6 @@ shardalyze.controller("updateCharts", function($scope)
 		$scope.chartmeta.granularity.reset(shards);
 	});
 
-	$scope.chartmeta.toggleedit = function()
-	{
-		$scope.chartmeta.shardedit = (!$scope.chartmeta.shardedit);
-	};
-
 	$scope.chartmeta.enableall = function(enable)
 	{
 		for(var k in $scope.mongo.ui.shardenabled)
@@ -481,7 +477,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 	{
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
-		pointHitDetectionRadius : 0,
+		pointHitDetectionRadius : 1,
 		//bezierCurve : false,
 		responsive : true
 	}

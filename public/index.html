@@ -159,7 +159,7 @@
 					<div id="shardedit" style="position:absolute; z-index:2">
 						<span id="shardeditbuttons" style="display:inline-block; float:left">
 							<div style="padding:5px">
-								<button type="button" class="{{chartmeta.shardedit ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="chartmeta.toggleedit();" value="Edit">
+								<button type="button" class="{{chartmeta.shardedit ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="chartmeta.shardedit = (!chartmeta.shardedit)" value="Edit">
 									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 								</button>
 							</div>
@@ -307,11 +307,14 @@
 								formatter="slidermeta.formatter(value)">
 							</slider>
 							<span id="erroroptions" class="form-inline form-group" style="width:100%">
-								<label ng-repeat="(name, opts) in errorconfig.opts" style="padding:5px; float:left">
+								<button type="button" style="margin:5px; float:left" class="{{mongo.ui.showmigrations ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="mongo.ui.showmigrations = (!mongo.ui.showmigrations)" value="Edit">
+									<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+								</button>
+								<label ng-repeat="(name, opts) in errorconfig.opts" class="form-control" style="margin:5px; float:left; background-color:transparent; border:none; box-shadow:none">
 									<checkbox ng-model="opts.enabled" class="btn-{{opts.severity}}"></checkbox>
 									{{opts.name}}
 								</label>
-								<label ng-repeat="(name, param) in errorconfig.params" style="padding:5px; float:right">
+								<label ng-repeat="(name, param) in errorconfig.params" style="margin:5px; float:right">
 									{{param.name || ''}}
 									<input ng-if="param.type !== 'select'" type="{{param.type}}" ng-model="param.value" id="param.name" min=1 class="form-control">
 									<select ng-if="param.type == 'select'" ng-model="param.value" ng-options="opt as key for (key, opt) in param.options" id="param.name" class="form-control"></select>
@@ -320,15 +323,17 @@
 						</div>
 					</div>
 
+					<div style="margin: 0 0 15px 0" ng-show="mongo.ui.showmigrations">
+						<div class="snug panel panel-default panel-body" style="width:75%; margin: 0 auto" ng-controller="migrateCtrl">
+							<canvas id="line" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels" colours="chartmeta.colours"
+								legend="false" series="chartmeta.series" options="chartmeta.options" watch="['labels']">
+							</canvas>
+						</div>
+					</div>
+
 					<div style="width:75%; margin:0 auto;" ng-style="{ 'visibility' : (mongo.ui.errmsg[mongo.ui.slider] != undefined ? 'visible' : 'hidden') }">
 						<uib-alert type="{{mongo.ui.errmsg[mongo.ui.slider].type}}" style="margin: 15px 0 0 0">{{mongo.ui.errmsg[mongo.ui.slider].msg}}&nbsp;</uib-alert>
 					</div>
-				</div>
-
-				<div class="snug" style="width:85%; margin: 0 auto" ng-controller="migrateCtrl">
-					<canvas id="line" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels" colours="chartmeta.colours"
-						legend="false" series="chartmeta.series" options="chartmeta.options" watch="['labels']">
-					</canvas>
 				</div>
 
 				<div id="changelogquery" class="snug">
