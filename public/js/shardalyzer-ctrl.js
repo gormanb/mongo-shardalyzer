@@ -471,7 +471,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 	$scope.chartmeta.data = [];
 
 	$scope.chartmeta.series =
-		['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Total'];
+		['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total'];
 
 	$scope.chartmeta.options =
 	{
@@ -488,8 +488,26 @@ shardalyze.controller("migrateCtrl", function($scope)
 		$scope.chartmeta.labels = [];
 
 		for(var i = 0; changes && i < changes.length; i++)
-			$scope.chartmeta.labels[i] = "";
+			$scope.chartmeta.labels[i] = i;
 	});
+
+	$scope.migrateClick = function(points, event)
+	{
+		var mid = Math.round(points.length/2);
+
+		for(var i = 0; i <= mid; i++)
+		{
+			var selpoint =
+				((mid-i) in points && points[mid-i].value && points[mid-i].label)
+					|| ((mid+i) in points && points[mid+i].value && points[mid+i].label) || null;
+
+			if(selpoint)
+			{
+				$scope.mongo.ui.slider = selpoint;
+				break;
+			}
+		}
+	}
 });
 
 shardalyze.controller("sliderControl", function($scope)

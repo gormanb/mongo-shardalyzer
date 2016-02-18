@@ -323,10 +323,10 @@
 						</div>
 					</div>
 
-					<div style="margin: 0 0 15px 0" ng-show="mongo.ui.showmigrations">
+					<div style="margin: 10px 0 15px 0" ng-show="mongo.ui.showmigrations">
 						<div class="snug panel panel-default panel-body" style="width:75%; margin: 0 auto" ng-controller="migrateCtrl">
 							<canvas id="line" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels" colours="chartmeta.colours"
-								legend="false" series="chartmeta.series" options="chartmeta.options" watch="['labels']">
+								legend="false" series="chartmeta.series" options="chartmeta.options" watch="['labels']" click="migrateClick">
 							</canvas>
 						</div>
 					</div>
