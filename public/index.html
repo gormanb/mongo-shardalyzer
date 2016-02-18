@@ -223,6 +223,7 @@
 					</div>
 				</div>
 
+				<div id="chartjs-tooltip-migrate" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 				<div id="chartjs-tooltip-shard" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 
 				<div id="shardcontrols" class="snug" style="margin: 15px 0 15px 0">
@@ -325,8 +326,8 @@
 
 					<div style="margin: 10px 0 15px 0" ng-show="mongo.ui.showmigrations">
 						<div class="snug panel panel-default panel-body" style="width:75%; margin: 0 auto" ng-controller="migrateCtrl">
-							<canvas id="line" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels" colours="chartmeta.colours"
-								legend="false" series="chartmeta.series" options="chartmeta.options" watch="['labels']" click="migrateClick">
+							<canvas id="line" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels" colours="chartmeta.colours" legend="false"
+								series="chartmeta.series" options="chartmeta.options" watch="['labels']" click="migrateClick" hover="migrateHover">
 							</canvas>
 						</div>
 					</div>

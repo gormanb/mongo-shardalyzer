@@ -157,6 +157,9 @@ var Shardalyzer =
 		// populate "from" & "to" fields in 2.6 moveChunk.from
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
+			for(var m in this.migrations)
+				this.migrations[m][i] = null;
+
 			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
 			{
 				currentmove.from = this.changes[i].details.from;
@@ -192,9 +195,6 @@ var Shardalyzer =
 					this.migrations[6][i] = sum;
 				}
 			}
-
-			for(var m in this.migrations)
-				this.migrations[m][i] = (this.migrations[m][i] || null);
 		}
 
 		// sort shard map by shard name

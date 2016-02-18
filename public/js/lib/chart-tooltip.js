@@ -69,3 +69,51 @@ var shardSegmentTooltip = function(tooltip)
 		fontStyle: tooltip.fontStyle,
 	});
 };
+
+var migrateGraphTooltipRaw = function(point, event)
+{
+	var tooltipEl = $('#chartjs-tooltip-migrate');
+
+	if (!point) {
+		tooltipEl.css({
+			opacity: 0
+		});
+		return;
+	}
+
+	// align to cursor
+	tooltipEl.removeClass('above below');
+	tooltipEl.addClass('center');
+
+	var migrations = Shardalyzer.migrations;
+
+	var text = [];
+
+	for(var i = 0; i < 6; i++)
+		text[i] = ("F" + (i+1) + ": " + migrations[i][point.label]);
+
+	text[6] = "Total: " + migrations[6][point.label];
+
+	// set text content
+	tooltipEl.html("<pre>" + JSON.stringify(text, null, 2) + "</pre>");
+
+	// get location of tooltip
+	var bottom = point.y;
+	var left = point.x;
+
+	// reposition tooltip based on parent containers' offsets
+
+	top =
+		event.clientY
+
+	left =
+		event.clientX
+
+	// set position and display
+	tooltipEl.css({
+		opacity: 1,
+		visibility: 'visible',
+		left: left + 'px',
+		top: top + 'px'
+	});
+}

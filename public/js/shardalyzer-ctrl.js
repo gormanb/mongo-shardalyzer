@@ -475,9 +475,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta.options =
 	{
+		customTooltips : angular.noop,
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
-		pointHitDetectionRadius : 1,
+		pointHitDetectionRadius : 0,
 		//bezierCurve : false,
 		responsive : true
 	}
@@ -491,22 +492,34 @@ shardalyze.controller("migrateCtrl", function($scope)
 			$scope.chartmeta.labels[i] = i;
 	});
 
-	$scope.migrateClick = function(points, event)
+	function closestToMid(points)
 	{
 		var mid = Math.round(points.length/2);
 
 		for(var i = 0; i <= mid; i++)
 		{
 			var selpoint =
-				((mid-i) in points && points[mid-i].value && points[mid-i].label)
-					|| ((mid+i) in points && points[mid+i].value && points[mid+i].label) || null;
+				((mid-i) in points && points[mid-i].value && points[mid-i])
+					|| ((mid+i) in points && points[mid+i].value && points[mid+i]) || null;
 
 			if(selpoint)
-			{
-				$scope.mongo.ui.slider = selpoint;
-				break;
-			}
+				return selpoint;
 		}
+
+		return null;
+	}
+
+	$scope.migrateClick = function(points, event)
+	{
+		var selpoint = closestToMid(points);
+
+		if(selpoint)
+			$scope.mongo.ui.slider = selpoint.label;
+	}
+
+	$scope.migrateHover = function(points, event)
+	{
+		migrateGraphTooltipRaw(closestToMid(points), event);
 	}
 });
 
