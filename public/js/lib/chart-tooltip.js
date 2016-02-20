@@ -83,7 +83,7 @@ var migrateGraphTooltipRaw = function(point, event)
 
 	// align to cursor
 	tooltipEl.removeClass('above below');
-	tooltipEl.addClass('center');
+	tooltipEl.addClass('above center');
 
 	var migrations = Shardalyzer.migrations;
 
@@ -97,17 +97,11 @@ var migrateGraphTooltipRaw = function(point, event)
 	// set text content
 	tooltipEl.html("<pre>" + JSON.stringify(text, null, 2) + "</pre>");
 
-	// get location of tooltip
-	var bottom = point.y;
-	var left = point.x;
+	var caretOffset = 20;
 
 	// reposition tooltip based on parent containers' offsets
-
-	top =
-		event.clientY
-
-	left =
-		event.clientX
+	var top = event.offsetY - caretOffset + event.target.offsetTop;
+	var left = event.offsetX + event.target.offsetLeft;
 
 	// set position and display
 	tooltipEl.css({
