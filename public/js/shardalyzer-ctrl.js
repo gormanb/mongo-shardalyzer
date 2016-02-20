@@ -517,9 +517,17 @@ shardalyze.controller("migrateCtrl", function($scope)
 			$scope.mongo.ui.slider = selpoint.label;
 	}
 
+	var lastPoint = null;
+
 	$scope.migrateHover = function(points, event)
 	{
-		migrateGraphTooltipRaw(closestToMid(points), event);
+		var point = closestToMid(points);
+
+		if(!point || !lastPoint ||  (point.label != lastPoint.label))
+		{
+			migrateGraphTooltipRaw(point, event);
+			lastPoint = point;
+		}
 	}
 });
 
