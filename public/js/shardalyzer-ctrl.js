@@ -485,11 +485,36 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.$watch('mongo.shardalyzer.changes', function(changes)
 	{
-		$scope.chartmeta.data = $scope.mongo.shardalyzer.migrations;
+		$scope.chartmeta.data = [ [],[],[],[],[],[],[] ];
 		$scope.chartmeta.labels = [];
 
-		for(var i = 0; changes && i < changes.length; i++)
+		if(!changes) return;
+
+		for(var i = 0; i < changes.length; i++)
+		{
+			for(var m in $scope.chartmeta.data)
+				$scope.chartmeta.data[m][i] = null;
+
+			if(changes[i].what == OP_FROM)
+			{
+				if(success(changes[i]))
+				{
+					var sum = 0;
+
+					for(var j = 1; j <= 6; j++)
+					{
+						var dur = changes[i].details["step " + j + " of 6"];
+
+						$scope.chartmeta.data[j-1][i] = dur;
+						sum += dur;
+					}
+
+					$scope.chartmeta.data[6][i] = sum;
+				}
+			}
+
 			$scope.chartmeta.labels[i] = i;
+		}
 	});
 
 	function closestToMid(points)
@@ -523,9 +548,9 @@ shardalyze.controller("migrateCtrl", function($scope)
 	{
 		var point = closestToMid(points);
 
-		if(!point || !lastPoint ||  (point.label != lastPoint.label))
+		if(!point || !lastPoint ||  (point.label !== lastPoint.label))
 		{
-			migrateGraphTooltipRaw(point, event);
+			migrateGraphTooltipRaw(point, $scope.chartmeta.data, event);
 			lastPoint = point;
 		}
 	}

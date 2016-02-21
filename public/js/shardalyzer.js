@@ -102,7 +102,6 @@ var Shardalyzer =
 	changes : [],
 	watched : {},
 	balancer : {},
-	migrations : [ [],[],[],[],[],[],[] ],
 	position : null,
 
 	statuscolors : statuscolors,
@@ -117,8 +116,6 @@ var Shardalyzer =
 
 		this.watched = {};
 		this.tags = {};
-
-		this.migrations = [ [],[],[],[],[],[],[] ];
 
 		var currentmove = {};
 
@@ -157,9 +154,6 @@ var Shardalyzer =
 		// populate "from" & "to" fields in 2.6 moveChunk.from
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
-			for(var m in this.migrations)
-				this.migrations[m][i] = null;
-
 			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
 			{
 				currentmove.from = this.changes[i].details.from;
@@ -178,21 +172,6 @@ var Shardalyzer =
 					}
 					else if(success(this.changes[i])) // change is not reproducible
 						this.changes.splice(i, 1);
-				}
-
-				if(success(this.changes[i]))
-				{
-					var sum = 0;
-
-					for(var j = 1; j <= 6; j++)
-					{
-						var dur = this.changes[i].details["step " + j + " of 6"];
-
-						this.migrations[j-1][i] = dur;
-						sum += dur;
-					}
-
-					this.migrations[6][i] = sum;
 				}
 			}
 		}

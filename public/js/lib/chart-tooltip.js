@@ -70,7 +70,7 @@ var shardSegmentTooltip = function(tooltip)
 	});
 };
 
-var migrateGraphTooltipRaw = function(point, event)
+var migrateGraphTooltipRaw = function(point, migrations, event)
 {
 	var tooltipEl = $('#chartjs-tooltip-shardalyzer');
 
@@ -84,8 +84,6 @@ var migrateGraphTooltipRaw = function(point, event)
 	// align to cursor
 	tooltipEl.removeClass('above below');
 	tooltipEl.addClass('above center');
-
-	var migrations = Shardalyzer.migrations;
 
 	var text = [];
 
