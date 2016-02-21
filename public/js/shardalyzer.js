@@ -37,7 +37,26 @@ statuscolors[STATUS_START_DEST] = '#AAAAAA',
 statuscolors[STATUS_TO_DEST] = '#AAAAAA',
 */
 
+// used to convert 2.x moveChunk step format to 3.x
+var migratekeymap = {};
+
+for(var i = 1; i <= 6; i++)
+{
+	migratekeymap["step" + i + " of 6"] = "step " + i + " of 6";
+	migratekeymap["step" + i + " of 5"] = "step " + i + " of 5";
+}
+
 var s = JSON.stringify;
+
+function remap(obj, keymap)
+{
+	var newObj = {};
+
+	for(k in obj)
+		newObj[(k in keymap ? keymap[k] : k)] = obj[k];
+
+	return newObj;
+}
 
 function peekBack(array)
 {
@@ -150,8 +169,12 @@ var Shardalyzer =
 			this.chunks[s(chunk.min)] = chunk;
 		}
 
-		// iterate from end to start, i.e. in chronological order
-		// populate "from" & "to" fields in 2.6 moveChunk.from
+		/*
+		 * Iterate from end to start, i.e. in chronological order
+		 * Homogenise 2.x changelog format to newer 3.0 format
+		 *   - populate "from" & "to" fields in 2.x moveChunk.from
+		 *   - change "stepX" in 2.x moveChunk to 3.x "step X"
+		 */
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
 			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
@@ -161,6 +184,10 @@ var Shardalyzer =
 			}
 			else if(this.changes[i].what == OP_FROM)
 			{
+				// change 2.x "stepX" to 3.x "step X"
+				if(this.changes[i].details["step1 of 6"])
+					this.changes[i].details = remap(this.changes[i].details, migratekeymap);
+
 				if(this.changes[i].details.from == undefined)
 				{
 					if(currentmove.from !== undefined)
@@ -173,6 +200,12 @@ var Shardalyzer =
 					else if(success(this.changes[i])) // change is not reproducible
 						this.changes.splice(i, 1);
 				}
+			}
+			else if(this.changes[i].what == OP_TO)
+			{
+				// change 2.x "stepX" to 3.x "step X"
+				if(this.changes[i].details["step1 of 5"])
+					this.changes[i].details = remap(this.changes[i].details, migratekeymap);
 			}
 		}
 
