@@ -1,7 +1,7 @@
 
 var shardSegmentTooltip = function(tooltip)
 {
-	var tooltipEl = $('#chartjs-tooltip-shard');
+	var tooltipEl = $('#chartjs-tooltip-shardalyzer');
 
 	if (!tooltip) {
 		tooltipEl.css({
@@ -72,7 +72,7 @@ var shardSegmentTooltip = function(tooltip)
 
 var migrateGraphTooltipRaw = function(point, event)
 {
-	var tooltipEl = $('#chartjs-tooltip-migrate');
+	var tooltipEl = $('#chartjs-tooltip-shardalyzer');
 
 	if (!point) {
 		tooltipEl.css({
