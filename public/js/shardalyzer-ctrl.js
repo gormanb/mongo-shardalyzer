@@ -493,8 +493,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 		for(var i = 0; i < changes.length; i++)
 		{
+			var r = changes.length - (i+1);
+
 			for(var m in $scope.chartmeta.data)
-				$scope.chartmeta.data[m][i] = null;
+				$scope.chartmeta.data[m][r] = null;
 
 			if(changes[i].what == OP_FROM)
 			{
@@ -506,15 +508,15 @@ shardalyze.controller("migrateCtrl", function($scope)
 					{
 						var dur = changes[i].details["step " + j + " of 6"];
 
-						$scope.chartmeta.data[j-1][i] = dur;
+						$scope.chartmeta.data[j-1][r] = dur;
 						sum += dur;
 					}
 
-					$scope.chartmeta.data[6][i] = sum;
+					$scope.chartmeta.data[6][r] = sum;
 				}
 			}
 
-			$scope.chartmeta.labels[i] = i;
+			$scope.chartmeta.labels[r] = i;
 		}
 	});
 
@@ -662,7 +664,7 @@ shardalyze.controller("sliderControl", function($scope)
 	 				{
 		 				var step = "step " + i + " of 6";
 
-		 				var time = change.details["step " + i + " of 6"];
+		 				var time = change.details[step];
 
 		 				if(time !== undefined)
 		 					msg[step] = time;
