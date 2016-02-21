@@ -480,6 +480,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 		maintainAspectRatio : false,
 		pointHitDetectionRadius : 0,
 		//bezierCurve : false,
+		showLabelsX : false,
 		responsive : true
 	}
 
