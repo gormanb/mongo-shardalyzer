@@ -489,6 +489,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 		$scope.chartmeta.data = [ [],[],[],[],[],[],[] ];
 		$scope.chartmeta.labels = [];
 
+		$scope.mongo.ui.showmigrations = false;
+
 		if(!changes) return;
 
 		for(var i = 0; i < changes.length; i++)
