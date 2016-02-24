@@ -322,11 +322,18 @@
 						</div>
 					</div>
 
-					<div style="margin: 10px 0 15px 0" ng-show="mongo.ui.showmigrations">
-						<div class="snug panel panel-default panel-body" style="width:75%; margin: 0 auto" ng-controller="migrateCtrl">
-							<canvas id="line" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels" colours="chartmeta.colours" legend="false"
-								series="chartmeta.series" options="chartmeta.options" watch="['labels']" click="migrateClick" hover="migrateHover">
-							</canvas>
+					<div style="margin: 10px 0 15px 0" ng-show="mongo.ui.showmigrations" ng-controller="migrateCtrl">
+						<div class="snug" style="margin: 0 auto; width: 75%">
+							<div class="snug panel panel-default panel-body" style="display: inline; float: left; width:25%">
+								<canvas id="migrateBar" class="chart chart-bar" data="[[1000, 100, 2500, 3000, 500, 1000, 50000]]" labels="chartmeta.series" colours="chartmeta.colours" legend="false"
+									series="['Series 1']" options="chartmeta.options" watch="['labels']">
+								</canvas>
+							</div>
+							<div class="snug panel panel-default panel-body" style="display: inline; float: right; width:75%">
+								<canvas id="migrateGraph" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels" colours="chartmeta.colours" legend="false"
+									series="chartmeta.series" options="chartmeta.options" watch="['labels']" click="migrateClick" hover="migrateHover">
+								</canvas>
+							</div>
 						</div>
 					</div>
 
