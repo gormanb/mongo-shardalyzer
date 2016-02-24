@@ -322,22 +322,22 @@
 						</div>
 					</div>
 
-					<div style="margin: 10px 0 15px 0" ng-show="mongo.ui.showmigrations" ng-controller="migrateCtrl">
-						<div class="snug" style="margin: 0 auto; width: 75%">
-							<div class="snug panel panel-default panel-body" style="display: inline; float: left; width:25%">
-								<canvas id="migrateBar" class="chart chart-bar" data="[[1000, 100, 2500, 3000, 500, 1000, 50000]]" labels="chartmeta.series" colours="chartmeta.colours" legend="false"
-									series="['Series 1']" options="chartmeta.options" watch="['labels']">
+					<div class="snug" style="margin: 10px 0 10px 0" ng-show="mongo.ui.showmigrations">
+						<div style="margin: 0 auto; width: 75%" ng-controller="migrateCtrl">
+							<div class="panel panel-default panel-body" style="float: left; width:25%">
+								<canvas id="migrateBars" class="chart chart-bar" data="chartmeta.bars.data" labels="chartmeta.bars.labels" colours="chartmeta.colours"
+									legend="false" series="chartmeta.bars.series" options="chartmeta.bars.options" watch="['data']">
 								</canvas>
 							</div>
-							<div class="snug panel panel-default panel-body" style="display: inline; float: right; width:75%">
-								<canvas id="migrateGraph" class="chart chart-line" data="chartmeta.data" labels="chartmeta.labels" colours="chartmeta.colours" legend="false"
-									series="chartmeta.series" options="chartmeta.options" watch="['labels']" click="migrateClick" hover="migrateHover">
+							<div class="panel panel-default panel-body" style="float: right; width:75%">
+								<canvas id="migrateGraph" class="chart chart-line" data="chartmeta.graph.data" labels="chartmeta.graph.labels" colours="chartmeta.colours" legend="false"
+									series="chartmeta.graph.series" options="chartmeta.graph.options" watch="['labels']" click="migrateClick" hover="migrateHover">
 								</canvas>
 							</div>
 						</div>
 					</div>
 
-					<div style="width:75%; margin:0 auto;" ng-style="{ 'visibility' : (mongo.ui.errmsg[mongo.ui.slider] != undefined ? 'visible' : 'hidden') }">
+					<div style="width:75%; margin:0 auto; clear:both" ng-style="{ 'visibility' : (mongo.ui.errmsg[mongo.ui.slider] != undefined ? 'visible' : 'hidden') }">
 						<uib-alert type="{{mongo.ui.errmsg[mongo.ui.slider].type}}" style="margin: 15px 0 0 0">{{mongo.ui.errmsg[mongo.ui.slider].msg}}&nbsp;</uib-alert>
 					</div>
 				</div>

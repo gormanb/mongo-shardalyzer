@@ -460,20 +460,35 @@ shardalyze.controller("migrateCtrl", function($scope)
 {
 	var scolors = $scope.mongo.shardalyzer.statuscolors;
 
-	$scope.chartmeta = {};
+	$scope.chartmeta =
+	{
+		graph : {},
+		bars : {}
+	};
 
 	$scope.chartmeta.colours =
 		[ scolors[STATUS_START_SOURCE], scolors[STATUS_START_SOURCE],
 		  scolors[STATUS_START_SOURCE], scolors[STATUS_TO_SOURCE],
 		  scolors[STATUS_COMMIT], scolors[STATUS_FROM_SUCCESS], DEFAULT_CHUNK_COLOR ];
 
-	$scope.chartmeta.labels = [];
-	$scope.chartmeta.data = [];
-
-	$scope.chartmeta.series =
+	$scope.chartmeta.graph.series =
 		['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total'];
 
-	$scope.chartmeta.options =
+	$scope.chartmeta.bars.series = ['Migration Steps'];
+
+	$scope.chartmeta.bars.labels = $scope.chartmeta.graph.series;
+	$scope.chartmeta.bars.data = [];
+
+	$scope.chartmeta.graph.labels = [];
+	$scope.chartmeta.graph.data = [];
+
+	$scope.chartmeta.bars.options =
+	{
+		maintainAspectRatio : false,
+		responsive : true
+	}
+
+	$scope.chartmeta.graph.options =
 	{
 		customTooltips : angular.noop,
 		scaleShowVerticalLines: false,
@@ -486,8 +501,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.$watch('mongo.shardalyzer.changes', function(changes)
 	{
-		$scope.chartmeta.data = [ [],[],[],[],[],[],[] ];
-		$scope.chartmeta.labels = [];
+		$scope.chartmeta.graph.data = [ [],[],[],[],[],[],[] ];
+		$scope.chartmeta.graph.labels = [];
 
 		$scope.mongo.ui.showmigrations = false;
 
@@ -497,8 +512,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 		{
 			var r = changes.length - (i+1);
 
-			for(var m in $scope.chartmeta.data)
-				$scope.chartmeta.data[m][r] = null;
+			for(var m in $scope.chartmeta.graph.data)
+				$scope.chartmeta.graph.data[m][r] = null;
 
 			if(changes[i].what == OP_FROM)
 			{
@@ -510,34 +525,39 @@ shardalyze.controller("migrateCtrl", function($scope)
 					{
 						var dur = changes[i].details["step " + j + " of 6"];
 
-						$scope.chartmeta.data[j-1][r] = dur;
+						$scope.chartmeta.graph.data[j-1][r] = dur;
 						sum += dur;
 					}
 
-					$scope.chartmeta.data[6][r] = sum;
+					$scope.chartmeta.graph.data[6][r] = sum;
 				}
 			}
 
-			$scope.chartmeta.labels[r] = i;
+			$scope.chartmeta.graph.labels[r] = i;
 		}
 	});
 
-	function closestToMid(points)
+	// update bars view when slider position changes
+	$scope.$watch('mongo.ui.slider', function(pos)
 	{
-		var mid = Math.round(points.length/2);
+		var changes = $scope.mongo.shardalyzer.changes;
+		$scope.chartmeta.bars.data = [[]];
 
-		for(var i = 0; i <= mid; i++)
+		if(pos && changes && changes[pos] && changes[pos].what == OP_FROM)
 		{
-			var selpoint =
-				((mid-i) in points && points[mid-i].value && points[mid-i])
-					|| ((mid+i) in points && points[mid+i].value && points[mid+i]) || null;
+			var sum = 0;
 
-			if(selpoint)
-				return selpoint;
+			for(var j = 1; j <= 6; j++)
+			{
+				var dur = changes[pos].details["step " + j + " of 6"];
+
+				$scope.chartmeta.bars.data[0][j-1] = (dur == undefined ? null : dur);
+				sum += (dur || 0);
+			}
+
+			$scope.chartmeta.bars.data[0][6] = sum;
 		}
-
-		return null;
-	}
+	});
 
 	$scope.migrateClick = function(points, event)
 	{
@@ -555,9 +575,26 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 		if(!point || !lastPoint ||  (point.label !== lastPoint.label))
 		{
-			migrateGraphTooltipRaw(point, $scope.chartmeta.data, event);
+			migrateGraphTooltipRaw(point, $scope.chartmeta.graph.data, event);
 			lastPoint = point;
 		}
+	}
+
+	function closestToMid(points)
+	{
+		var mid = Math.round(points.length/2);
+
+		for(var i = 0; i <= mid; i++)
+		{
+			var selpoint =
+				((mid-i) in points && points[mid-i].value && points[mid-i])
+					|| ((mid+i) in points && points[mid+i].value && points[mid+i]) || null;
+
+			if(selpoint)
+				return selpoint;
+		}
+
+		return null;
 	}
 });
 
