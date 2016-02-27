@@ -484,7 +484,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta.bars.options =
 	{
-		maintainAspectRatio : false,
+		maintainAspectRatio : true,
 		responsive : true
 	}
 

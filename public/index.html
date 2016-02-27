@@ -324,16 +324,16 @@
 
 					<div class="snug" style="margin: 10px 0 10px 0" ng-show="mongo.ui.showmigrations">
 						<div style="margin: 0 auto; width: 75%" ng-controller="migrateCtrl">
-							<div class="panel panel-default panel-body" style="float: left; width:25%">
+							<span class="panel panel-default panel-body" style="float: left; width:25%">
 								<canvas id="migrateBars" class="chart chart-bar" data="chartmeta.bars.data" labels="chartmeta.bars.labels" colours="chartmeta.colours"
 									legend="false" series="chartmeta.bars.series" options="chartmeta.bars.options" watch="['data']">
 								</canvas>
-							</div>
-							<div class="panel panel-default panel-body" style="float: right; width:75%">
+							</span>
+							<span class="panel panel-default panel-body" style="float: right; width:75%">
 								<canvas id="migrateGraph" class="chart chart-line" data="chartmeta.graph.data" labels="chartmeta.graph.labels" colours="chartmeta.colours" legend="false"
 									series="chartmeta.graph.series" options="chartmeta.graph.options" watch="['labels']" click="migrateClick" hover="migrateHover">
 								</canvas>
-							</div>
+							</span>
 						</div>
 					</div>
 
