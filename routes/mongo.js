@@ -105,6 +105,8 @@ exports.metadata =
 				res.status(500).send(err);
 			else
 			{
+			    var collcoll = db.collection('collections');
+
 			    var changecoll = db.collection('changelog');
 				var chunkcoll = db.collection('chunks');
 
@@ -112,7 +114,7 @@ exports.metadata =
 				var tagcoll = db.collection('tags');
 
 				// guard against collections that were dropped and recreated; only take changelog entries since the most recent sharding
-				changecoll.find({ ns : namespace, what : "shardCollection" }).sort({ time : -1 }).limit(1).toArray(function(err, shardevent)
+				collcoll.find({ _id : namespace, dropped : false }).limit(1).toArray(function(err, shardevent)
 				{
 					var start = new Date(0);
 
@@ -124,7 +126,7 @@ exports.metadata =
 						return;
 					}
 					else if(shardevent && shardevent.length > 0)
-						start = shardevent[0].time;
+						start = shardevent[0].lastmod;
 
 					var changecursor = changecoll.find({ ns : namespace, what : /moveChunk|split/, time : { $gt : start } }).sort({ time : -1 });
 					var chunkcursor = chunkcoll.find({ ns : namespace });
