@@ -201,7 +201,7 @@
 								data="chartmeta.data[shard]"
 								labels="chartmeta.labels[shard]"
 								colours="chartmeta.colors[shard]"
-								watch="['colours']"
+								watch="{'colours':'collection'}"
 								click="wedgeClick"></canvas>
 							<p align="center">
 								<a href="#" uib-tooltip-template="'tooltip.html'" tooltip-placement="bottom" tooltip-append-to-body="true" style="color:{{mongo.shardalyzer.balancer[shard]}};">
@@ -325,12 +325,12 @@
 					<div style="margin: 0 auto; margin-top:10px; width: 75%; height:200px;" ng-controller="migrateCtrl" ng-show="mongo.ui.showmigrations">
 						<div class="panel panel-default panel-body" style="float: left; width:25%; height:100%">
 							<canvas id="migrateBars" class="chart chart-bar" data="chartmeta.bars.data" labels="chartmeta.bars.labels" colours="chartmeta.colours"
-								legend="false" series="chartmeta.bars.series" options="chartmeta.bars.options" watch="['data']">
+								legend="false" series="chartmeta.bars.series" options="chartmeta.bars.options" watch="{'labels':false}">
 							</canvas>
 						</div>
 						<div class="panel panel-default panel-body" style="float: right; width:75%; height:100%">
 							<canvas id="migrateGraph" class="chart chart-line" data="chartmeta.graph.data" labels="chartmeta.graph.labels" colours="chartmeta.colours" legend="false"
-								series="chartmeta.graph.series" options="chartmeta.graph.options" watch="['data']" click="migrateClick" hover="migrateHover">
+								series="chartmeta.graph.series" options="chartmeta.graph.options" watch="{'labels':false}" click="migrateClick" hover="migrateHover">
 							</canvas>
 							<div style="float:right; transform: translate(0%, -75%);">
 								<select style="color: #333; font-weight:normal"

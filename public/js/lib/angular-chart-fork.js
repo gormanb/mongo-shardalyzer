@@ -112,11 +112,16 @@
           if (usingExcanvas) window.G_vmlCanvasManager.initElement(elem[0]);
 
           if(!scope.watch)
-             scope.watch = ['data', 'series', 'labels', 'options', 'colours'];
+             scope.watch = { 'data' : false, 'series' : false, 'labels' : false, 'options' : false, 'colours' : false };
 
           // series, labels, options, colours
           for(var k in scope.watch)
-        	  scope.$watchCollection(scope.watch[k], resetChart);
+          {
+        	  if(scope.watch[k] === "collection")
+        		  scope.$watchCollection(k, resetChart);
+        	  else
+        		  scope.$watch(k, resetChart, scope.watch[k]);
+          }
 
           // always watch chartType
           scope.$watch('chartType', function (newVal, oldVal) {
