@@ -462,7 +462,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta =
 	{
-		graph : {},
+		graph : { from : null, to : null },
 		bars : {}
 	};
 
@@ -499,12 +499,18 @@ shardalyze.controller("migrateCtrl", function($scope)
 		responsive : true
 	}
 
-	$scope.$watch('mongo.shardalyzer.changes', function(changes)
+	function filterMigration(change)
+	{
+		return (!$scope.chartmeta.graph.from || change.details.from == $scope.chartmeta.graph.from)
+			&& (!$scope.chartmeta.graph.to || change.details.to == $scope.chartmeta.graph.to);
+	}
+
+	function updateGraph()
 	{
 		$scope.chartmeta.graph.data = [ [],[],[],[],[],[],[] ];
 		$scope.chartmeta.graph.labels = [];
 
-		$scope.mongo.ui.showmigrations = false;
+		var changes = $scope.mongo.shardalyzer.changes;
 
 		if(!changes) return;
 
@@ -517,7 +523,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 			if(changes[i].what == OP_FROM)
 			{
-				if(success(changes[i]))
+				if(success(changes[i]) && filterMigration(changes[i]))
 				{
 					var sum = 0;
 
@@ -535,7 +541,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 			$scope.chartmeta.graph.labels[r] = i;
 		}
-	});
+	};
+
+	$scope.$watch('mongo.shardalyzer.changes', function(changes) { $scope.mongo.ui.showmigrations = false; updateGraph(); } )
+	$scope.$watchGroup(['chartmeta.graph.from', 'chartmeta.graph.to'], updateGraph);
 
 	// update bars view when slider position changes
 	$scope.$watch('mongo.ui.slider', function(pos)

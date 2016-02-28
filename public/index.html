@@ -330,8 +330,21 @@
 						</div>
 						<div class="panel panel-default panel-body" style="float: right; width:75%; height:100%">
 							<canvas id="migrateGraph" class="chart chart-line" data="chartmeta.graph.data" labels="chartmeta.graph.labels" colours="chartmeta.colours" legend="false"
-								series="chartmeta.graph.series" options="chartmeta.graph.options" watch="['labels']" click="migrateClick" hover="migrateHover">
+								series="chartmeta.graph.series" options="chartmeta.graph.options" watch="['data']" click="migrateClick" hover="migrateHover">
 							</canvas>
+							<div style="float:right; transform: translate(0%, -75%);">
+								<select style="color: #333; font-weight:normal"
+									ng-options="shard as shard for (shard, shardobj) in mongo.shardalyzer.shards"
+									ng-model="chartmeta.graph.from">
+									<option value="">All shards</option>
+								</select>
+								-
+								<select style="color: #333; font-weight:normal"
+									ng-options="shard as shard for (shard, shardobj) in mongo.shardalyzer.shards"
+									ng-model="chartmeta.graph.to">
+									<option value="">All shards</option>
+								</select>
+							</div>
 						</div>
 					</div>
 
