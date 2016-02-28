@@ -135,3 +135,7 @@ pre {
 .popover {
     max-width: 100%; /* Max Width of the popover (depending on the container!) */
 }
+
+.chart-container {
+	height: 100%
+}
