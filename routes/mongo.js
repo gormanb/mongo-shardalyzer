@@ -97,8 +97,6 @@ exports.metadata =
 
 		var namespace = req.param('namespace');
 
-		var meta = {};
-
 		MongoClient.connect(url, mongoopts, function (err, db)
 		{
 			if (err)
@@ -134,60 +132,52 @@ exports.metadata =
 					var tagcursor = tagcoll.find({ ns : namespace });
 					var shardcursor = shardcoll.find({});
 
-					changecursor.toArray(function(err, changelog)
-					{
-						if(err)
-						{
-							res.status(500).send(err);
-							db.close();
-						}
-						else
-						{
-							meta.changelog = changelog;
+					var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"'];
+					var cursors = [changecursor, chunkcursor, shardcursor, tagcursor];
 
-							chunkcursor.toArray(function(err, chunks)
-							{
-								if(err)
-								{
-									res.status(500).send(err);
-									db.close();
-								}
-								else
-								{
-									meta.chunks = chunks;
+					res.set('Content-Type', 'application/json');
 
-									shardcursor.toArray(function(err, shards)
-									{
-										if(err)
-										{
-											res.status(500).send(err);
-											db.close();
-										}
-										else
-										{
-											meta.shards = shards;
-
-											tagcursor.toArray(function(err, tags)
-											{
-												if(err)
-													res.status(500).send(err);
-												else
-												{
-													meta.tags = tags;
-													res.json(meta);
-												}
-
-												db.close();
-											})
-										}
-									});
-								}
-							});
-						}
-					});
+					send(collections, cursors, res, 0);
 				});
 			}
 		});
+
+		// stream the full metadata object to client-side
+		function send(collections, cursors, res, idx)
+		{
+			idx = (idx || 0);
+
+			// open top-level document or separate from preceding array
+			res.write((idx == 0) ? '{' : ',');
+
+			// add collection key and open array, e.g. 'changelog' : [
+			res.write(collections[idx] + " : [");
+
+			var firstDoc = true;
+
+			// write the contents of the array
+			cursors[idx].stream().on("data", function(doc)
+			{
+				if(!firstDoc) res.write(','); else firstDoc = false;
+				res.write(JSON.stringify(doc));
+			});
+
+			// end of cursor; close array, begin next or close top-level doc
+			cursors[idx].stream().on("end", function()
+			{
+				res.write(']');
+
+				if(idx+1 == cursors.length)
+				{
+					res.write('}');
+					res.end();
+				}
+				else
+					send(collections, cursors, res, idx+1);
+			});
+
+			cursors[idx].stream().on("error", function(err) { res.status(500).send(err); });
+		}
 	};
 
 exports.query =
