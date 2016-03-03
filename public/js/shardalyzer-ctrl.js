@@ -280,8 +280,8 @@ shardalyze.controller("updateCharts", function($scope)
 		}
 		else if(numChunks > 1 && !(event.altKey || event.shiftKey || event.ctrlKey))
 		{
-			$scope.chartmeta.options.animationSteps = 125;
-			$scope.chartmeta.options.animateScale = true;
+			$scope.chartmeta.options.animation.animateScale = true;
+			$scope.chartmeta.options.animation.duration = 1000;
 			generateChart(label[0], label[1], label[2]);
 		}
 	}
@@ -342,8 +342,8 @@ shardalyze.controller("updateCharts", function($scope)
 
 		if(position == null)
 		{
-			$scope.chartmeta.options.animateRotate = true;
-			$scope.chartmeta.options.animationSteps = 125;
+			$scope.chartmeta.options.animation.animateRotate = true;
+			$scope.chartmeta.options.animation.duration = 1000;
 
 			$scope.chartmeta.data = {};
 			$scope.chartmeta.colors = {};
@@ -426,32 +426,38 @@ shardalyze.controller("updateCharts", function($scope)
 	{
 		responsive: true,
 
-		segmentShowStroke : true,
-		segmentStrokeColor : '#fff',
-		segmentStrokeWidth : 0.25,
-
-		percentageInnerCutout : 75, // This is 0 for Pie charts
-
-		animationEasing : 'easeOutQuint',
-		animationSteps : 125,
-		animateRotate : true,
-		animateScale : false,
-
-		legendTemplate : '',
-
-		customTooltips : shardSegmentTooltip,
-
-		tooltipTemplate : function(label)
+		elements :
 		{
-			return label.label;
+			arc :
+			{
+				borderColor : '#fff',
+				borderWidth : 0.25
+			}
 		},
 
-		// disable animation after initial loading
-		onAnimationComplete : function()
+		cutoutPercentage : 75, // This is 0 for Pie charts
+
+		animation :
 		{
-			$scope.chartmeta.options.animateRotate = false;
-			$scope.chartmeta.options.animateScale = false;
-			$scope.chartmeta.options.animationSteps = 1;
+			easing : 'easeOutQuart',
+			animateRotate : true,
+			animateScale : false,
+			duration : 1000
+		},
+
+		legend : { display : false },
+
+		tooltips : { custom : shardSegmentTooltip, mode : 'label' },
+
+		animation :
+		{
+			// disable animation after initial loading
+			onComplete : function()
+			{
+				$scope.chartmeta.options.animation.animateRotate = false;
+				$scope.chartmeta.options.animation.animateScale = false;
+				$scope.chartmeta.options.animation.duration = 0;
+			}
 		}
 	};
 });
@@ -484,18 +490,20 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta.bars.options =
 	{
+		legend : { display : false },
 		maintainAspectRatio : false,
 		responsive : true
 	}
 
 	$scope.chartmeta.graph.options =
 	{
-		customTooltips : angular.noop,
+		tooltips : { custom : angular.noop },
+		tooltips : { mode : 'label' },
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
 		pointHitDetectionRadius : 0,
 		//bezierCurve : false,
-		showLabelsX : false,
+		scales : { xAxes : [ { display : false } ] },
 		responsive : true
 	}
 
