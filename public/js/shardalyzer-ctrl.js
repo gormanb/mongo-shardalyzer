@@ -447,7 +447,7 @@ shardalyze.controller("updateCharts", function($scope)
 
 		legend : { display : false },
 
-		tooltips : { custom : shardSegmentTooltip, mode : 'label' },
+		tooltips : { custom : shardSegmentTooltip },
 
 		animation :
 		{

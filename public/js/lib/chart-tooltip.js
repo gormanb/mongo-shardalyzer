@@ -3,12 +3,14 @@ var shardSegmentTooltip = function(tooltip)
 {
 	var tooltipEl = $('#chartjs-tooltip-shardalyzer');
 
-	if (!tooltip) {
+	if (!tooltip.opacity) {
 		tooltipEl.css({
 			opacity: 0
 		});
 		return;
 	}
+
+	//$(this._chart.canvas).css('cursor', 'pointer');
 
 	// align to cursor
 	tooltipEl.removeClass('above below');
@@ -16,10 +18,12 @@ var shardSegmentTooltip = function(tooltip)
 
 	var shards = Shardalyzer.shards;
 
+	var info = tooltip.body[0].split(/[\s,\:]+/);
+
 	// "text" field is actually [shard, lowerinc, upperex]
-	var	shard = tooltip.text[0],
-		lower = tooltip.text[1],
-		upper = tooltip.text[2];
+	var	shard = info[0],
+		lower = info[1],
+		upper = info[2];
 
 	var numChunks = (upper-lower);
 	var text;
@@ -44,19 +48,17 @@ var shardSegmentTooltip = function(tooltip)
 	tooltipEl.html("<pre>" + text + "</pre>");
 
 	// get location of tooltip
-	var top = tooltip.y + tooltip.caretHeight + tooltip.caretPadding;
+	var top = tooltip.y + tooltip.caretSize + tooltip.caretPadding;
 	var left = tooltip.x;
 
 	// reposition tooltip based on parent containers' offsets
+	var canvas = $(this._chart.canvas);
 
 	top +=
-		tooltip.chart.canvas.offsetTop
-		+ tooltip.chart.canvas.offsetParent.offsetTop
-		- tooltip.chart.canvas.offsetParent.parentElement.parentElement.scrollTop;
+		canvas.offset().top
 
 	left +=
-		tooltip.chart.canvas.offsetLeft
-		+ tooltip.chart.canvas.offsetParent.offsetLeft
+		canvas.offset().left
 
 	// set position and display
 	tooltipEl.css({
