@@ -87,9 +87,9 @@ var migrateGraphTooltipRaw = function(point, migrations, event)
 	tooltipEl.removeClass('above below');
 	tooltipEl.addClass('above center');
 
-	var idx = Shardalyzer.changes.length - (point.label+1);
+	var idx = point._index;
 
-	var text = { time : Shardalyzer.changes[idx].time };
+	var text = { time : point._xScale.ticks[idx] };
 
 	for(var i = 0; i < 6; i++)
 		text["F" + (i+1)] = migrations[i][idx];

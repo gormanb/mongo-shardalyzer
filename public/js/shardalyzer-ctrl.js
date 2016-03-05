@@ -497,13 +497,12 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta.graph.options =
 	{
-		tooltips : { custom : angular.noop },
-		tooltips : { mode : 'label' },
+		tooltips : { enabled : false, mode : 'label' },
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
 		pointHitDetectionRadius : 0,
 		//bezierCurve : false,
-		scales : { xAxes : [ { display : false } ] }, //yAxes : [ { stacked : false, type : 'logarithmic' } ] },
+		scales : { xAxes : [ { display : false } ], yAxes : [ { stacked : false } ] },
 		responsive : true
 	}
 
@@ -547,7 +546,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 				}
 			}
 
-			$scope.chartmeta.graph.labels[r] = i;
+			$scope.chartmeta.graph.labels[r] = $scope.mongo.shardalyzer.changes[i].time;
 		}
 	};
 
@@ -578,10 +577,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.migrateClick = function(points, event)
 	{
-		var selpoint = closestToMid(points);
+		var point = closestToMid(points);
 
-		if(selpoint)
-			$scope.mongo.ui.slider = selpoint.label;
+		if(point)
+			$scope.mongo.ui.slider = (point._xScale.ticks.length-1 - point._index);
 	}
 
 	var lastPoint = null;
@@ -590,7 +589,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 	{
 		var point = closestToMid(points);
 
-		if(!point || !lastPoint ||  (point.label !== lastPoint.label))
+		if(!point || !lastPoint ||  (point._index !== lastPoint._index))
 		{
 			migrateGraphTooltipRaw(point, $scope.chartmeta.graph.data, event);
 			lastPoint = point;
@@ -599,19 +598,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	function closestToMid(points)
 	{
-		var mid = Math.round(points.length/2);
-
-		for(var i = 0; i <= mid; i++)
-		{
-			var selpoint =
-				((mid-i) in points && points[mid-i].value && points[mid-i])
-					|| ((mid+i) in points && points[mid+i].value && points[mid+i]) || null;
-
-			if(selpoint)
-				return selpoint;
-		}
-
-		return null;
+		if(points.length == 0)
+			return null;
+		else
+			return points[Math.floor(points.length/2)];
 	}
 });
 
