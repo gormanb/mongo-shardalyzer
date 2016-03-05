@@ -89,7 +89,9 @@ var migrateGraphTooltipRaw = function(point, migrations, event)
 
 	var idx = point._index;
 
-	var text = { time : point._xScale.ticks[idx] };
+	var change = Shardalyzer.changes[Shardalyzer.changes.length - (idx+1)];
+
+	var text = { time : change.time, from : change.details.from, to : change.details.to };
 
 	for(var i = 0; i < 6; i++)
 		text["F" + (i+1)] = migrations[i][idx];
