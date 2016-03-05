@@ -556,8 +556,9 @@ shardalyze.controller("migrateCtrl", function($scope)
 	// update bars view when slider position changes
 	$scope.$watch('mongo.ui.slider', function(pos)
 	{
+		$scope.chartmeta.bars.data = [ NaN, NaN, NaN, NaN, NaN, NaN, NaN ];
+
 		var changes = $scope.mongo.shardalyzer.changes;
-		$scope.chartmeta.bars.data = [[]];
 
 		if(pos && changes && changes[pos] && changes[pos].what == OP_FROM)
 		{
@@ -567,11 +568,11 @@ shardalyze.controller("migrateCtrl", function($scope)
 			{
 				var dur = changes[pos].details["step " + j + " of 6"];
 
-				$scope.chartmeta.bars.data[0][j-1] = (dur == undefined ? null : dur);
+				$scope.chartmeta.bars.data[j-1] = (dur == undefined ? null : dur);
 				sum += (dur || 0);
 			}
 
-			$scope.chartmeta.bars.data[0][6] = sum;
+			$scope.chartmeta.bars.data[6] = sum;
 		}
 	});
 
