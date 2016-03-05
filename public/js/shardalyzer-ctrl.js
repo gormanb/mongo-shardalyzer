@@ -503,7 +503,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 		maintainAspectRatio : false,
 		pointHitDetectionRadius : 0,
 		//bezierCurve : false,
-		scales : { xAxes : [ { display : false } ] },
+		scales : { xAxes : [ { display : false } ] }, //yAxes : [ { stacked : false, type : 'logarithmic' } ] },
 		responsive : true
 	}
 
@@ -527,7 +527,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 			var r = changes.length - (i+1);
 
 			for(var m in $scope.chartmeta.graph.data)
-				$scope.chartmeta.graph.data[m][r] = null;
+				$scope.chartmeta.graph.data[m][r] = NaN;
 
 			if(changes[i].what == OP_FROM)
 			{
