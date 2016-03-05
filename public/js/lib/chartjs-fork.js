@@ -2726,6 +2726,10 @@ module.exports = function(Chart) {
 		updateBezierControlPoints: function() {
 			// Update bezier control points
 			helpers.each(this.getDataset().metaData, function(point, index) {
+
+				if(point._model.skip)
+					return;
+
 				var controlPoints = helpers.splineCurve(
 					helpers.previousItem(this.getDataset().metaData, index)._model,
 					point._model,
@@ -3167,6 +3171,10 @@ module.exports = function(Chart) {
 		},
 		updateBezierControlPoints: function() {
 			helpers.each(this.getDataset().metaData, function(point, index) {
+
+				if(point._model.skip)
+					return;
+
 				var controlPoints = helpers.splineCurve(
 					helpers.previousItem(this.getDataset().metaData, index, true)._model,
 					point._model,
@@ -4446,13 +4454,18 @@ module.exports = function(Chart) {
 			return index >= collection.length - 1 ? collection[0] : collection[index + 1];
 		}
 
-		return index >= collection.length - 1 ? collection[collection.length - 1] : collection[index + 1];
+		do { index++; } while(index < collection.length && collection[index]._model.skip);
+
+		return index >= collection.length - 1 ? collection[collection.length - 1] : collection[index];
 	};
 	helpers.previousItem = function(collection, index, loop) {
 		if (loop) {
 			return index <= 0 ? collection[collection.length - 1] : collection[index - 1];
 		}
-		return index <= 0 ? collection[0] : collection[index - 1];
+
+		do { index--; } while(index >= 0 && collection[index]._model.skip);
+
+		return index <= 0 ? collection[0] : collection[index];
 	};
 	// Implementation of the nice number algorithm used in determining where axis labels will go
 	helpers.niceNum = function(range, round) {
@@ -7427,6 +7440,10 @@ module.exports = function(Chart) {
 				ctx.beginPath();
 
 				helpers.each(this._children, function(point, index) {
+
+					if(point._model.skip)
+						return;
+
 					var previous = helpers.previousItem(this._children, index);
 					var next = helpers.nextItem(this._children, index);
 
@@ -7465,9 +7482,15 @@ module.exports = function(Chart) {
 				if (this._loop) {
 					loopBackToStart(true);
 				} else {
+					// trim start & end if points skipped
+					var first = 0, last = this._children.length-1;
+
+					while(first < last && this._children[first++]._view.skip);
+					while(last > first && this._children[last--]._view.skip);
+
 					//Round off the line by going to the base of the chart, back to the start, then fill.
-					ctx.lineTo(this._children[this._children.length - 1]._view.x, vm.scaleZero);
-					ctx.lineTo(this._children[0]._view.x, vm.scaleZero);
+					ctx.lineTo(this._children[last]._view.x, vm.scaleZero);
+					ctx.lineTo(this._children[first]._view.x, vm.scaleZero);
 				}
 
 				ctx.fillStyle = vm.backgroundColor || Chart.defaults.global.defaultColor;
@@ -7490,6 +7513,10 @@ module.exports = function(Chart) {
 			ctx.beginPath();
 
 			helpers.each(this._children, function(point, index) {
+
+				if(point._model.skip)
+					return;
+
 				var previous = helpers.previousItem(this._children, index);
 				var next = helpers.nextItem(this._children, index);
 
