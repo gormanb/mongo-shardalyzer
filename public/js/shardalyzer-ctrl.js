@@ -267,11 +267,11 @@ shardalyze.controller("updateCharts", function($scope)
 		}
 	};
 
-	$scope.wedgeClick = function(points, event)
+	$scope.chunkClick = function(points, event)
 	{
 		// label[0][1][2] = shard, startindex, endindex
-		var numChunks = points[0].label[2] - points[0].label[1];
-		var label = points[0].label;
+		var numChunks = points[0]._model.label[2] - points[0]._model.label[1];
+		var label = points[0]._model.label;
 
 		if(numChunks == 1 && event.altKey)
 		{
@@ -284,6 +284,11 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.options.animation.duration = 1000;
 			generateChart(label[0], label[1], label[2]);
 		}
+	}
+
+	$scope.chunkHover = function(points, event)
+	{
+		shardSegmentTooltipRaw(points[0], event);
 	}
 
 	$scope.shardtags = function(shard)
@@ -437,20 +442,16 @@ shardalyze.controller("updateCharts", function($scope)
 
 		cutoutPercentage : 75, // This is 0 for Pie charts
 
+		tooltips : { enabled : false },
+		legend : { display : false },
+
 		animation :
 		{
 			easing : 'easeOutQuart',
 			animateRotate : true,
 			animateScale : false,
-			duration : 1000
-		},
+			duration : 1000,
 
-		legend : { display : false },
-
-		tooltips : { custom : shardSegmentTooltip },
-
-		animation :
-		{
 			// disable animation after initial loading
 			onComplete : function()
 			{
@@ -458,7 +459,7 @@ shardalyze.controller("updateCharts", function($scope)
 				$scope.chartmeta.options.animation.animateScale = false;
 				$scope.chartmeta.options.animation.duration = 0;
 			}
-		}
+		},
 	};
 });
 

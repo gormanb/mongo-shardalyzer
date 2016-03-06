@@ -1,9 +1,9 @@
 
-var shardSegmentTooltip = function(tooltip)
+var shardSegmentTooltipRaw = function(point, event)
 {
 	var tooltipEl = $('#chartjs-tooltip-shardalyzer');
 
-	if (!tooltip.opacity) {
+	if (!point) {
 		tooltipEl.css({
 			opacity: 0
 		});
@@ -18,7 +18,7 @@ var shardSegmentTooltip = function(tooltip)
 
 	var shards = Shardalyzer.shards;
 
-	var info = tooltip.body[0].split(/[\s,\:]+/);
+	var info = point._model.label;
 
 	// "text" field is actually [shard, lowerinc, upperex]
 	var	shard = info[0],
@@ -47,28 +47,27 @@ var shardSegmentTooltip = function(tooltip)
 	// set text content
 	tooltipEl.html("<pre>" + text + "</pre>");
 
-	// get location of tooltip
-	var top = tooltip.y + tooltip.caretSize + tooltip.caretPadding;
-	var left = tooltip.x;
+	// reposition tooltip based on parent containers' offsets
+	var top = event.offsetY + event.target.offsetTop;
+	var left = event.offsetX + event.target.offsetLeft;
 
 	// reposition tooltip based on parent containers' offsets
-	var canvas = $(this._chart.canvas);
+	var canvas = point._chart.canvas;
 
 	top +=
-		canvas.offset().top
+		canvas.offsetTop
+		+ canvas.offsetParent.offsetTop
+		- canvas.offsetParent.parentElement.parentElement.scrollTop;
 
 	left +=
-		canvas.offset().left
+		canvas.offsetLeft + canvas.offsetParent.offsetLeft
 
 	// set position and display
 	tooltipEl.css({
 		opacity: 1,
 		visibility: 'visible',
 		left: left + 'px',
-		top: top + 'px',
-		fontFamily: tooltip.fontFamily,
-		fontSize: tooltip.fontSize,
-		fontStyle: tooltip.fontStyle,
+		top: top + 'px'
 	});
 };
 

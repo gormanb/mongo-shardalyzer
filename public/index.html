@@ -202,7 +202,8 @@
 								chart-labels="chartmeta.labels[shard]"
 								chart-colors="chartmeta.colors[shard]"
 								chart-watch="{'chartColors':'collection'}"
-								chart-click="wedgeClick"></canvas>
+								chart-hover="chunkHover"
+								chart-click="chunkClick"></canvas>
 							<p align="center">
 								<a href="#" uib-tooltip-template="'tooltip.html'" tooltip-placement="bottom" tooltip-append-to-body="true" style="color:{{mongo.shardalyzer.balancer[shard]}};">
 									<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
