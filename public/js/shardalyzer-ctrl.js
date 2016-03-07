@@ -562,15 +562,16 @@ shardalyze.controller("migrateCtrl", function($scope)
 	{
 		$scope.chartmeta.bars.data = [ NaN, NaN, NaN, NaN, NaN, NaN, NaN ];
 
-		var changes = $scope.mongo.shardalyzer.changes;
+		var migrations = $scope.mongo.shardalyzer.migrations;
 
-		if(pos && changes && changes[pos] && changes[pos].what == OP_FROM)
+		if(pos && migrations && pos in migrations)
 		{
+			var migration = migrations[pos];
 			var sum = 0;
 
 			for(var j = 1; j <= 6; j++)
 			{
-				var dur = changes[pos].details["step " + j + " of 6"];
+				var dur = migration[OP_FROM].details["step " + j + " of 6"];
 
 				$scope.chartmeta.bars.data[j-1] = (dur == undefined ? null : dur);
 				sum += (dur || 0);
