@@ -136,6 +136,8 @@ var Shardalyzer =
 		this.watched = {};
 		this.tags = {};
 
+		this.migrations = [];
+
 		var currentmove = {};
 
 		for(var k in sharddata)
@@ -178,9 +180,14 @@ var Shardalyzer =
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
 			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
+				currentmove[this.changes[i].what] = this.changes[i];
+			else if(this.changes[i].what == OP_TO)
 			{
-				currentmove.from = this.changes[i].details.from;
-				currentmove.to = this.changes[i].details.to;
+				// change 2.x "stepX" to 3.x "step X"
+				if(this.changes[i].details["step1 of 5"])
+					this.changes[i].details = remap(this.changes[i].details, migratekeymap);
+
+				currentmove[OP_TO] = this.changes[i];
 			}
 			else if(this.changes[i].what == OP_FROM)
 			{
@@ -190,22 +197,28 @@ var Shardalyzer =
 
 				if(this.changes[i].details.from == undefined)
 				{
-					if(currentmove.from !== undefined)
-					{
-						this.changes[i].details.from = currentmove.from;
-						this.changes[i].details.to = currentmove.to;
+					var context = (currentmove[OP_START] || currentmove[OP_COMMIT]);
 
-						currentmove.from = currentmove.to = undefined;
+					if(context && context.details.from !== undefined)
+					{
+						this.changes[i].details.from = context.details.from;
+						this.changes[i].details.to = context.details.to;
 					}
 					else if(success(this.changes[i])) // change is not reproducible
+					{
 						this.changes.splice(i, 1);
+						currentmove = {};
+						continue;
+					}
 				}
-			}
-			else if(this.changes[i].what == OP_TO)
-			{
-				// change 2.x "stepX" to 3.x "step X"
-				if(this.changes[i].details["step1 of 5"])
-					this.changes[i].details = remap(this.changes[i].details, migratekeymap);
+
+				if(success(this.changes[i]))
+				{
+					currentmove[OP_FROM] = this.changes[i];
+					this.migrations[i] = currentmove;
+				}
+
+				currentmove = {};
 			}
 		}
 

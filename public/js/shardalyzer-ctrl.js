@@ -507,10 +507,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 		responsive : true
 	}
 
-	function filterMigration(change)
+	function filterMigration(moveFrom)
 	{
-		return (!$scope.chartmeta.graph.from || change.details.from == $scope.chartmeta.graph.from)
-			&& (!$scope.chartmeta.graph.to || change.details.to == $scope.chartmeta.graph.to);
+		return (!$scope.chartmeta.graph.from || moveFrom.details.from == $scope.chartmeta.graph.from)
+			&& (!$scope.chartmeta.graph.to || moveFrom.details.to == $scope.chartmeta.graph.to);
 	}
 
 	function updateGraph()
@@ -518,9 +518,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 		$scope.chartmeta.graph.data = [ [],[],[],[],[],[],[] ];
 		$scope.chartmeta.graph.labels = [];
 
+		var migrations = $scope.mongo.shardalyzer.migrations;
 		var changes = $scope.mongo.shardalyzer.changes;
 
-		if(!changes) return;
+		if(!changes || !migrations) return;
 
 		for(var i = 0; i < changes.length; i++)
 		{
@@ -529,15 +530,17 @@ shardalyze.controller("migrateCtrl", function($scope)
 			for(var m in $scope.chartmeta.graph.data)
 				$scope.chartmeta.graph.data[m][r] = NaN;
 
-			if(changes[i].what == OP_FROM)
+			if(i in migrations)
 			{
-				if(success(changes[i]) && filterMigration(changes[i]))
+				var moveFrom = migrations[i][OP_FROM];
+
+				if(filterMigration(moveFrom))
 				{
 					var sum = 0;
 
 					for(var j = 1; j <= 6; j++)
 					{
-						var dur = changes[i].details["step " + j + " of 6"];
+						var dur = moveFrom.details["step " + j + " of 6"];
 
 						$scope.chartmeta.graph.data[j-1][r] = dur;
 						sum += dur;
