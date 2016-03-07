@@ -326,7 +326,7 @@
 					<div style="margin: 0 auto; margin-top:10px; width: 75%; height:200px;" ng-controller="migrateCtrl" ng-show="mongo.ui.showmigrations">
 						<div class="panel panel-default panel-body" style="float: left; width:25%; height:100%">
 							<canvas id="migrateBars" class="chart chart-bar" chart-data="chartmeta.bars.data" chart-labels="chartmeta.bars.labels" chart-colors="chartmeta.colours"
-								chart-series="chartmeta.bars.series" chart-options="chartmeta.bars.options" chart-watch="{'chartData':false}">
+								chart-series="chartmeta.bars.series" chart-options="chartmeta.bars.options" chart-watch="{'chartData':false}" chart-click="migrateBarClick">
 							</canvas>
 						</div>
 						<div class="panel panel-default panel-body" style="float: right; width:75%; height:100%">

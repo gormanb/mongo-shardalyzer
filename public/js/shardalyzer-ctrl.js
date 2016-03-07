@@ -470,7 +470,13 @@ shardalyze.controller("migrateCtrl", function($scope)
 	$scope.chartmeta =
 	{
 		graph : { from : null, to : null },
-		bars : {}
+		bars : {},
+
+		series:
+		{
+			"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total'],
+			"moveChunk.to": ['T1', 'T2', 'T3', 'T4', 'T5', 'Total']
+		}
 	};
 
 	$scope.chartmeta.colours =
@@ -478,12 +484,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 		  scolors[STATUS_START_SOURCE], scolors[STATUS_TO_SOURCE],
 		  scolors[STATUS_COMMIT], scolors[STATUS_FROM_SUCCESS], DEFAULT_CHUNK_COLOR ];
 
-	$scope.chartmeta.graph.series =
-		['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total'];
-
+	$scope.chartmeta.graph.series = $scope.chartmeta.series["moveChunk.from"];
 	$scope.chartmeta.bars.series = ['Migration Steps'];
 
-	$scope.chartmeta.bars.labels = $scope.chartmeta.graph.series;
+	$scope.chartmeta.bars.labels = [];
 	$scope.chartmeta.bars.data = [];
 
 	$scope.chartmeta.graph.labels = [];
@@ -557,29 +561,48 @@ shardalyze.controller("migrateCtrl", function($scope)
 	$scope.$watch('mongo.shardalyzer.changes', function(changes) { $scope.mongo.ui.showmigrations = false; updateGraph(); } )
 	$scope.$watchGroup(['chartmeta.graph.from', 'chartmeta.graph.to'], updateGraph);
 
-	// update bars view when slider position changes
-	$scope.$watch('mongo.ui.slider', function(pos)
+	function updateBars(pos, op)
 	{
-		$scope.chartmeta.bars.data = [ NaN, NaN, NaN, NaN, NaN, NaN, NaN ];
+		$scope.chartmeta.bars.data = [];
+		op = (op || OP_FROM);
 
 		var migrations = $scope.mongo.shardalyzer.migrations;
+		var steps = (op == OP_FROM ? 6 : 5);
 
 		if(pos && migrations && pos in migrations)
 		{
 			var migration = migrations[pos];
 			var sum = 0;
 
-			for(var j = 1; j <= 6; j++)
+			for(var i = 1; i <= steps; i++)
 			{
-				var dur = migration[OP_FROM].details["step " + j + " of 6"];
+				var dur = migration[op].details["step " + i + " of " + steps];
 
-				$scope.chartmeta.bars.data[j-1] = (dur == undefined ? null : dur);
+				$scope.chartmeta.bars.data.push(dur == undefined ? NaN : dur);
 				sum += (dur || 0);
 			}
 
-			$scope.chartmeta.bars.data[6] = sum;
+			$scope.chartmeta.bars.data.push(sum);
 		}
-	});
+		else
+		{
+			for(var i = 0; i <= steps; i++)
+				$scope.chartmeta.bars.data.push(NaN);
+		}
+
+		$scope.chartmeta.bars.labels = $scope.chartmeta.series[op];
+	}
+
+	// update bars view when slider position changes
+	$scope.$watch('mongo.ui.slider', function(pos) { updateBars(pos, OP_FROM); });
+
+	$scope.migrateBarClick = function(points, event)
+	{
+		var point = closestToMid(points);
+
+		if(point._model.label == "F4")
+			updateBars($scope.mongo.ui.slider, OP_TO);
+	}
 
 	$scope.migrateClick = function(points, event)
 	{
