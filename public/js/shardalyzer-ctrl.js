@@ -474,15 +474,21 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 		series:
 		{
-			"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total'],
+			"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total', 'Data Size'],
 			"moveChunk.to": ['T1', 'T2', 'T3', 'T4', 'T5', 'Total']
 		}
 	};
 
 	$scope.chartmeta.colours =
-		[ scolors[STATUS_START_SOURCE], scolors[STATUS_START_SOURCE],
+	[
+	 	// F1-6
+	 	  scolors[STATUS_START_SOURCE], scolors[STATUS_START_SOURCE],
 		  scolors[STATUS_START_SOURCE], scolors[STATUS_TO_SOURCE],
-		  scolors[STATUS_COMMIT], scolors[STATUS_FROM_SUCCESS], DEFAULT_CHUNK_COLOR ];
+		  scolors[STATUS_COMMIT], scolors[STATUS_FROM_SUCCESS], DEFAULT_CHUNK_COLOR,
+
+		// data size
+		'#000000'
+	]
 
 	$scope.chartmeta.graph.series = $scope.chartmeta.series["moveChunk.from"];
 	$scope.chartmeta.bars.series = ['Migration Steps'];
@@ -507,8 +513,16 @@ shardalyze.controller("migrateCtrl", function($scope)
 		maintainAspectRatio : false,
 		pointHitDetectionRadius : 0,
 		//bezierCurve : false,
-		scales : { xAxes : [ { display : false } ], yAxes : [ { stacked : false } ] },
-		responsive : true
+		responsive : true,
+		scales:
+		{
+			xAxes : [ { display : false } ],
+			yAxes:
+			[
+			 	{ id : "mig_time", type : "linear", stacked : false, scaleLabel : { labelString : "ms", display : true } },
+			 	{ id : "mig_data", type : "linear", position : "right", scaleLabel : { labelString : "MB", display : true } }
+			]
+		}
 	}
 
 	function filterMigration(moveFrom)
@@ -519,8 +533,20 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	function updateGraph()
 	{
-		$scope.chartmeta.graph.data = [ [],[],[],[],[],[],[] ];
+		$scope.chartmeta.graph.data = [];
 		$scope.chartmeta.graph.labels = [];
+
+		// 0-6: F1-6 & Total, 7: data size
+		for(var i = 0; i <= 7; i++)
+		{
+			$scope.chartmeta.graph.data[i] =
+			{
+				data : [],
+				tension : 0.1,
+				fill :  (i <= 6),
+				yAxisID : (i <= 6) ? "mig_time" : "mig_data"
+			}
+		}
 
 		var migrations = $scope.mongo.shardalyzer.migrations;
 		var changes = $scope.mongo.shardalyzer.changes;
@@ -532,10 +558,11 @@ shardalyze.controller("migrateCtrl", function($scope)
 			var r = changes.length - (i+1);
 
 			for(var m in $scope.chartmeta.graph.data)
-				$scope.chartmeta.graph.data[m][r] = NaN;
+				$scope.chartmeta.graph.data[m].data[r] = NaN;
 
 			if(i in migrations)
 			{
+				var moveCommit = migrations[i][OP_COMMIT];
 				var moveFrom = migrations[i][OP_FROM];
 
 				if(filterMigration(moveFrom))
@@ -546,11 +573,14 @@ shardalyze.controller("migrateCtrl", function($scope)
 					{
 						var dur = moveFrom.details["step " + j + " of 6"];
 
-						$scope.chartmeta.graph.data[j-1][r] = dur;
+						$scope.chartmeta.graph.data[j-1].data[r] = dur;
 						sum += dur;
 					}
 
-					$scope.chartmeta.graph.data[6][r] = sum;
+					$scope.chartmeta.graph.data[6].data[r] = sum;
+
+					// amount of data transferred
+					$scope.chartmeta.graph.data[7].data[r] = moveCommit.details.clonedBytes/(1024.0*1024.0);
 				}
 			}
 

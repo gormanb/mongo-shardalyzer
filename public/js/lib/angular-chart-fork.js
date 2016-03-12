@@ -155,9 +155,12 @@
             scope.getColour = typeof scope.getColour === 'function' ? scope.getColour : getRandomColour;
 
             var cvs = elem[0], ctx = cvs.getContext('2d');
+
             var data = Array.isArray(scope.chartData[0]) ?
               getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope)) :
-              getData(scope.chartLabels, scope.chartData, scope.chartColors);
+            	scope.chartData[0] instanceof Object ?
+            	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope)) :
+            	    getData(scope.chartLabels, scope.chartData, scope.chartColors);
 
             var options = angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
             chart = new ChartJs.Chart(ctx, {
@@ -258,6 +261,18 @@
         b = bigint & 255;
 
       return [r, g, b];
+    }
+
+    // array of objects [{ data : [] }], fill in colors & labels
+    function fillDataSets(labels, data, series, colors)
+    {
+    	for(var i in data)
+    		angular.extend(data[i], colors[i], (i in series ? { label : series[i] } : {}));
+
+    	return {
+    		labels : labels,
+    		datasets : data
+    	}
     }
 
     function getDataSets (labels, data, series, colors) {
