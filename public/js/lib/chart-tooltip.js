@@ -93,9 +93,9 @@ var migrateGraphTooltipRaw = function(point, migrations, event)
 	var text = { time : change.time, from : change.details.from, to : change.details.to };
 
 	for(var i = 0; i < 6; i++)
-		text["F" + (i+1)] = migrations[i][idx];
+		text["F" + (i+1)] = migrations[i].data[idx];
 
-	text["Total"] = migrations[6][idx];
+	text["Total"] = migrations[6].data[idx];
 
 	// set text content
 	tooltipEl.html("<pre>" + JSON.stringify(text, null, 2) + "</pre>");

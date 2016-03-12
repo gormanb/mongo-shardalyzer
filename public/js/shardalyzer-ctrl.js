@@ -469,11 +469,26 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta =
 	{
-		bars : {},
+		bars:
+		{
+			labels : [],
+			data : [],
+
+			series:
+			{
+				"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total'],
+				"moveChunk.to": ['T1', 'T2', 'T3', 'T4', 'T5', 'Total']
+			}
+		},
 		graph:
 		{
+			labels : [],
+			data : [],
+
 			from : null,
 			to : null,
+
+			series : ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total', 'Data Size'],
 
 			yAxes:
 			{
@@ -493,12 +508,6 @@ shardalyze.controller("migrateCtrl", function($scope)
 					display : false
 				}
 			}
-		},
-
-		series:
-		{
-			"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total', 'Data Size'],
-			"moveChunk.to": ['T1', 'T2', 'T3', 'T4', 'T5', 'Total']
 		}
 	};
 
@@ -512,15 +521,6 @@ shardalyze.controller("migrateCtrl", function($scope)
 		// data size
 		'#000000'
 	]
-
-	$scope.chartmeta.graph.series = $scope.chartmeta.series["moveChunk.from"];
-	$scope.chartmeta.bars.series = ['Migration Steps'];
-
-	$scope.chartmeta.bars.labels = [];
-	$scope.chartmeta.bars.data = [];
-
-	$scope.chartmeta.graph.labels = [];
-	$scope.chartmeta.graph.data = [];
 
 	$scope.chartmeta.bars.options =
 	{
@@ -648,7 +648,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 				$scope.chartmeta.bars.data.push(NaN);
 		}
 
-		$scope.chartmeta.bars.labels = $scope.chartmeta.series[op];
+		$scope.chartmeta.bars.labels = $scope.chartmeta.bars.series[op];
 	}
 
 	// update bars view when slider position changes
