@@ -469,8 +469,31 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta =
 	{
-		graph : { from : null, to : null },
 		bars : {},
+		graph:
+		{
+			from : null,
+			to : null,
+
+			yAxes:
+			{
+				mig_time:
+				{
+					id : "mig_time",
+					type : "linear",
+					stacked : false,
+					scaleLabel : { labelString : "Time (ms)", display : false },
+				},
+				mig_data:
+				{
+					id : "mig_data",
+					type : "linear",
+					position : "right",
+					scaleLabel : { labelString : "Data Size (MB)", display : true },
+					display : false
+				}
+			}
+		},
 
 		series:
 		{
@@ -508,6 +531,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta.graph.options =
 	{
+		title : { padding : 0, position : "bottom", display : true },
 		tooltips : { enabled : false, mode : 'label' },
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
@@ -517,11 +541,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 		scales:
 		{
 			xAxes : [ { display : false } ],
-			yAxes:
-			[
-			 	{ id : "mig_time", type : "linear", stacked : false, scaleLabel : { labelString : "ms", display : true } },
-			 	{ id : "mig_data", type : "linear", position : "right", scaleLabel : { labelString : "MB", display : true } }
-			]
+			yAxes : [ $scope.chartmeta.graph.yAxes.mig_time, $scope.chartmeta.graph.yAxes.mig_data ]
 		}
 	}
 
@@ -536,8 +556,15 @@ shardalyze.controller("migrateCtrl", function($scope)
 		$scope.chartmeta.graph.data = [];
 		$scope.chartmeta.graph.labels = [];
 
+		// don't show Time (ms) label if MB scale is disabled
+		$scope.chartmeta.graph.yAxes.mig_time.scaleLabel.display =
+			$scope.chartmeta.graph.yAxes.mig_data.display;
+
+		// 8 datasets if data is enabled, 7 otherwise
+		var sets = ($scope.chartmeta.graph.yAxes.mig_data.display ? 8 : 7);
+
 		// 0-6: F1-6 & Total, 7: data size
-		for(var i = 0; i <= 7; i++)
+		for(var i = 0; i < sets; i++)
 		{
 			$scope.chartmeta.graph.data[i] =
 			{
@@ -579,8 +606,9 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 					$scope.chartmeta.graph.data[6].data[r] = sum;
 
-					// amount of data transferred
-					$scope.chartmeta.graph.data[7].data[r] = moveCommit.details.clonedBytes/(1024.0*1024.0);
+					// amount of data transferred (optional)
+					if($scope.chartmeta.graph.yAxes.mig_data.display)
+						$scope.chartmeta.graph.data[7].data[r] = moveCommit.details.clonedBytes/(1024.0*1024.0);
 				}
 			}
 
@@ -588,8 +616,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 		}
 	};
 
+	$scope.$watchGroup(['chartmeta.graph.from', 'chartmeta.graph.to', 'chartmeta.graph.yAxes.mig_time.stacked', 'chartmeta.graph.yAxes.mig_data.display'], updateGraph);
 	$scope.$watch('mongo.shardalyzer.changes', function(changes) { $scope.mongo.ui.showmigrations = false; updateGraph(); } )
-	$scope.$watchGroup(['chartmeta.graph.from', 'chartmeta.graph.to'], updateGraph);
 
 	function updateBars(pos, op)
 	{

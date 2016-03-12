@@ -330,18 +330,26 @@
 							</canvas>
 						</div>
 						<div class="panel panel-default panel-body" style="float: right; width:75%; height:100%">
-							<canvas id="migrateGraph" class="chart chart-line" chart-data="chartmeta.graph.data" chart-labels="chartmeta.graph.labels" chart-colors="chartmeta.colours"
-								chart-series="chartmeta.graph.series" chart-options="chartmeta.graph.options" chart-watch="{'chartLabels':false}" chart-click="migrateClick" chart-hover="migrateHover">
-							</canvas>
-							<div style="float:right; transform: translate(0%, -75%);">
+							<div style="width:100%; height:100%">
+								<canvas id="migrateGraph" class="chart chart-line" chart-data="chartmeta.graph.data" chart-labels="chartmeta.graph.labels" chart-colors="chartmeta.colours"
+									chart-series="chartmeta.graph.series" chart-options="chartmeta.graph.options" chart-watch="{'chartLabels':false}" chart-click="migrateClick" chart-hover="migrateHover">
+								</canvas>
+							</div>
+							<div style="float:right; transform: translate(0, -50%);">
+								<button type="button" class="btn btn-xs {{chartmeta.graph.yAxes.mig_data.display ? 'btn-success' : 'btn-danger'}}" ng-model="chartmeta.graph.yAxes.mig_data.display" uib-btn-checkbox>
+									<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+								</button>
+								<button type="button" class="btn btn-xs {{chartmeta.graph.yAxes.mig_time.stacked ? 'btn-success' : 'btn-danger'}}" ng-model="chartmeta.graph.yAxes.mig_time.stacked" uib-btn-checkbox>
+									<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+								</button>
 								<select style="color: #333; font-weight:normal"
-									ng-options="shard as shard for (shard, shardobj) in mongo.shardalyzer.shards"
+									ng-options="shardname as shardname for (shardname, shard) in mongo.shardalyzer.shards"
 									ng-model="chartmeta.graph.from">
 									<option value="">All shards</option>
 								</select>
 								-
 								<select style="color: #333; font-weight:normal"
-									ng-options="shard as shard for (shard, shardobj) in mongo.shardalyzer.shards"
+									ng-options="shardname as shardname for (shardname, shard) in mongo.shardalyzer.shards"
 									ng-model="chartmeta.graph.to">
 									<option value="">All shards</option>
 								</select>
