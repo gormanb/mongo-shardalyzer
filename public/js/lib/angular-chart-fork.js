@@ -231,7 +231,7 @@
 
     function getColour (colour) {
       return {
-        backgroundColor: rgba(colour, 0.2),
+        backgroundColor: rgba(colour, 1),
         borderColor: rgba(colour, 1),
         pointBackgroundColor: rgba(colour, 1),
         pointBorderColor: '#fff',

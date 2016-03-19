@@ -488,7 +488,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 			from : null,
 			to : null,
 
-			series : ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total', 'Data Size'],
+			series : [], // generated dynamically based on current settings
 
 			yAxes:
 			{
@@ -532,6 +532,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 	$scope.chartmeta.graph.options =
 	{
 		title : { padding : 0, position : "bottom", display : true },
+		elements : { point : { radius : 0, hitRadius : 4 } },
 		tooltips : { enabled : false, mode : 'label' },
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
@@ -551,6 +552,38 @@ shardalyze.controller("migrateCtrl", function($scope)
 			&& (!$scope.chartmeta.graph.to || moveFrom.details.to == $scope.chartmeta.graph.to);
 	}
 
+	function generateGraphMeta()
+	{
+		var series = $scope.chartmeta.graph.series = [];
+
+		for(var i = 1; i <= 6; i++)
+			series.push('F' + i);
+
+		if(!$scope.chartmeta.graph.yAxes.mig_time.stacked)
+			series.push('Total')
+
+		if($scope.chartmeta.graph.yAxes.mig_data.display)
+			series.push('Data Size');
+
+		var datasets = {};
+
+		for(var s in series)
+		{
+			var ds = series[s];
+
+			datasets[ds] =
+			{
+				data : [],
+				tension : 0,
+				borderWidth : (ds == "Data Size" ? 2 : 1),
+				fill :  (ds == "Data Size" ? false : $scope.chartmeta.graph.yAxes.mig_time.stacked),
+				yAxisID : (ds == "Data Size" ? "mig_data" : "mig_time")
+			}
+		}
+
+		return datasets;
+	}
+
 	function updateGraph()
 	{
 		$scope.chartmeta.graph.data = [];
@@ -560,20 +593,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 		$scope.chartmeta.graph.yAxes.mig_time.scaleLabel.display =
 			$scope.chartmeta.graph.yAxes.mig_data.display;
 
-		// 8 datasets if data is enabled, 7 otherwise
-		var sets = ($scope.chartmeta.graph.yAxes.mig_data.display ? 8 : 7);
-
-		// 0-6: F1-6 & Total, 7: data size
-		for(var i = 0; i < sets; i++)
-		{
-			$scope.chartmeta.graph.data[i] =
-			{
-				data : [],
-				tension : 0.1,
-				fill :  (i <= 6),
-				yAxisID : (i <= 6) ? "mig_time" : "mig_data"
-			}
-		}
+		// set series & build template datasets based on current settings
+		var datasets = generateGraphMeta();
 
 		var migrations = $scope.mongo.shardalyzer.migrations;
 		var changes = $scope.mongo.shardalyzer.changes;
@@ -584,8 +605,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 		{
 			var r = changes.length - (i+1);
 
-			for(var m in $scope.chartmeta.graph.data)
-				$scope.chartmeta.graph.data[m].data[r] = NaN;
+			for(var m in datasets)
+				datasets[m].data[r] = NaN;
 
 			if(i in migrations)
 			{
@@ -600,20 +621,26 @@ shardalyze.controller("migrateCtrl", function($scope)
 					{
 						var dur = moveFrom.details["step " + j + " of 6"];
 
-						$scope.chartmeta.graph.data[j-1].data[r] = dur;
+						datasets["F" + j].data[r] = dur;
 						sum += dur;
 					}
 
-					$scope.chartmeta.graph.data[6].data[r] = sum;
+					// Total is not shown if graph is stacked
+					if(!$scope.chartmeta.graph.yAxes.mig_time.stacked)
+						datasets["Total"].data[r] = sum;
 
 					// amount of data transferred (optional)
 					if($scope.chartmeta.graph.yAxes.mig_data.display)
-						$scope.chartmeta.graph.data[7].data[r] = moveCommit.details.clonedBytes/(1024.0*1024.0);
+						datasets["Data Size"].data[r] = moveCommit.details.clonedBytes/(1024.0*1024.0);
 				}
 			}
 
 			$scope.chartmeta.graph.labels[r] = $scope.mongo.shardalyzer.changes[i].time;
 		}
+
+		// finalise datasets
+		for(var ds in datasets)
+			$scope.chartmeta.graph.data.push(datasets[ds]);
 	};
 
 	$scope.$watchGroup(['chartmeta.graph.from', 'chartmeta.graph.to', 'chartmeta.graph.yAxes.mig_time.stacked', 'chartmeta.graph.yAxes.mig_data.display'], updateGraph);
