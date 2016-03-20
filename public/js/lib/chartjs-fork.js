@@ -7485,8 +7485,8 @@ module.exports = function(Chart) {
 					// trim start & end if points skipped
 					var first = 0, last = this._children.length-1;
 
-					while(first < last && this._children[first++]._view.skip);
-					while(last > first && this._children[last--]._view.skip);
+					while(first < last && this._children[first]._view.skip) first++;
+					while(last > first && this._children[last]._view.skip) last--;
 
 					//Round off the line by going to the base of the chart, back to the start, then fill.
 					ctx.lineTo(this._children[last]._view.x, vm.scaleZero);
