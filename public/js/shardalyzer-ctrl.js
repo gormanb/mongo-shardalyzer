@@ -467,6 +467,19 @@ shardalyze.controller("migrateCtrl", function($scope)
 {
 	var scolors = $scope.mongo.shardalyzer.statuscolors;
 
+	var colormap =
+	{
+		F1 : "#AEC6CF",
+	 	F2 : '#DCDCDC',
+		F3 : scolors[STATUS_START_SOURCE],
+		F4 : scolors[STATUS_TO_SOURCE],
+		F5 : scolors[STATUS_COMMIT],
+		F6 : scolors[STATUS_FROM_SUCCESS],
+
+		"Total" : '#FFA07A',
+		"Data Size" : '#000000'
+	};
+
 	$scope.chartmeta =
 	{
 		bars:
@@ -476,12 +489,9 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 			colors:
 			[
-			 	scolors[STATUS_START_SOURCE],
-		 		scolors[STATUS_START_SOURCE],
-		 		scolors[STATUS_START_SOURCE],
-		 		scolors[STATUS_TO_SOURCE],
-		 		scolors[STATUS_COMMIT],
-		 		scolors[STATUS_FROM_SUCCESS]
+			 	colormap["F1"],	colormap["F2"],
+			 	colormap["F3"],	colormap["F4"],
+			 	colormap["F5"],	colormap["F6"],
 			 ],
 
 			series:
@@ -522,19 +532,6 @@ shardalyze.controller("migrateCtrl", function($scope)
 		}
 	};
 
-	$scope.chartmeta.colors =
-	{
-	 	F1 : scolors[STATUS_START_SOURCE],
-	 	F2 : scolors[STATUS_START_SOURCE],
-		F3 : scolors[STATUS_START_SOURCE],
-		F4 : scolors[STATUS_TO_SOURCE],
-		F5 : scolors[STATUS_COMMIT],
-		F6 : scolors[STATUS_FROM_SUCCESS],
-
-		"Total" : DEFAULT_CHUNK_COLOR,
-		"Data Size" : '#000000'
-	}
-
 	$scope.chartmeta.bars.options =
 	{
 		legend : { display : false },
@@ -544,8 +541,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta.graph.options =
 	{
+		elements : { point : { radius : 0, hitRadius : 4 }, line : { borderJoinStyle : 'bevel' } },
 		title : { padding : 0, position : "bottom", display : true },
-		elements : { point : { radius : 0, hitRadius : 4 } },
 		tooltips : { enabled : false, mode : 'label' },
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
@@ -589,12 +586,12 @@ shardalyze.controller("migrateCtrl", function($scope)
 			{
 				data : [],
 				tension : 0,
-				borderWidth : (ds == "Data Size" ? 2 : 1),
+				borderWidth : 2,
 				fill :  (ds == "Data Size" ? false : $scope.chartmeta.graph.yAxes.mig_time.stacked),
 				yAxisID : (ds == "Data Size" ? "mig_data" : "mig_time")
 			}
 
-			colors.push($scope.chartmeta.colors[ds]);
+			colors.push(colormap[ds]);
 		}
 
 		return datasets;
@@ -670,7 +667,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 		var migrations = $scope.mongo.shardalyzer.migrations;
 		var steps = (op == OP_FROM ? 6 : 5);
 
-		if(pos && migrations && pos in migrations)
+		if((pos == 0 || pos) && migrations && pos in migrations)
 		{
 			var migration = migrations[pos];
 			var sum = 0;

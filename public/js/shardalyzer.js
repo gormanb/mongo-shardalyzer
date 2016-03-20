@@ -21,14 +21,14 @@ var DEFAULT_CHUNK_COLOR = '#AEC6CF';
 
 var statuscolors = {};
 
-statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#FFB347',
-statuscolors[STATUS_MULTI_SPLIT_DEST] = '#D19036',
-statuscolors[STATUS_SPLIT_SOURCE] = '#FFB347',
-statuscolors[STATUS_SPLIT_DEST] = '#D19036',
-statuscolors[STATUS_START_SOURCE] = '#AAEEAA',
-statuscolors[STATUS_TO_SOURCE] = '#55CC55',
+statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#D19036',
+statuscolors[STATUS_MULTI_SPLIT_DEST] = '#FFD700',
+statuscolors[STATUS_SPLIT_SOURCE] = '#FFA500',
+statuscolors[STATUS_SPLIT_DEST] = '#FFD700',
+statuscolors[STATUS_START_SOURCE] = '#00CED1',
+statuscolors[STATUS_TO_SOURCE] = '#90EE90',
 statuscolors[STATUS_COMMIT] = '#0000AA',
-statuscolors[STATUS_FROM_SUCCESS] = '#00AA00',
+statuscolors[STATUS_FROM_SUCCESS] = '#009900',
 statuscolors[STATUS_FROM_FAILURE] = '#EE0000',
 statuscolors.undefined = DEFAULT_CHUNK_COLOR;
 
