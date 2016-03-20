@@ -474,10 +474,20 @@ shardalyze.controller("migrateCtrl", function($scope)
 			labels : [],
 			data : [],
 
+			colors:
+			[
+			 	scolors[STATUS_START_SOURCE],
+		 		scolors[STATUS_START_SOURCE],
+		 		scolors[STATUS_START_SOURCE],
+		 		scolors[STATUS_TO_SOURCE],
+		 		scolors[STATUS_COMMIT],
+		 		scolors[STATUS_FROM_SUCCESS]
+			 ],
+
 			series:
 			{
-				"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'Total'],
-				"moveChunk.to": ['T1', 'T2', 'T3', 'T4', 'T5', 'Total']
+				"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6'],
+				"moveChunk.to": ['T1', 'T2', 'T3', 'T4', 'T5']
 			}
 		},
 		graph:
@@ -489,6 +499,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 			to : null,
 
 			series : [], // generated dynamically based on current settings
+			colors : [],
 
 			yAxes:
 			{
@@ -511,16 +522,18 @@ shardalyze.controller("migrateCtrl", function($scope)
 		}
 	};
 
-	$scope.chartmeta.colours =
-	[
-	 	// F1-6
-	 	  scolors[STATUS_START_SOURCE], scolors[STATUS_START_SOURCE],
-		  scolors[STATUS_START_SOURCE], scolors[STATUS_TO_SOURCE],
-		  scolors[STATUS_COMMIT], scolors[STATUS_FROM_SUCCESS], DEFAULT_CHUNK_COLOR,
+	$scope.chartmeta.colors =
+	{
+	 	F1 : scolors[STATUS_START_SOURCE],
+	 	F2 : scolors[STATUS_START_SOURCE],
+		F3 : scolors[STATUS_START_SOURCE],
+		F4 : scolors[STATUS_TO_SOURCE],
+		F5 : scolors[STATUS_COMMIT],
+		F6 : scolors[STATUS_FROM_SUCCESS],
 
-		// data size
-		'#000000'
-	]
+		"Total" : DEFAULT_CHUNK_COLOR,
+		"Data Size" : '#000000'
+	}
 
 	$scope.chartmeta.bars.options =
 	{
@@ -555,15 +568,16 @@ shardalyze.controller("migrateCtrl", function($scope)
 	function generateGraphMeta()
 	{
 		var series = $scope.chartmeta.graph.series = [];
+		var colors = $scope.chartmeta.graph.colors = [];
+
+		if($scope.chartmeta.graph.yAxes.mig_data.display)
+			series.push('Data Size');
 
 		for(var i = 1; i <= 6; i++)
 			series.push('F' + i);
 
 		if(!$scope.chartmeta.graph.yAxes.mig_time.stacked)
 			series.push('Total')
-
-		if($scope.chartmeta.graph.yAxes.mig_data.display)
-			series.push('Data Size');
 
 		var datasets = {};
 
@@ -579,6 +593,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 				fill :  (ds == "Data Size" ? false : $scope.chartmeta.graph.yAxes.mig_time.stacked),
 				yAxisID : (ds == "Data Size" ? "mig_data" : "mig_time")
 			}
+
+			colors.push($scope.chartmeta.colors[ds]);
 		}
 
 		return datasets;
@@ -662,12 +678,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 			for(var i = 1; i <= steps; i++)
 			{
 				var dur = migration[op].details["step " + i + " of " + steps];
-
 				$scope.chartmeta.bars.data.push(dur == undefined ? NaN : dur);
-				sum += (dur || 0);
 			}
-
-			$scope.chartmeta.bars.data.push(sum);
 		}
 		else
 		{

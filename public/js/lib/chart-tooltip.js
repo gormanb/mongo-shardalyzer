@@ -86,16 +86,29 @@ var migrateGraphTooltipRaw = function(point, migrations, event)
 	tooltipEl.removeClass('above below');
 	tooltipEl.addClass('above center');
 
-	var idx = point._index;
+	var idx = Shardalyzer.changes.length - (point._index+1);
 
-	var change = Shardalyzer.changes[Shardalyzer.changes.length - (idx+1)];
+	var moveCommit = Shardalyzer.migrations[idx]["moveChunk.commit"];
+	var moveFrom = Shardalyzer.migrations[idx]["moveChunk.from"];
 
-	var text = { time : change.time, from : change.details.from, to : change.details.to };
+	var text =
+	{
+		time : moveFrom.time,
+		clonedBytes : moveCommit.details.clonedBytes,
+		from : moveFrom.details.from,
+		to : moveFrom.details.to
+	};
 
-	for(var i = 0; i < 6; i++)
-		text["F" + (i+1)] = migrations[i].data[idx];
+	var sum = 0;
 
-	text["Total"] = migrations[6].data[idx];
+	for(var i = 1; i <= 6; i++)
+	{
+		var dur = moveFrom.details["step " + i + " of 6"];
+		text["F" + i] = dur;
+		sum += dur;
+	}
+
+	text["Total"] = sum;
 
 	// set text content
 	tooltipEl.html("<pre>" + JSON.stringify(text, null, 2) + "</pre>");
