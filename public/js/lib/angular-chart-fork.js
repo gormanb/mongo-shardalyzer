@@ -91,7 +91,7 @@
       return {
         restrict: 'CA',
         scope: {
-          getColour: '=?',
+          chartGetColor: '=?',
           chartType: '=',
           chartData: '=?',
           chartLabels: '=?',
@@ -123,7 +123,6 @@
           scope.$watch('chartType', function (newVal, oldVal) {
             if (isEmpty(newVal)) return;
             if (angular.equals(newVal, oldVal)) return;
-            if (chart) chart.destroy();
             createChart(newVal);
           });
 
@@ -139,12 +138,12 @@
 
             // chart.update() doesn't work for series and labels
             // so we have to re-create the chart entirely
-            if (chart) chart.destroy();
-
             createChart(chartType);
           }
 
           function createChart (type) {
+			if (chart) chart.destroy();
+
             // TODO: check parent?
             if (isResponsive(type, scope) && elem[0].clientHeight === 0) {
               return $timeout(function () {
@@ -152,7 +151,7 @@
               }, 50, false);
             }
             if (! scope.chartData || ! scope.chartData.length) return;
-            scope.getColour = typeof scope.getColour === 'function' ? scope.getColour : getRandomColour;
+            scope.chartGetColor = typeof scope.chartGetColor === 'function' ? scope.chartGetColor : getRandomColor;
 
             var cvs = elem[0], ctx = cvs.getContext('2d');
 
@@ -212,31 +211,35 @@
         ChartJs.getOptions(type).chartColors ||
         Chart.defaults.global.colors
       );
+      var notEnoughColors = colors.length < scope.chartData.length;
       while (colors.length < scope.chartData.length) {
-        colors.push(scope.getColour());
+        colors.push(scope.chartGetColor());
       }
-      return colors.map(convertColour);
+      // mutate colors in this case as we don't want
+      // the colors to change on each refresh
+      if (notEnoughColors) scope.chartColors = colors;
+      return colors.map(convertColor);
     }
 
-    function convertColour (colour) {
-      if (typeof colour === 'object' && colour !== null) return colour;
-      if (typeof colour === 'string' && colour[0] === '#') return getColour(hexToRgb(colour.substr(1)));
-      return getRandomColour();
+    function convertColor (color) {
+      if (typeof color === 'object' && color !== null) return color;
+      if (typeof color === 'string' && color[0] === '#') return getColor(hexToRgb(color.substr(1)));
+      return getRandomColor();
     }
 
-    function getRandomColour () {
-      var colour = [getRandomInt(0, 255), getRandomInt(0, 255), getRandomInt(0, 255)];
-      return getColour(colour);
+    function getRandomColor () {
+      var color = [getRandomInt(0, 255), getRandomInt(0, 255), getRandomInt(0, 255)];
+      return getColor(color);
     }
 
-    function getColour (colour) {
+    function getColor (color) {
       return {
-        backgroundColor: rgba(colour, 1),
-        borderColor: rgba(colour, 1),
-        pointBackgroundColor: rgba(colour, 1),
+        backgroundColor: rgba(color, 1),
+        borderColor: rgba(color, 1),
+        pointBackgroundColor: rgba(color, 1),
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: rgba(colour, 0.8)
+        pointHoverBorderColor: rgba(color, 0.8)
       };
     }
 
@@ -244,12 +247,12 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function rgba (colour, alpha) {
+    function rgba (color, alpha) {
       if (usingExcanvas) {
         // rgba not supported by IE8
-        return 'rgb(' + colour.join(',') + ')';
+        return 'rgb(' + color.join(',') + ')';
       } else {
-        return 'rgba(' + colour.concat(alpha).join(',') + ')';
+        return 'rgba(' + color.concat(alpha).join(',') + ')';
       }
     }
 
