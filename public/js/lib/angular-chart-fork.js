@@ -115,9 +115,9 @@
           for(var k in scope.chartWatch)
           {
         	  if(scope.chartWatch[k] === "collection")
-        		  scope.$watchCollection(k, resetChart);
+        		  scope.$watchCollection(k, updateChart);
         	  else
-        		  scope.$watch(k, resetChart, scope.chartWatch[k]);
+        		  scope.$watch(k, updateChart, scope.chartWatch[k]);
           }
 
           // always watch chartType
@@ -130,6 +130,29 @@
           scope.$on('$destroy', function () {
             destroyChart(chart, scope);
           });
+
+          function updateChart(newVal, oldVal)
+          {
+        	  if(chart)
+        	  {
+        		  for(var ds in chart.config.data.datasets)
+        		  {
+        			  chart.config.data.datasets[ds].backgroundColor = scope.chartColors.map(function (color) {
+        	  			return (typeof color === 'string' ? color : color.pointBackgroundColor);
+        	            });
+
+        			  chart.config.data.datasets[ds].hoverBackgroundColor = scope.chartColors.map(function (color) {
+        	            	return (typeof color === 'string' ? rgba(hexToRgb(color.substr(1)), 0.8) : color.backgroundColor);
+        	            });
+        		  }
+
+        		  chart.config.options = angular.extend(chart.config.options, scope.chartOptions);
+
+        		  chart.update();
+        	  }
+        	  else
+        		  resetChart(newVal, oldVal);
+          }
 
           function resetChart (newVal, oldVal) {
             if (isEmpty(newVal)) return;
@@ -162,11 +185,11 @@
             	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope)) :
             	    getData(scope.chartLabels, scope.chartData, scope.chartColors);
 
-            var options = angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
+            //var options = angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
             chart = new ChartJs.Chart(ctx, {
               type: type,
               data: data,
-              options: options
+              options: scope.chartOptions
             });
             scope.$emit('chart-create', chart);
 
