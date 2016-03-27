@@ -362,61 +362,62 @@
 					</div>
 				</div>
 
-				<div id="changelogquery" class="snug">
-					<div style="width:75%; margin: auto;">
-						<uib-tabset>
-							<uib-tab heading="Changelog">
-								<div ng-show="mongo.ui.showchangelog" style="width:100%; height:20em; max-height:20em; margin:0 auto; display:table; border-collapse:collapse;">
-									<div id="changelist" style="display:table-cell; width:100%;" ng-controller="changelogControl">
-										<select class="form-control" size=18 style="width:100%; overflow-x:scroll; overflow-y:hidden"
-											ng-options="index as change | json for (index, change) in mongo.ui.changelog"
-											ng-model="mongo.ui.selectedchange"
-											ng-readonly="true">
+				<div id="changelogquery" class="snug" style="width:75%; margin:0 auto">
+					<uib-tabset>
+						<uib-tab heading="Changelog">
+							<div class="form form-inline" ng-show="mongo.ui.showchangelog" style="width:100%; height:24em; max-height:24em;">
+								<select id="changelist" class="form-control" style="width:75%; height:100%; overflow-x:scroll; overflow-y:hidden; float:left"
+									ng-options="index as change | json for (index, change) in mongo.ui.changelog"
+									ng-model="mongo.ui.selectedchange"
+									ng-controller="changelogControl"
+									ng-readonly="true"
+									size=18>
+								</select>
+
+								<json-formatter id="changejson"
+									class="form-control" style="width:25%; height:100%; overflow-y:scroll; background:white; float:right"
+									ng-show="mongo.ui.changelog[mongo.ui.selectedchange] !== undefined"
+									json="mongo.ui.changelog[mongo.ui.selectedchange]"
+									open="3" ng-readonly="true">
+								</json-formatter>
+							</div>
+						</uib-tab>
+						<uib-tab heading="Query">
+							<div class="flexv" ng-controller="queryCtrl" ng-show="mongo.ui.showchangelog" style="width:100%; height:24em; max-height:24em;">
+								<div class="input-group snug">
+									<span class="input-group-btn">
+										<select class="form-control"
+											ng-model="query.selectedColl"
+											ng-init="query.selectedColl = 'changelog'"
+											ng-options="coll.name as coll.name for coll in mongo.collList">
+											<option value="">[collection]</option>
 										</select>
-									</div>
+									</span>
 
-									<div style="min-width:395px; max-width:395px; height:100%; margin: 0 0 0 5px; overflow-y:scroll; background:white" ng-show="mongo.ui.changelog[mongo.ui.selectedchange] !== undefined">
-										<json-formatter json="mongo.ui.changelog[mongo.ui.selectedchange]" open="3" ng-readonly="true"></json-formatter>
-									</div>
+									<input type="text" class="form-control" ng-model="query.query" ng-model-options="{updateOn : 'default'}" ng-enter="query.submit()" />
+
+									<span class="input-group-btn">
+										<select class="form-control"
+											ng-model="query.andreAgg"
+											ng-options="value as key for (key, value) in query.andre_aggregrassi">
+											<option value="">[Predefined Aggregations]</option>
+										</select>
+									</span>
+
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" ng-click="query.submit()" value="?">
+											<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+										</button>
+									</span>
 								</div>
-							</uib-tab>
-							<uib-tab heading="Query">
-								<div ng-controller="queryCtrl" ng-show="mongo.ui.showchangelog" style="width:100%; margin:0 auto; display:table; border-collapse:collapse;">
-									<div class="input-group">
-										<span class="input-group-btn">
-											<select class="form-control"
-												ng-model="query.selectedColl"
-												ng-init="query.selectedColl = 'changelog'"
-												ng-options="coll.name as coll.name for coll in mongo.collList">
-												<option value="">[collection]</option>
-											</select>
-										</span>
 
-										<input type="text" class="form-control" ng-model="query.query" ng-model-options="{updateOn : 'default'}" ng-enter="query.submit()" />
-
-										<span class="input-group-btn">
-											<select class="form-control"
-												ng-model="query.andreAgg"
-												ng-options="value as key for (key, value) in query.andre_aggregrassi">
-												<option value="">[Predefined Aggregations]</option>
-											</select>
-										</span>
-
-										<span class="input-group-btn">
-											<button type="button" class="btn btn-primary" ng-click="query.submit()" value="?">
-												<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-											</button>
-										</span>
-									</div>
-
-									<textarea class="form-control" style="width:100%; display:table-cell; height:20em;" ng-model="query.result" ng-readonly="true"></textarea>
-								</div>
-							</uib-tab>
-							<button type="button" class="btn btn-default pull-right" ng-click="mongo.ui.showchangelog = (!mongo.ui.showchangelog)" value="Show/Hide">
-								<span class="glyphicon {{mongo.ui.showchangelog ? 'glyphicon-menu-down' : 'glyphicon-menu-up'}}" aria-hidden="true"></span>
-							</button>
-						</uib-tabset>
-					</div>
+								<textarea class="form-control greedy" style="width:100%;" ng-model="query.result" ng-readonly="true"></textarea>
+							</div>
+						</uib-tab>
+						<button type="button" class="btn btn-default pull-right" ng-click="mongo.ui.showchangelog = (!mongo.ui.showchangelog)" value="Show/Hide">
+							<span class="glyphicon {{mongo.ui.showchangelog ? 'glyphicon-menu-down' : 'glyphicon-menu-up'}}" aria-hidden="true"></span>
+						</button>
+					</uib-tabset>
 				</div>
 
 				<div class="footer" style="margin: 15px 0 0 -15px"></div>
