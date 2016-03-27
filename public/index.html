@@ -225,7 +225,7 @@
 
 				<div id="chartjs-tooltip-shardalyzer" class="chartjs-tooltip" style="visibility:hidden; z-index:100"></div>
 
-				<div id="shardcontrols" class="snug" style="margin: 15px 0 15px 0">
+				<div id="shardcontrols" class="snug" style="margin: 15px 0 10px 0">
 					<div class="flexh" style="width:75%; margin:0 auto;">
 						<div class="snug" style="padding-right:15px" ng-controller="playControl">
 							<div class="btn-group" role="group">
@@ -322,44 +322,44 @@
 							</span>
 						</div>
 					</div>
+				</div>
 
-					<div style="margin: 0 auto; margin-top:10px; width: 75%; height:200px;" ng-controller="migrateCtrl" ng-show="mongo.ui.showmigrations">
-						<div class="panel panel-default panel-body" style="float: left; width:25%; height:100%">
-							<canvas id="migrateBars" class="chart chart-bar" chart-data="chartmeta.bars.data" chart-labels="chartmeta.bars.labels" chart-colors="chartmeta.bars.colors"
-								chart-series="chartmeta.bars.series" chart-options="chartmeta.bars.options" chart-watch="{'chartData':false}" chart-click="migrateBarClick">
+				<div style="margin: 0 auto; margin-bottom:10px; width: 75%; height:200px;" ng-controller="migrateCtrl" ng-show="mongo.ui.showmigrations">
+					<div class="panel panel-default panel-body" style="float: left; width:25%; height:100%">
+						<canvas id="migrateBars" class="chart chart-bar" chart-data="chartmeta.bars.data" chart-labels="chartmeta.bars.labels" chart-colors="chartmeta.bars.colors"
+							chart-series="chartmeta.bars.series" chart-options="chartmeta.bars.options" chart-watch="{'chartData':false}" chart-click="migrateBarClick">
+						</canvas>
+					</div>
+					<div class="panel panel-default panel-body" style="float: right; width:75%; height:100%">
+						<div style="width:100%; height:100%">
+							<canvas id="migrateGraph" class="chart chart-line" chart-data="chartmeta.graph.data" chart-labels="chartmeta.graph.labels" chart-colors="chartmeta.graph.colors"
+								chart-series="chartmeta.graph.series" chart-options="chartmeta.graph.options" chart-watch="{'chartLabels':false}" chart-click="migrateClick" chart-hover="migrateHover">
 							</canvas>
 						</div>
-						<div class="panel panel-default panel-body" style="float: right; width:75%; height:100%">
-							<div style="width:100%; height:100%">
-								<canvas id="migrateGraph" class="chart chart-line" chart-data="chartmeta.graph.data" chart-labels="chartmeta.graph.labels" chart-colors="chartmeta.graph.colors"
-									chart-series="chartmeta.graph.series" chart-options="chartmeta.graph.options" chart-watch="{'chartLabels':false}" chart-click="migrateClick" chart-hover="migrateHover">
-								</canvas>
-							</div>
-							<div style="float:right; transform: translate(0, -50%);">
-								<button type="button" class="btn btn-xs {{chartmeta.graph.yAxes.mig_data.display ? 'btn-success' : 'btn-danger'}}" ng-model="chartmeta.graph.yAxes.mig_data.display" uib-btn-checkbox>
-									<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-								</button>
-								<button type="button" class="btn btn-xs {{chartmeta.graph.yAxes.mig_time.stacked ? 'btn-success' : 'btn-danger'}}" ng-model="chartmeta.graph.yAxes.mig_time.stacked" uib-btn-checkbox>
-									<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-								</button>
-								<select style="color: #333; font-weight:normal"
-									ng-options="shardname as shardname for (shardname, shard) in mongo.shardalyzer.shards"
-									ng-model="chartmeta.graph.from">
-									<option value="">All shards</option>
-								</select>
-								-
-								<select style="color: #333; font-weight:normal"
-									ng-options="shardname as shardname for (shardname, shard) in mongo.shardalyzer.shards"
-									ng-model="chartmeta.graph.to">
-									<option value="">All shards</option>
-								</select>
-							</div>
+						<div style="float:right; transform: translate(0, -50%);">
+							<button type="button" class="btn btn-xs {{chartmeta.graph.yAxes.mig_data.display ? 'btn-success' : 'btn-danger'}}" ng-model="chartmeta.graph.yAxes.mig_data.display" uib-btn-checkbox>
+								<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+							</button>
+							<button type="button" class="btn btn-xs {{chartmeta.graph.yAxes.mig_time.stacked ? 'btn-success' : 'btn-danger'}}" ng-model="chartmeta.graph.yAxes.mig_time.stacked" uib-btn-checkbox>
+								<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+							</button>
+							<select style="color: #333; font-weight:normal"
+								ng-options="shardname as shardname for (shardname, shard) in mongo.shardalyzer.shards"
+								ng-model="chartmeta.graph.from">
+								<option value="">All shards</option>
+							</select>
+							-
+							<select style="color: #333; font-weight:normal"
+								ng-options="shardname as shardname for (shardname, shard) in mongo.shardalyzer.shards"
+								ng-model="chartmeta.graph.to">
+								<option value="">All shards</option>
+							</select>
 						</div>
 					</div>
+				</div>
 
-					<div style="width:75%; margin:0 auto; clear:both" ng-style="{ 'visibility' : (mongo.ui.errmsg[mongo.ui.slider] != undefined ? 'visible' : 'hidden') }">
-						<uib-alert type="{{mongo.ui.errmsg[mongo.ui.slider].type}}" style="margin: 15px 0 0 0">{{mongo.ui.errmsg[mongo.ui.slider].msg}}&nbsp;</uib-alert>
-					</div>
+				<div style="width:75%; margin:0 auto; margin-bottom:-5px" ng-style="{ 'visibility' : (mongo.ui.errmsg[mongo.ui.slider] != undefined ? 'visible' : 'hidden') }">
+					<uib-alert type="{{mongo.ui.errmsg[mongo.ui.slider].type}}">{{mongo.ui.errmsg[mongo.ui.slider].msg}}&nbsp;</uib-alert>
 				</div>
 
 				<div id="changelogquery" class="snug" style="width:75%; margin:0 auto">
