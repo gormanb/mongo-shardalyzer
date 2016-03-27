@@ -317,7 +317,7 @@
 								<label ng-repeat="(name, param) in errorconfig.params" style="margin:5px; float:right">
 									{{param.name || ''}}
 									<input ng-if="param.type !== 'select'" type="{{param.type}}" ng-model="param.value" id="param.name" min=1 class="form-control">
-									<select ng-if="param.type == 'select'" ng-model="param.value" ng-options="opt as key for (key, opt) in param.options" id="param.name" class="form-control"></select>
+									<select ng-if="param.type == 'select'" ng-model="param.value" ng-options="opt as key for (key, opt) in param.options" id="param.name" class="form-control" style="color: #333; font-weight:normal"></select>
 								</label>
 							</span>
 						</div>
