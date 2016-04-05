@@ -10,6 +10,16 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 		$rootScope.mongo.host = "localhost";
 		$rootScope.mongo.port = 27017;
 
+		$rootScope.mongo.auth =
+		{
+			authmech : null,
+			username : null,
+			password : null,
+			authdb : "admin",
+			pempwd : null,
+			pem : null
+		};
+
 		$rootScope.mongo.selectedNS = null;
 		$rootScope.mongo.collList = [];
 		$rootScope.mongo.nsList = [];

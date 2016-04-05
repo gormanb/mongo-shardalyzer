@@ -154,6 +154,36 @@
 							</a>
 						</li>
 					</ul>
+					<ul class="nav navmenu-nav" ng-show="opts.advanced">
+						<li class="active"><a href="#"><small>Authentication settings</small></a></li>
+						<li><a href="#">Authentication Method
+								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="None"
+									ng-model="mongo.auth.authmech" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+							</a>
+						</li>
+						<li><a href="#">Credentials
+								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[username]"
+									ng-model="mongo.auth.username" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[password]"
+									ng-model="mongo.auth.password" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+							</a>
+						</li>
+						<li><a href="#">Authentication Database
+								<input type="text" class="form-control" style="color: #333; font-weight:normal"
+									ng-model="mongo.auth.authdb" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+							</a>
+						</li>
+					</ul>
+					<ul class="nav navmenu-nav" ng-show="opts.advanced">
+						<li class="active"><a href="#"><small>SSL Configuration</small></a></li>
+						<li><a href="#">PEM File & Password
+								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="None"
+									ng-model="mongo.auth.pem" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[password]"
+									ng-model="mongo.auth.pempwd" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+							</a>
+						</li>
+					</ul>
 				</div>
 			</nav>
 
