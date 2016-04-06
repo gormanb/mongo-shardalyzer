@@ -1,5 +1,5 @@
 
-var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel', 'ui.sortable', 'frapontillo.bootstrap-switch', 'ui.checkbox', 'ui.select']).run
+var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', 'ui.bootstrap-slider', 'jsonFormatter', 'angular-growl', 'ngAnimate', 'monospaced.mousewheel', 'ui.sortable', 'frapontillo.bootstrap-switch', 'ui.checkbox', 'ui.select', 'file-model']).run
 (
 	function($rootScope)
 	{
@@ -12,12 +12,23 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 
 		$rootScope.mongo.auth =
 		{
-			authmech : null,
-			username : null,
-			password : null,
-			authdb : "admin",
-			pempwd : null,
-			pem : null
+			methods:
+			{
+				"No Authentication" : null,
+				MongoDB : "DEFAULT",
+				x509 : "MONGODB-X509",
+				Kerberos : "GSSAPI",
+				LDAP : "PLAIN"
+			},
+			config:
+			{
+				authmech : null,
+				username : null,
+				password : null,
+				authdb : "admin",
+				pempwd : null,
+				pem : null
+			}
 		};
 
 		$rootScope.mongo.selectedNS = null;

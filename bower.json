@@ -30,6 +30,7 @@
     "angular-ui-select": "0.16.1",
     "angular-mousewheel": "1.0.4",
     "angular-bootstrap": "0.14.3",
+    "angular-file-model": "0.3.1",
     "angular-growl-v2": "0.7.9",
     "angular-animate": "1.4.8",
     "jasny-bootstrap": "3.1.3",

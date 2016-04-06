@@ -45,9 +45,9 @@
 		<script src="/bower_components/angular-ui-select/dist/select.min.js"></script>
 
 		<script src="/bower_components/angular-bootstrap-checkbox/angular-bootstrap-checkbox.js"></script>
+		<script src="/bower_components/angular-file-model/angular-file-model.js"></script>
 
 		<script src="/bower_components/angular-ui-sortable/sortable.min.js"></script>
-
 		<script src="/node_modules/relaxed-json/relaxed-json.js"></script>
 
 		<link rel="stylesheet" href="stylesheets/chart-tooltip.css">
@@ -157,30 +157,49 @@
 					<ul class="nav navmenu-nav" ng-show="opts.advanced">
 						<li class="active"><a href="#"><small>Authentication settings</small></a></li>
 						<li><a href="#">Authentication Method
-								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="None"
-									ng-model="mongo.auth.authmech" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+								<ui-select ng-model="mongo.auth.config.authmech">
+									<ui-select-match placeholder="No Authentication">
+										{{$select.selected.key}}
+									</ui-select-match>
+									<ui-select-choices repeat="method.value as (key, method) in mongo.auth.methods | filter: {'key':$select.search}">
+										<span ng-bind="method.key"></span>
+									</ui-select-choices>
+								</ui-select>
 							</a>
 						</li>
 						<li><a href="#">Credentials
 								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[username]"
-									ng-model="mongo.auth.username" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+									ng-model="mongo.auth.config.username" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
 								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[password]"
-									ng-model="mongo.auth.password" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+									ng-model="mongo.auth.config.password" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
 							</a>
 						</li>
 						<li><a href="#">Authentication Database
 								<input type="text" class="form-control" style="color: #333; font-weight:normal"
-									ng-model="mongo.auth.authdb" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+									ng-model="mongo.auth.config.authdb" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
 							</a>
 						</li>
 					</ul>
 					<ul class="nav navmenu-nav" ng-show="opts.advanced">
 						<li class="active"><a href="#"><small>SSL Configuration</small></a></li>
 						<li><a href="#">PEM File & Password
-								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="None"
-									ng-model="mongo.auth.pem" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+								<div class="input-group">
+									<span class="input-group-btn">
+										<button type="button" class=" btn btn-default btn-file" value="...">
+											<span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+											<input type="file" file-model="mongo.auth.config.pem">
+										</button>
+									</span>
+									<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="SSL Disabled" ng-readonly="true"
+										ng-model="mongo.auth.config.pem.name" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+									<span class="input-group-btn">
+										<button type="button" class=" btn btn-default" ng-click="mongo.auth.config.pem=null" value="...">
+											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										</button>
+									</span>
+								</div>
 								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[password]"
-									ng-model="mongo.auth.pempwd" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+									ng-model="mongo.auth.config.pempwd" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
 							</a>
 						</li>
 					</ul>
