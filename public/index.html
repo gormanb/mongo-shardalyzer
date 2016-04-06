@@ -167,16 +167,18 @@
 								</ui-select>
 							</a>
 						</li>
-						<li><a href="#">Credentials
-								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[username]"
+						<li ng-show="mongo.auth.config.authmech">
+							<a href="#">Credentials
+								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="{{mongo.auth.config.authmech == 'GSSAPI' ? '[principal]' : '[username]'}}"
 									ng-model="mongo.auth.config.username" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
-								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[password]"
+								<input type="text" class="form-control" style="color: #333; font-weight:normal" placeholder="[password]" ng-show="mongo.auth.config.authmech != 'MONGODB-X509'"
 									ng-model="mongo.auth.config.password" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
 							</a>
 						</li>
-						<li><a href="#">Authentication Database
+						<li ng-show="mongo.auth.config.authmech && mongo.auth.config.authmech != 'MONGODB-X509'">
+							<a href="#">{{mongo.auth.config.authmech == "PLAIN" ? "LDAP Server" : mongo.auth.config.authmech == "GSSAPI" ? "Kerberos Server" : "Authentication Database"}}
 								<input type="text" class="form-control" style="color: #333; font-weight:normal"
-									ng-model="mongo.auth.config.authdb" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
+									ng-model="mongo.auth.config.authsrc" ng-model-options="{updateOn : 'default'}" ng-enter="updateNSList()" />
 							</a>
 						</li>
 					</ul>

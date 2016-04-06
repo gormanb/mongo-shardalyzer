@@ -25,7 +25,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 				authmech : null,
 				username : null,
 				password : null,
-				authdb : "admin",
+				authsrc : "admin",
 				pempwd : null,
 				pem : null
 			}
@@ -148,6 +148,7 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 
 		$http
 		({
+			params: $scope.mongo.auth.config,
 			method: 'GET',
 			url: url
 		})
@@ -187,6 +188,7 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 
 		$http
 		({
+			params: $scope.mongo.auth.config,
 			method: 'GET',
 			url: url
 		})
@@ -1116,6 +1118,7 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 
 		$http
 		({
+			params: $scope.mongo.auth.config,
 			method: 'GET',
 			url: url
 		})
@@ -1148,6 +1151,7 @@ shardalyze.controller("queryCtrl", [ '$scope', '$http', 'growl', function($scope
 
 		$http
 		({
+			params: $scope.mongo.auth.config,
 			method: 'GET',
 			url: url
 		})

@@ -1,22 +1,77 @@
-/**
- * GET shard configuration given host, port, collection name
- */
 
-var mongodb = require('mongodb');
+var	mongodb = require('mongodb'),
+	RJSON = require('relaxed-json'),
+	format = require('util').format,
+	MongoClient = mongodb.MongoClient;
 
-var RJSON = require('relaxed-json');
+var urlform =
+{
+	// user:pwd@host:port/db
+	'DEFAULT': "mongodb://%s:%s@%s:%s/%s?authSource=%s", //authMechanism=DEFAULT&
+	// user@host:port/db
+	'MONGODB-X509': "mongodb://%s@%s:%s/%s?authMechanism=MONGODB-X509",
+	// user:pwd@server/kerberos
+	'GSSAPI': "mongodb://%s%s@%s/kerberos?authMechanism=GSSAPI&gssapiServiceName=mongodb",
+	// user:pwd@server/db
+	'PLAIN': "mongodb://%s:%s@%s?authMechanism=PLAIN",
+	// host:port/db
+	'NONE': "mongodb://%s:%s/%s"
+}
 
-var MongoClient = mongodb.MongoClient;
+function mongourl(host, port, db, cred, serveropts)
+{
+	if(!cred || !cred.authmech)
+		return format(urlform['NONE'], host, port, db);
 
-var mongoopts = { server : { poolSize : 1 } };
+	var url = null;
+
+	if(cred.pem)
+	{
+		serveropts.sslCert = fs.readFileSync(cred.pem);
+		serveropts.sslKey = fs.readFileSync(cred.pem);
+		serveropts.sslPass = creds.pempwd;
+		serveropts.sslValidate = false;
+	}
+
+	host = (host || ''); port = (port || ''); db = (db || '');
+
+	switch(cred.authmech)
+	{
+		case 'DEFAULT':
+			url = format(urlform['DEFAULT'], cred.username, cred.password, host, port, db, (cred.authsrc || db));
+			break;
+
+		case 'MONGODB-X509':
+			url = format(urlform['MONGODB-X509'], encodeURIComponent(cred.username), host, port, db);
+
+			break;
+
+		case 'GSSAPI':
+			url = format(urlform['GSSAPI'], encodeURIComponent(creds.username), (creds.password ? ':' + creds.password : ''), creds.authsrc);
+
+			break;
+
+		case 'PLAIN':
+			url = format(urlform['PLAIN'], creds.username, creds.password, creds.authsrc, db);
+			break;
+	}
+
+	url += ('&ssl=' + (!!cred.pem));
+
+	console.log(url);
+
+	return url;
+}
 
 exports.namespaces =
 	function(req, res)
 	{
-		var url = 'mongodb://' + req.param('host') + ':' +
-			req.param('port') + '/' + (req.param('configdb') || 'config');
+		var opts = { server : { poolSize : 1 } };
 
-		MongoClient.connect(url, mongoopts, function(err, db)
+		var url = mongourl(req.param('host'), req.param('port'),
+			(req.param('configdb') || 'config'), req.query, opts.server);
+
+		MongoClient.connect(url, opts, function(err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -42,10 +97,12 @@ exports.namespaces =
 exports.dbs =
 	function(req, res)
 	{
-		var url =
-			'mongodb://' + req.param('host') + ':' + req.param('port');
+		var opts = { server : { poolSize : 1 } };
 
-		MongoClient.connect(url, mongoopts, function (err, db)
+		var url = mongourl(req.param('host'),
+			req.param('port'), null, req.query, opts.server);
+
+		MongoClient.connect(url, opts, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -67,10 +124,12 @@ exports.dbs =
 exports.collections =
 	function(req, res)
 	{
-		var url = 'mongodb://' + req.param('host') +
-			':' + req.param('port') + '/' + req.param('db');
+		var opts = { server : { poolSize : 1 } };
 
-		MongoClient.connect(url, mongoopts, function (err, db)
+		var url = mongourl(req.param('host'),
+			req.param('port'), req.param('db'), req.query, opts.server);
+
+		MongoClient.connect(url, opts, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -92,12 +151,14 @@ exports.collections =
 exports.metadata =
 	function(req, res)
 	{
-		var url = 'mongodb://' + req.param('host') + ':' +
-			req.param('port') + '/' + (req.param('configdb') || 'config');
+		var opts = { server : { poolSize : 1 } };
+
+		var url = mongourl(req.param('host'), req.param('port'),
+			(req.param('configdb') || 'config'), req.query, opts.server);
 
 		var namespace = req.param('namespace');
 
-		MongoClient.connect(url, mongoopts, function (err, db)
+		MongoClient.connect(url, opts, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
@@ -183,8 +244,10 @@ exports.metadata =
 exports.query =
 	function(req, res)
 	{
-		var url = 'mongodb://' + req.param('host') +
-			':' + req.param('port') + '/' + req.param('db');
+		var opts = { server : { poolSize : 1 } };
+
+		var url = mongourl(req.param('host'),
+			req.param('port'), req.param('db'), req.query, opts.server);
 
 		try
 		{
@@ -200,7 +263,7 @@ exports.query =
 
 		var result = [];
 
-		MongoClient.connect(url, mongoopts, function (err, db)
+		MongoClient.connect(url, opts, function (err, db)
 		{
 			if (err)
 				res.status(500).send(err);
