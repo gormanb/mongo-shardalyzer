@@ -26,6 +26,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 				username : null,
 				password : null,
 				authsrc : "admin",
+				pemdata : null,
 				pempwd : null,
 				pem : null
 			}
@@ -207,6 +208,30 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 					$scope.mongo.host + ":" + $scope.mongo.port + "/" + $scope.mongo.selectedNS, err.message));
 			}
 		);
+	});
+
+	$scope.$watch('mongo.auth.config.pem', function(pem)
+	{
+		if(pem)
+		{
+			try
+			{
+				var reader = new FileReader();
+
+				reader.onload = function(filedata)
+				{
+					growl.success(growlmsg("Loaded PEM file", pem.name, "PEM file contents loaded."));
+					$scope.mongo.auth.config.pemdata = filedata.target.result;
+				};
+
+				reader.readAsText($scope.mongo.auth.config.pem);
+			}
+			catch(err)
+			{
+				growl.error(growlmsg("Failed to load PEM file: ", pem.name, err.message));
+				$scope.mongo.auth.config.pemdata = null;
+			}
+		}
 	});
 }]);
 

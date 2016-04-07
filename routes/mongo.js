@@ -1,8 +1,9 @@
 
-var	mongodb = require('mongodb'),
-	RJSON = require('relaxed-json'),
-	format = require('util').format,
-	MongoClient = mongodb.MongoClient;
+var mongodb = require('mongodb'),
+    RJSON = require('relaxed-json'),
+    format = require('util').format;
+
+var MongoClient = mongodb.MongoClient;
 
 var urlform =
 {
@@ -27,9 +28,9 @@ function mongourl(host, port, db, cred, serveropts)
 
 	if(cred.pem)
 	{
-		serveropts.sslCert = fs.readFileSync(cred.pem);
-		serveropts.sslKey = fs.readFileSync(cred.pem);
-		serveropts.sslPass = creds.pempwd;
+		serveropts.sslCert = cred.pemdata;
+		serveropts.sslKey = cred.pemdata;
+		serveropts.sslPass = cred.pempwd;
 		serveropts.sslValidate = false;
 	}
 
