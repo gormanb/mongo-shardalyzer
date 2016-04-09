@@ -19,7 +19,7 @@ var urlform =
 	'NONE': "mongodb://%s:%s/%s"
 }
 
-function mongourl(host, port, db, cred, serveropts)
+function mongourl(host, port, db, cred, opts)
 {
 	if(!cred || !cred.authmech)
 		return format(urlform['NONE'], host, port, db);
@@ -28,10 +28,10 @@ function mongourl(host, port, db, cred, serveropts)
 
 	if(cred.pem)
 	{
-		serveropts.sslCert = cred.pemdata;
-		serveropts.sslKey = cred.pemdata;
-		serveropts.sslPass = cred.pempwd;
-		serveropts.sslValidate = false;
+		opts.sslCert = cred.pemdata;
+		opts.sslKey = cred.pemdata;
+		opts.sslPass = cred.pempwd;
+		opts.sslValidate = false;
 	}
 
 	host = (host || ''); port = (port || ''); db = (db || '');
@@ -44,12 +44,10 @@ function mongourl(host, port, db, cred, serveropts)
 
 		case 'MONGODB-X509':
 			url = format(urlform['MONGODB-X509'], encodeURIComponent(cred.username), host, port, db);
-
 			break;
 
 		case 'GSSAPI':
 			url = format(urlform['GSSAPI'], encodeURIComponent(creds.username), (creds.password ? ':' + creds.password : ''), creds.authsrc);
-
 			break;
 
 		case 'PLAIN':
@@ -64,10 +62,21 @@ function mongourl(host, port, db, cred, serveropts)
 	return url;
 }
 
+function optstruct()
+{
+	var agnostic = { poolSize : 1 };
+
+	return {
+		replSet : agnostic,
+		server : agnostic,
+		mongos : agnostic
+	};
+}
+
 exports.namespaces =
 	function(req, res)
 	{
-		var opts = { server : { poolSize : 1 } };
+		var opts = optstruct();
 
 		var url = mongourl(req.param('host'), req.param('port'),
 			(req.param('configdb') || 'config'), req.query, opts.server);
@@ -98,7 +107,7 @@ exports.namespaces =
 exports.dbs =
 	function(req, res)
 	{
-		var opts = { server : { poolSize : 1 } };
+		var opts = optstruct();
 
 		var url = mongourl(req.param('host'),
 			req.param('port'), null, req.query, opts.server);
@@ -125,7 +134,7 @@ exports.dbs =
 exports.collections =
 	function(req, res)
 	{
-		var opts = { server : { poolSize : 1 } };
+		var opts = optstruct();
 
 		var url = mongourl(req.param('host'),
 			req.param('port'), req.param('db'), req.query, opts.server);
@@ -152,7 +161,7 @@ exports.collections =
 exports.metadata =
 	function(req, res)
 	{
-		var opts = { server : { poolSize : 1 } };
+		var opts = optstruct();
 
 		var url = mongourl(req.param('host'), req.param('port'),
 			(req.param('configdb') || 'config'), req.query, opts.server);
@@ -245,7 +254,7 @@ exports.metadata =
 exports.query =
 	function(req, res)
 	{
-		var opts = { server : { poolSize : 1 } };
+		var opts = optstruct();
 
 		var url = mongourl(req.param('host'),
 			req.param('port'), req.param('db'), req.query, opts.server);
