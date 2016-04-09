@@ -743,7 +743,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 		var point = closestToMid(points);
 
 		if(point._model.label == "F4")
+		{
 			updateBars($scope.mongo.ui.slider, OP_TO);
+			$scope.$apply();
+		}
 	}
 
 	$scope.migrateClick = function(points, event)
@@ -751,7 +754,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 		var point = closestToMid(points);
 
 		if(point)
+		{
 			$scope.mongo.ui.slider = (point._xScale.ticks.length-1 - point._index);
+			$scope.$apply();
+		}
 	}
 
 	var lastPoint = null;

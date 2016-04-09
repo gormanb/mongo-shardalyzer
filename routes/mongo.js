@@ -12,7 +12,7 @@ var urlform =
 	'DEFAULT': "mongodb://%s:%s@%s:%s/%s?authSource=%s", //authMechanism=DEFAULT&
 	// user@host:port/db
 	'MONGODB-X509': "mongodb://%s@%s:%s/%s?authMechanism=MONGODB-X509",
-	// user:pwd@server/kerberos
+	// user[:pwd]@server/kerberos
 	'GSSAPI': "mongodb://%s%s@%s/kerberos?authMechanism=GSSAPI&gssapiServiceName=mongodb",
 	// user:pwd@server/db
 	'PLAIN': "mongodb://%s:%s@%s?authMechanism=PLAIN",

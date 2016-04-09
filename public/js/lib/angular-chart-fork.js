@@ -100,6 +100,7 @@
           chartColors: '=?',
           chartClick: '=?',
           chartHover: '=?',
+          chartYAxes: '=?',
           chartWatch: '=?'
         },
         link: function (scope, elem/*, attrs */) {
@@ -127,7 +128,7 @@
           });
 
           scope.$on('$destroy', function () {
-            if (chart) chart.destroy();
+            destroyChart(chart, scope);
           });
 
           function resetChart (newVal, oldVal) {
@@ -142,7 +143,7 @@
           }
 
           function createChart (type) {
-			if (chart) chart.destroy();
+            destroyChart(chart, scope);
 
             // TODO: check parent?
             if (isResponsive(type, scope) && elem[0].clientHeight === 0) {
@@ -156,7 +157,7 @@
             var cvs = elem[0], ctx = cvs.getContext('2d');
 
             var data = Array.isArray(scope.chartData[0]) ?
-              getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope)) :
+              getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartYAxes) :
             	scope.chartData[0] instanceof Object ?
             	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope)) :
             	    getData(scope.chartLabels, scope.chartData, scope.chartColors);
@@ -200,7 +201,6 @@
           if (triggerOnlyOnChange === false || angular.equals(lastState, activePoints) === false) {
             lastState = activePoints;
             scope[action](activePoints, evt);
-            scope.$apply();
           }
         }
       };
@@ -278,15 +278,19 @@
     	}
     }
 
-    function getDataSets (labels, data, series, colors) {
+    function getDataSets (labels, data, series, colors, yaxis) {
       return {
         labels: labels,
         datasets: data.map(function (item, i) {
-          return angular.extend({}, colors[i], {
+          var dataset = angular.extend({}, colors[i], {
             label: series[i],
             data: item,
             fill: true
           });
+          if (yaxis) {
+            dataset.yAxisID = 'y-axis-' + (i + 1);
+          }
+          return dataset;
         })
       };
     }
@@ -328,6 +332,12 @@
     function isResponsive (type, scope) {
       var options = angular.extend({}, Chart.defaults.global, ChartJs.getOptions(type), scope.chartOptions);
       return options.responsive;
+    }
+
+    function destroyChart(chart, scope) {
+      if(! chart) return;
+      chart.destroy();
+      scope.$emit('chart-destroy', chart);
     }
   }
 }));
