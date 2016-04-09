@@ -1,7 +1,8 @@
 
 var mongodb = require('mongodb'),
     RJSON = require('relaxed-json'),
-    format = require('util').format;
+    format = require('util').format,
+    enc = encodeURIComponent;
 
 var MongoClient = mongodb.MongoClient;
 
@@ -39,19 +40,19 @@ function mongourl(host, port, db, cred, opts)
 	switch(cred.authmech)
 	{
 		case 'DEFAULT':
-			url = format(urlform['DEFAULT'], cred.username, cred.password, host, port, db, (cred.authsrc || db));
+			url = format(urlform['DEFAULT'], enc(cred.username), enc(cred.password), host, port, db, (cred.authsrc || db));
 			break;
 
 		case 'MONGODB-X509':
-			url = format(urlform['MONGODB-X509'], encodeURIComponent(cred.username), host, port, db);
+			url = format(urlform['MONGODB-X509'], enc(cred.username), host, port, db);
 			break;
 
 		case 'GSSAPI':
-			url = format(urlform['GSSAPI'], encodeURIComponent(creds.username), (creds.password ? ':' + creds.password : ''), creds.authsrc);
+			url = format(urlform['GSSAPI'], enc(cred.username), (cred.password ? ':' + enc(cred.password) : ''), cred.authsrc);
 			break;
 
 		case 'PLAIN':
-			url = format(urlform['PLAIN'], creds.username, creds.password, creds.authsrc, db);
+			url = format(urlform['PLAIN'], enc(cred.username), enc(cred.password), cred.authsrc, db);
 			break;
 	}
 
@@ -67,6 +68,7 @@ function optstruct()
 	var agnostic = { poolSize : 1 };
 
 	return {
+		uri_decode_auth : true,
 		replSet : agnostic,
 		server : agnostic,
 		mongos : agnostic
