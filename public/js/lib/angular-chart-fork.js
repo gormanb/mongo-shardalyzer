@@ -152,13 +152,20 @@
         	  {
         		  for(var ds in chart.config.data.datasets)
         		  {
-        			  chart.config.data.datasets[ds].backgroundColor = scope.chartColors.map(function (color) {
-        	  			return (typeof color === 'string' ? color : color.pointBackgroundColor);
-        	            });
+        			  // colors are updated by reference, but need to recreate hover colors
+        			  var dataset = chart.config.data.datasets[ds];
+        			  var colors = dataset.backgroundColor;
 
-        			  chart.config.data.datasets[ds].hoverBackgroundColor = scope.chartColors.map(function (color) {
-        	            	return (typeof color === 'string' ? rgba(hexToRgb(color.substr(1)), 0.8) : color.backgroundColor);
-        	            });
+        			  for(var k in colors)
+        			  {
+        				  if(colors[k] !== oldVal[k])
+        				  {
+        					  dataset.hoverBackgroundColor[k] =
+        						  rgba(hexToRgb(colors[k].substr(1)), 0.8);
+        				  }
+        			  }
+
+        			  dataset.hoverBackgroundColor.length = colors.length;
         		  }
 
         		  angular.extend(chart.config.options, scope.chartOptions);
@@ -334,14 +341,13 @@
       };
     }
 
+    // colors is array of hex strings
     function getData (labels, data, colors) {
       return {
         labels: labels,
         datasets: [{
           data: data,
-          backgroundColor: colors.map(function (color) {
-			return (typeof color === 'string' ? color : color.pointBackgroundColor);
-          }),
+          backgroundColor: colors,
           hoverBackgroundColor: colors.map(function (color) {
           	return (typeof color === 'string' ? rgba(hexToRgb(color.substr(1)), 0.8) : color.backgroundColor);
           })
