@@ -114,10 +114,25 @@
           // series, labels, options, colours
           for(var k in scope.chartWatch)
           {
-        	  if(scope.chartWatch[k] === "collection")
-        		  scope.$watchCollection(k, updateChart);
-        	  else
-        		  scope.$watch(k, updateChart, scope.chartWatch[k]);
+        	  // type, deep boolean, reset boolean
+        	  var opts = scope.chartWatch[k];
+
+        	  var updateFunc =
+        		opts.reset ? resetChart : updateChart;
+
+        	  switch(opts.type)
+        	  {
+        	  	case 'collection':
+        	  		scope.$watchCollection(k, updateFunc);
+        	  		break;
+
+        	  	case 'group':
+        	  		scope.$watchGroup(k, updateFunc, (opts.deep == true));
+        	  		break;
+
+        	  	default:
+        	  		scope.$watch(k, updateFunc, (opts.deep == true));
+        	  }
           }
 
           // always watch chartType
@@ -146,7 +161,7 @@
         	            });
         		  }
 
-        		  chart.config.options = angular.extend(chart.config.options, scope.chartOptions);
+        		  angular.extend(chart.config.options, scope.chartOptions);
 
         		  chart.update();
         	  }
@@ -181,11 +196,12 @@
 
             var data = Array.isArray(scope.chartData[0]) ?
               getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartYAxes) :
-            	scope.chartData[0] instanceof Object ?
+            	scope.chartData[0] instanceof Object ? // line
             	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope)) :
-            	    getData(scope.chartLabels, scope.chartData, scope.chartColors);
+            	    getData(scope.chartLabels, scope.chartData, scope.chartColors); // doughnut, bar
 
             //var options = angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
+
             chart = new ChartJs.Chart(ctx, {
               type: type,
               data: data,

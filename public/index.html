@@ -253,13 +253,14 @@
 						</span>
 					</div>
 					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist" ng-readonly="true" class="row-centered" style="overflow-x:hidden">
-						<div ng-repeat="shard in chartmeta.shardlist" ng-if="mongo.ui.shardenabled[shard] || chartmeta.shardedit" class="{{chartmeta.colclasses[chartmeta.currentcol]}} col-centered" style="opacity: {{mongo.ui.shardenabled[shard] ? 1 : 0.25}}">
-							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut"
+						<div ng-repeat="shard in chartmeta.shardlist" ng-if="mongo.ui.shardenabled[shard] || chartmeta.shardedit"
+							class="{{chartmeta.colclasses[chartmeta.currentcol]}} col-centered" style="opacity:{{mongo.ui.shardenabled[shard] ? 1 : 0.25}}">
+							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut" ng-readonly="true"
 								chart-options="chartmeta.options"
 								chart-data="chartmeta.data[shard]"
 								chart-labels="chartmeta.labels[shard]"
 								chart-colors="chartmeta.colors[shard]"
-								chart-watch="{'chartColors':'collection'}"
+								chart-watch="{'chartColors':{type:'collection'},'chartData':{reset:true}}"
 								chart-hover="chunkHover"
 								chart-click="chunkClick"></canvas>
 							<p align="center">
@@ -384,14 +385,14 @@
 
 				<div style="margin: 0 auto; margin-bottom:10px; width: 75%; height:200px;" ng-controller="migrateCtrl" ng-show="mongo.ui.showmigrations">
 					<div class="panel panel-default panel-body" style="float: left; width:25%; height:100%">
-						<canvas id="migrateBars" class="chart chart-bar" chart-data="chartmeta.bars.data" chart-labels="chartmeta.bars.labels" chart-colors="chartmeta.bars.colors"
-							chart-series="chartmeta.bars.series" chart-options="chartmeta.bars.options" chart-watch="{'chartData':false}" chart-click="migrateBarClick">
+						<canvas id="migrateBars" class="chart chart-bar" ng-readonly="true" chart-data="chartmeta.bars.data" chart-labels="chartmeta.bars.labels" chart-colors="chartmeta.bars.colors"
+							chart-series="chartmeta.bars.series" chart-options="chartmeta.bars.options" chart-watch="{'chartData':{reset:true}}" chart-click="migrateBarClick">
 						</canvas>
 					</div>
 					<div class="panel panel-default panel-body" style="float: right; width:75%; height:100%">
 						<div style="width:100%; height:100%">
-							<canvas id="migrateGraph" class="chart chart-line" chart-data="chartmeta.graph.data" chart-labels="chartmeta.graph.labels" chart-colors="chartmeta.graph.colors"
-								chart-series="chartmeta.graph.series" chart-options="chartmeta.graph.options" chart-watch="{'chartLabels':false}" chart-click="migrateClick" chart-hover="migrateHover">
+							<canvas id="migrateGraph" class="chart chart-line" ng-readonly="true" chart-data="chartmeta.graph.data" chart-labels="chartmeta.graph.labels" chart-colors="chartmeta.graph.colors"
+								chart-series="chartmeta.graph.series" chart-options="chartmeta.graph.options" chart-watch="{'chartLabels':{reset:true}}" chart-click="migrateClick" chart-hover="migrateHover">
 							</canvas>
 						</div>
 						<div style="float:right; transform: translate(0, -50%);">
