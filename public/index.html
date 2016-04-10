@@ -55,6 +55,8 @@
 		<link rel="stylesheet" href="stylesheets/spinner.css">
 		<link rel="stylesheet" href="stylesheets/style.css">
 
+		<script src="/js/lib/util.js"></script>
+
 		<script src="/js/lib/chartjs-fork.js"></script>
 		<script src="js/lib/angular-chart-fork.js"></script>
 		<script src="js/lib/chart-tooltip.js"></script>
@@ -260,6 +262,7 @@
 								chart-data="chartmeta.data[shard]"
 								chart-labels="chartmeta.labels[shard]"
 								chart-colors="chartmeta.colors[shard]"
+								chart-highlights="chartmeta.highlights[shard]"
 								chart-watch="{'chartColors':{type:'collection'},'chartData':{reset:true}}"
 								chart-hover="chunkHover"
 								chart-click="chunkClick"></canvas>

@@ -98,6 +98,7 @@
           chartOptions: '=?',
           chartSeries: '=?',
           chartColors: '=?',
+          chartHighlights: '=?',
           chartClick: '=?',
           chartHover: '=?',
           chartYAxes: '=?',
@@ -118,7 +119,7 @@
         	  var opts = scope.chartWatch[k];
 
         	  var updateFunc =
-        		opts.reset ? resetChart : updateChart;
+        		opts.reset ? resetChart : refreshChart;
 
         	  switch(opts.type)
         	  {
@@ -146,30 +147,13 @@
             destroyChart(chart, scope);
           });
 
-          function updateChart(newVal, oldVal)
+          // only used for shard graphs at present
+          function refreshChart(newVal, oldVal)
           {
         	  if(chart)
         	  {
-        		  for(var ds in chart.config.data.datasets)
-        		  {
-        			  // colors are updated by reference, but need to recreate hover colors
-        			  var dataset = chart.config.data.datasets[ds];
-        			  var colors = dataset.backgroundColor;
-
-        			  for(var k in colors)
-        			  {
-        				  if(colors[k] !== oldVal[k])
-        				  {
-        					  dataset.hoverBackgroundColor[k] =
-        						  rgba(hexToRgb(colors[k].substr(1)), 0.8);
-        				  }
-        			  }
-
-        			  dataset.hoverBackgroundColor.length = colors.length;
-        		  }
-
+        		  // requires that all relevant data has been passed by reference to chart.js
         		  angular.extend(chart.config.options, scope.chartOptions);
-
         		  chart.update();
         	  }
         	  else
@@ -205,7 +189,7 @@
               getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartYAxes) :
             	scope.chartData[0] instanceof Object ? // line
             	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope)) :
-            	    getData(scope.chartLabels, scope.chartData, scope.chartColors); // doughnut, bar
+            	    getData(scope.chartLabels, scope.chartData, scope.chartColors, scope.chartHighlights); // doughnut, bar
 
             //var options = angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
 
@@ -342,13 +326,13 @@
     }
 
     // colors is array of hex strings
-    function getData (labels, data, colors) {
+    function getData (labels, data, colors, highlights) {
       return {
         labels: labels,
         datasets: [{
           data: data,
           backgroundColor: colors,
-          hoverBackgroundColor: colors.map(function (color) {
+          hoverBackgroundColor: highlights || colors.map(function (color) {
           	return (typeof color === 'string' ? rgba(hexToRgb(color.substr(1)), 0.8) : color.backgroundColor);
           })
         }]

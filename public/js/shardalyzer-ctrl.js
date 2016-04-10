@@ -247,8 +247,10 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.mongo.ui.shardenabled = {};
 	$scope.chartmeta.shardlist = [];
 
-	$scope.chartmeta.labels = {};
+	$scope.chartmeta.highlights = {};
 	$scope.chartmeta.colors = {};
+
+	$scope.chartmeta.labels = {};
 	$scope.chartmeta.data = {};
 
 	var GRANULARITY_DEFAULT = 200;
@@ -365,6 +367,10 @@ shardalyze.controller("updateCharts", function($scope)
 		if(!shards[shard][lower].status && shards[shard][lower].watched)
 			$scope.chartmeta.colors[shard][index] = shards[shard][lower].watched;
 
+		// set hover highlight color
+		$scope.chartmeta.highlights[shard][index] =
+			rgba(hexToRgb($scope.chartmeta.colors[shard][index].substr(1)), 0.8);
+
 		if(!$scope.chartmeta.labels[shard][index])
 			$scope.chartmeta.labels[shard][index] = [];
 
@@ -387,9 +393,11 @@ shardalyze.controller("updateCharts", function($scope)
 		{
 			if(!$scope.chartmeta.data[s])
 			{
-				$scope.chartmeta.data[s] = [];
+				$scope.chartmeta.highlights[s] = [];
 				$scope.chartmeta.colors[s] = [];
+
 				$scope.chartmeta.labels[s] = [];
+				$scope.chartmeta.data[s] = [];
 			}
 
 			generateChart(s);
@@ -400,9 +408,11 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.options.animation.animateRotate = true;
 			$scope.chartmeta.options.animation.duration = 1000;
 
-			$scope.chartmeta.data = {};
+			$scope.chartmeta.highlights = {};
 			$scope.chartmeta.colors = {};
+
 			$scope.chartmeta.labels = {};
+			$scope.chartmeta.data = {};
 		}
 
 		// update granularity max and (possibly) value
