@@ -15,6 +15,8 @@ var	STATUS_SPLIT_SOURCE = OP_SPLIT + SOURCE, STATUS_SPLIT_DEST = OP_SPLIT + DEST
 	STATUS_MULTI_SPLIT_SOURCE = OP_MULTI_SPLIT + SOURCE,
 	STATUS_MULTI_SPLIT_DEST = OP_MULTI_SPLIT + DESTINATION;
 
+var MIGRATE_TIME = "Total";
+
 var BALANCER_SOURCE_COLOR = '#EE0000', BALANCER_DEST_COLOR = '#00AA00';
 
 var DEFAULT_CHUNK_COLOR = '#AEC6CF';
@@ -44,6 +46,18 @@ for(var i = 1; i <= 6; i++)
 {
 	migratekeymap["step" + i + " of 6"] = "step " + i + " of 6";
 	migratekeymap["step" + i + " of 5"] = "step " + i + " of 5";
+}
+
+function migratesteps(change)
+{
+	var steptimes = [];
+
+	var numsteps = (change.what == OP_FROM ? 6 : change.what == OP_TO ? 5 : 0);
+
+	for(var i = 1; i <= numsteps; i++)
+		steptimes[i] = change.details["step " + i + " of " + numsteps];
+
+	return steptimes;
 }
 
 var s = JSON.stringify;
@@ -115,6 +129,8 @@ var Shardalyzer =
 	chunks : {},
 	changes : [],
 	watched : {},
+	migrations : [],
+	failures : [],
 	balancer : {},
 	position : null,
 
@@ -132,6 +148,7 @@ var Shardalyzer =
 		this.tags = {};
 
 		this.migrations = [];
+		this.failures = [];
 
 		var currentmove = {};
 
@@ -207,11 +224,15 @@ var Shardalyzer =
 					}
 				}
 
+				currentmove[OP_FROM] = this.changes[i];
+
 				if(success(this.changes[i]))
 				{
-					currentmove[OP_FROM] = this.changes[i];
+					currentmove[MIGRATE_TIME] = sum(migratesteps(this.changes[i]));
 					this.migrations[i] = currentmove;
 				}
+				else
+					this.failures[i] = currentmove;
 
 				currentmove = {};
 			}

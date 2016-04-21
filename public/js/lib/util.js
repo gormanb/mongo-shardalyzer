@@ -21,3 +21,9 @@ function hexToRgb (hex) {
 
   return [r, g, b];
 }
+
+function sum(arr)
+{
+	return arr.length == 0 ? NaN :
+		arr.reduce(function(a, b) { return (a || 0) + (b || 0) }, 0);
+}

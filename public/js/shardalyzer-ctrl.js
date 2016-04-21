@@ -688,19 +688,14 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 				if(filterMigration(moveFrom))
 				{
-					var sum = 0;
+					var steptimes = migratesteps(moveFrom);
 
-					for(var j = 1; j <= 6; j++)
-					{
-						var dur = moveFrom.details["step " + j + " of 6"];
-
-						datasets["F" + j].data[r] = dur;
-						sum += dur;
-					}
+					for(var j in steptimes)
+						datasets["F" + j].data[r] = steptimes[j];
 
 					// Total is not shown if graph is stacked
 					if(!$scope.chartmeta.graph.yAxes.mig_time.stacked)
-						datasets["Total"].data[r] = sum;
+						datasets[MIGRATE_TIME].data[r] = migrations[i][MIGRATE_TIME];
 
 					// amount of data transferred (optional)
 					if($scope.chartmeta.graph.yAxes.mig_data.display)
@@ -729,14 +724,10 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 		if((pos == 0 || pos) && migrations && pos in migrations)
 		{
-			var migration = migrations[pos];
-			var sum = 0;
+			var steptimes = migratesteps(migrations[pos][op]);
 
-			for(var i = 1; i <= steps; i++)
-			{
-				var dur = migration[op].details["step " + i + " of " + steps];
-				$scope.chartmeta.bars.data.push(dur == undefined ? NaN : dur);
-			}
+			for(var i in steptimes)
+				$scope.chartmeta.bars.data.push(steptimes[i]);
 		}
 		else
 		{
