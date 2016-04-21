@@ -92,12 +92,7 @@ function putAll(to, from)
 
 function sortObject(obj)
 {
-	var sorted = [];
-
-	for(var k in obj)
-		sorted.push(k);
-
-	sorted.sort();
+	var sorted = Object.keys(obj).sort();
 
 	var newObj = {};
 
@@ -221,9 +216,6 @@ var Shardalyzer =
 				currentmove = {};
 			}
 		}
-
-		// sort shard map by shard name
-		this.shards = sortObject(this.shards);
 
 		// if chunkdata is empty, position is null else 0
 		// clusters with no changelog entries still valid

@@ -200,10 +200,10 @@ exports.metadata =
 						start = shardevent[0].lastmod;
 
 					var changecursor = changecoll.find({ ns : namespace, what : /moveChunk|split/, time : { $gt : start } }).sort({ time : -1 });
-					var chunkcursor = chunkcoll.find({ ns : namespace });
+					var chunkcursor = chunkcoll.find({ ns : namespace }).sort({ min : 1 });
 
+					var shardcursor = shardcoll.find({}).sort({ _id : 1 });
 					var tagcursor = tagcoll.find({ ns : namespace });
-					var shardcursor = shardcoll.find({});
 
 					var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"'];
 					var cursors = [changecursor, chunkcursor, shardcursor, tagcursor];

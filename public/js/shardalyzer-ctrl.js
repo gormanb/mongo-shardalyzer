@@ -332,6 +332,8 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.options.animation.duration = 1000;
 			generateChart(label[0], label[1], label[2]);
 		}
+
+		$scope.$apply();
 	}
 
 	$scope.chunkHover = function(points, event)
@@ -524,7 +526,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 		F5 : scolors[STATUS_COMMIT],
 		F6 : scolors[STATUS_FROM_SUCCESS],
 
-		"Total" : '#FFA07A',
+		"Total" : scolors[STATUS_FROM_FAILURE],
 		"Data Size" : '#000000'
 	};
 
