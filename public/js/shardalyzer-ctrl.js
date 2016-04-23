@@ -44,6 +44,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 			shardenabled : {},
 			changelog : [],
 			logwindow : 18,
+			errorsummary : {},
 			errors : [],
 			errmsg : [],
 			slider : 0
@@ -848,6 +849,23 @@ shardalyze.controller("sliderControl", function($scope)
 		 		name : "Failed moves",
 		 		severity : "danger",
 		 		enabled : true,
+		 		summarise : function(shardalyzer, summary, params)
+		 		{
+		 			summary = (summary || {});
+
+		 			var fails = summary["Failed moves"] = {};
+
+		 			for(var f in shardalyzer.failures)
+		 			{
+		 				var failFrom = shardalyzer.failures[f][OP_FROM];
+
+		 				var key = failFrom.details.from + " - " + failFrom.details.to;
+
+		 				fails[key] = (fails[key] || 0) + 1;
+		 			}
+
+		 			return summary;
+		 		},
 		 		error : function(change, params)
 		 		{
 		 			return change.details.note === "aborted";
@@ -863,22 +881,31 @@ shardalyze.controller("sliderControl", function($scope)
 		 		name : "Slow moves",
 		 		severity : "warning",
 		 		enabled : false,
+		 		summarise : function(shardalyzer, summary, params)
+		 		{
+		 			summary = (summary || {});
+
+		 			var slow = summary["Slow moves"] = {};
+
+		 			for(var s in shardalyzer.migrations)
+		 			{
+		 				var moveTime = shardalyzer.migrations[s][MIGRATE_TIME];
+		 				var moveFrom = shardalyzer.migrations[s][OP_FROM];
+
+		 				if(moveTime < params.slow_move_threshold.value * params.slow_move_units.value)
+		 					continue;
+
+		 				var key = moveFrom.details.from + " - " + moveFrom.details.to;
+
+		 				slow[key] = (slow[key] || 0) + 1;
+		 			}
+
+		 			return summary;
+		 		},
 		 		error : function(change, params)
 		 		{
-		 			if(change.what == "moveChunk.from")
-		 			{
-		 				var sum = 0;
-
-		 				for(var i = 1; i < 6; i++)
-		 				{
-		 					var time = change.details["step " + i + " of 6"];
-
-		 					if(time !== undefined)
-		 						sum += time;
-		 				}
-
-		 				return sum >= params.slow_move_threshold.value * params.slow_move_units.value;
-		 			}
+		 			if(change.what == OP_FROM)
+		 				return sum(migratesteps(change)) >= params.slow_move_threshold.value * params.slow_move_units.value;
 
 		 			return false;
 		 		},
@@ -932,6 +959,20 @@ shardalyze.controller("sliderControl", function($scope)
 		return undefined;
 	};
 
+	buildErrorSummary = function()
+	{
+		var summary = $scope.mongo.ui.errorsummary = {};
+
+		var erropts = $scope.errorconfig.opts;
+		var params = $scope.errorconfig.params;
+
+		for(var k in erropts)
+		{
+			if(erropts[k].enabled)
+				erropts[k].summarise($scope.mongo.shardalyzer, summary, params);
+		}
+	}
+
 	setErrorTicks = function()
 	{
 		$scope.mongo.ui.errors = [];
@@ -958,17 +999,23 @@ shardalyze.controller("sliderControl", function($scope)
 		$scope.slidermeta.scale = (	$scope.slidermeta.scale == null ? "linear" : null);
 	}
 
+	updateErrors = function()
+	{
+		buildErrorSummary();
+		setErrorTicks();
+	}
+
 	$scope.$watch('mongo.shardalyzer.changes', function(changes)
 	{
 		$scope.slidermeta.max = $scope.mongo.shardalyzer.changes.length;
 		$scope.mongo.ui.slider = 0;
 
-		setErrorTicks();
+		updateErrors();
 
 		updateChangelog($scope, 0);
 	});
 
-	$scope.$watch('errorconfig', setErrorTicks, true);
+	$scope.$watch('errorconfig', updateErrors, true);
 });
 
 shardalyze.controller("playControl", ['$scope', '$interval', 'growl', function($scope, $interval, growl)

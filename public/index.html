@@ -372,6 +372,17 @@
 								<button type="button" style="margin:5px; float:left" class="{{mongo.ui.showmigrations ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="mongo.ui.showmigrations = (!mongo.ui.showmigrations)" value="Edit">
 									<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 								</button>
+								<button popover-template="'errorsummary.html'" popover-title="Migration Summary" popover-append-to-body="true" type="button" class="btn btn-default" style="margin:5px; float:left">
+									<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+								</button>
+								<script type="text/ng-template" id="errorsummary.html">
+									<json-formatter id="errorsummaryjson"
+										class="form-control" style="height:320px; overflow-y:scroll; background:white"
+										json="mongo.ui.errorsummary"
+										open="10" ng-readonly="true">
+									</json-formatter>
+								</script>
+
 								<label ng-repeat="(name, opts) in errorconfig.opts" class="form-control" style="margin:5px; float:left; background-color:transparent; border:none; box-shadow:none">
 									<checkbox ng-model="opts.enabled" class="btn-{{opts.severity}}"></checkbox>
 									{{opts.name}}
