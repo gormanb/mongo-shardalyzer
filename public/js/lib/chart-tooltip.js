@@ -88,9 +88,9 @@ var migrateGraphTooltipRaw = function(point, migrations, event)
 
 	var idx = Shardalyzer.changes.length - (point._index+1);
 
-	var moveCommit = Shardalyzer.migrations[idx]["moveChunk.commit"];
-	var moveFrom = Shardalyzer.migrations[idx]["moveChunk.from"];
 	var moveTime = Shardalyzer.migrations[idx][MIGRATE_TIME];
+	var moveCommit = Shardalyzer.migrations[idx][OP_COMMIT];
+	var moveFrom = Shardalyzer.migrations[idx][OP_FROM];
 
 	var text =
 	{
@@ -105,7 +105,7 @@ var migrateGraphTooltipRaw = function(point, migrations, event)
 	for(var i in steptimes)
 		text["F" + i] = steptimes[i];
 
-	text[MIGRATE_TIME] = moveTime;
+	text["Total"] = moveTime;
 
 	// set text content
 	tooltipEl.html("<pre>" + JSON.stringify(text, null, 2) + "</pre>");

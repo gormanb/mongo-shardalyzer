@@ -695,7 +695,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 					// Total is not shown if graph is stacked
 					if(!$scope.chartmeta.graph.yAxes.mig_time.stacked)
-						datasets[MIGRATE_TIME].data[r] = migrations[i][MIGRATE_TIME];
+						datasets["Total"].data[r] = migrations[i][MIGRATE_TIME];
 
 					// amount of data transferred (optional)
 					if($scope.chartmeta.graph.yAxes.mig_data.display)
