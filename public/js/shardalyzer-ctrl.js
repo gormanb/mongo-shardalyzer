@@ -849,11 +849,18 @@ shardalyze.controller("sliderControl", function($scope)
 		 		name : "Failed moves",
 		 		severity : "danger",
 		 		enabled : true,
-		 		summarise : function(shardalyzer, summary, params)
+		 		errors : function(shardalyzer, params)
 		 		{
-		 			summary = (summary || {});
+		 			var errors = [];
 
-		 			var fails = summary["Failed moves"] = {};
+		 			for(var f in shardalyzer.failures)
+		 				errors[f] = { type : "danger", msg : shardalyzer.failures[f][OP_FROM].details.errmsg };
+
+		 			return errors;
+		 		},
+		 		summarise : function(shardalyzer, params)
+		 		{
+		 			var summary = {};
 
 		 			for(var f in shardalyzer.failures)
 		 			{
@@ -861,18 +868,10 @@ shardalyze.controller("sliderControl", function($scope)
 
 		 				var key = failFrom.details.from + " - " + failFrom.details.to;
 
-		 				fails[key] = (fails[key] || 0) + 1;
+		 				summary[key] = (summary[key] || 0) + 1;
 		 			}
 
 		 			return summary;
-		 		},
-		 		error : function(change, params)
-		 		{
-		 			return change.details.note === "aborted";
-		 		},
-		 		errmsg : function(change, params)
-		 		{
-		 			return { type : "danger", msg : change.details.errmsg };
 		 		}
 		 	},
 
@@ -881,87 +880,58 @@ shardalyze.controller("sliderControl", function($scope)
 		 		name : "Slow moves",
 		 		severity : "warning",
 		 		enabled : false,
-		 		summarise : function(shardalyzer, summary, params)
+		 		errors : function(shardalyzer, params)
 		 		{
-		 			summary = (summary || {});
+		 			var threshold = params.slow_move_threshold.value * params.slow_move_units.value;
+		 			var errors = [];
 
-		 			var slow = summary["Slow moves"] = {};
+		 			for(var m in shardalyzer.migrations)
+		 			{
+		 				if(shardalyzer.migrations[m][MIGRATE_TIME] >= threshold)
+		 				{
+		 					var moveFrom = shardalyzer.migrations[m][OP_FROM];
+		 					var steps = migratesteps(moveFrom);
+		 					var msg = {};
+
+		 					errors[m] = { type : "warning" };
+
+		 					for(var s in steps)
+		 						msg["step " + s + " of 6"] = steps[s];
+
+		 					errors[m].msg = JSON.stringify(msg);
+		 				}
+		 			}
+
+		 			return errors;
+		 		},
+		 		summarise : function(shardalyzer, params)
+		 		{
+		 			var threshold = params.slow_move_threshold.value * params.slow_move_units.value;
+		 			var summary = {};
 
 		 			for(var s in shardalyzer.migrations)
 		 			{
 		 				var moveTime = shardalyzer.migrations[s][MIGRATE_TIME];
 		 				var moveFrom = shardalyzer.migrations[s][OP_FROM];
 
-		 				if(moveTime < params.slow_move_threshold.value * params.slow_move_units.value)
+		 				if(moveTime < threshold)
 		 					continue;
 
 		 				var key = moveFrom.details.from + " - " + moveFrom.details.to;
 
-		 				slow[key] = (slow[key] || 0) + 1;
+		 				summary[key] = (summary[key] || 0) + 1;
 		 			}
 
 		 			return summary;
-		 		},
-		 		error : function(change, params)
-		 		{
-		 			if(change.what == OP_FROM)
-		 				return sum(migratesteps(change)) >= params.slow_move_threshold.value * params.slow_move_units.value;
-
-		 			return false;
-		 		},
-		 		errmsg : function(change, params)
-		 		{
-		 			var msg = {};
-
-		 			for(var i = 1; i < 6; i++)
-	 				{
-		 				var step = "step " + i + " of 6";
-
-		 				var time = change.details[step];
-
-		 				if(time !== undefined)
-		 					msg[step] = time;
-	 				}
-
-	 				return { type : "warning", msg : JSON.stringify(msg) };
 		 		}
 		 	}
 		}
 	}
 
-	isError = function(change)
-	{
-		var erropts = $scope.errorconfig.opts;
-		var params = $scope.errorconfig.params;
-
-		var error = false;
-
-		for(var k in erropts)
-		{
-			if((!error) && erropts[k].enabled)
-				error = erropts[k].error(change, params);
-		}
-
-		return error;
-	};
-
-	errorMsg = function(change)
-	{
-		var erropts = $scope.errorconfig.opts;
-		var params = $scope.errorconfig.params;
-
-		for(var k in erropts)
-		{
-			if(erropts[k].enabled && erropts[k].error(change, params))
-				return erropts[k].errmsg(change, params);
-		}
-
-		return undefined;
-	};
-
 	buildErrorSummary = function()
 	{
 		var summary = $scope.mongo.ui.errorsummary = {};
+		var shardalyzer = $scope.mongo.shardalyzer;
 
 		var erropts = $scope.errorconfig.opts;
 		var params = $scope.errorconfig.params;
@@ -969,25 +939,29 @@ shardalyze.controller("sliderControl", function($scope)
 		for(var k in erropts)
 		{
 			if(erropts[k].enabled)
-				erropts[k].summarise($scope.mongo.shardalyzer, summary, params);
+				summary[erropts[k].name] = erropts[k].summarise(shardalyzer, params);
 		}
 	}
 
 	setErrorTicks = function()
-	{
-		$scope.mongo.ui.errors = [];
-		$scope.mongo.ui.errmsg = [];
+	{	
+		var shardalyzer = $scope.mongo.shardalyzer;
+		var errmsg = $scope.mongo.ui.errmsg = [];
 
-		for(var i in $scope.mongo.shardalyzer.changes)
+		var erropts = $scope.errorconfig.opts;
+		var params = $scope.errorconfig.params;
+
+		for(var k in erropts)
 		{
-			var change = $scope.mongo.shardalyzer.changes[i];
-
-			if(isError(change))
+			if(erropts[k].enabled)
 			{
-				$scope.mongo.ui.errmsg[i] = errorMsg(change);
-				$scope.mongo.ui.errors.push(i);
+				merge(errmsg, erropts[k].errors(shardalyzer, params),
+					function(oldVal, newVal){ return (newVal.type == "danger"); });
 			}
 		}
+
+		// obtain array of indices of each error
+		$scope.mongo.ui.errors = Object.keys(errmsg);
 
 		if($scope.mongo.ui.errors[0] !== 0)
 			$scope.mongo.ui.errors.unshift(0);

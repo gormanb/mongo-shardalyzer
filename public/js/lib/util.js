@@ -22,8 +22,19 @@ function hexToRgb (hex) {
   return [r, g, b];
 }
 
+// sum all elements of an array
 function sum(arr)
 {
 	return arr.length == 0 ? NaN :
 		arr.reduce(function(a, b) { return (a || 0) + (b || 0) }, 0);
+}
+
+// merge one array into another
+function merge(arr1, arr2, owfunc)
+{
+	for(var m in arr2)
+	{
+		if(!(m in arr1) || !owfunc || owfunc(arr1[m], arr2[m]))
+			arr1[m] = arr2[m];
+	}
 }
