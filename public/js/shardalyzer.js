@@ -132,6 +132,7 @@ var Shardalyzer =
 	migrations : [],
 	failures : [],
 	splits : [],
+	splitcount : 0,
 	balancer : {},
 	position : null,
 
@@ -150,6 +151,9 @@ var Shardalyzer =
 
 		this.migrations = [];
 		this.failures = [];
+
+		this.splits = [];
+		this.splitcount = 0;
 
 		var currentmove = {};
 
@@ -261,6 +265,9 @@ var Shardalyzer =
 		// if chunkdata is empty, position is null else 0
 		// clusters with no changelog entries still valid
 		this.position = (chunkdata.length > 0 ? 0 : null);
+
+		// total number of splits in changelog
+		this.splitcount = Object.keys(this.splits).length;
 
 		if(this.canRewind())
 			this.tag(this.chunks, this.changes[0]);
@@ -395,6 +402,10 @@ var Shardalyzer =
 		// the original chunk
 		var chunk = chunks[s(before.min)];
 
+		// update split counters
+		chunk.splits = (chunk.splits || 0) + 1;
+		this.splitcount++;
+
 		// update the source chunk' details
 		putAll(chunk, left);
 
@@ -427,6 +438,8 @@ var Shardalyzer =
 
 		// ... and revert left
 		putAll(chunk, before);
+		this.splitcount--;
+		chunk.splits--;
 	},
 
 /*
@@ -508,7 +521,14 @@ var Shardalyzer =
 		var newMin = newMeta.min;
 
 		if(splitNum == 1)
-			putAll(chunk, newMeta); // split 1 of N updates existing chunk
+		{
+			// split 1 of N updates existing chunk
+			putAll(chunk, newMeta);
+
+			// update root chunk split count before cloning
+			chunk.splits = (chunk.splits || 0) + change.details.of;
+			this.splitcount += change.details.of;
+		}
 		else
 		{
 			// subsequent splits create new chunks
@@ -551,6 +571,10 @@ var Shardalyzer =
 
 			// revert parent chunk
 			putAll(chunk, before);
+
+			// root chunk split count
+			this.splitcount -= change.details.of;
+			chunk.splits -= change.details.of;
 		}
 		else
 		{
