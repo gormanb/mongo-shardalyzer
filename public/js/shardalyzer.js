@@ -131,6 +131,7 @@ var Shardalyzer =
 	watched : {},
 	migrations : [],
 	failures : [],
+	splits : [],
 	balancer : {},
 	position : null,
 
@@ -235,6 +236,25 @@ var Shardalyzer =
 					this.failures[i] = currentmove;
 
 				currentmove = {};
+			}
+			else // split or multi-split operation
+			{
+				var change = this.splits[i] = this.changes[i];
+				var src = change.details.before;
+
+				if(this.changes[i].what == OP_SPLIT)
+				{
+					this.chunks[s(change.details.left.min)].splits =
+						(this.chunks[s(change.details.left.min)].splits || 0) + 1;
+
+					this.chunks[s(change.details.right.min)].splits =
+						(this.chunks[s(change.details.right.min)].splits || 0) + 1;
+				}
+				else
+				{
+					this.chunks[s(change.details.chunk.min)].splits =
+						(this.chunks[s(change.details.chunk.min)].splits || 0) + change.details.of;
+				}
 			}
 		}
 
