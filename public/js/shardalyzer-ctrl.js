@@ -375,7 +375,7 @@ shardalyze.controller("updateCharts", function($scope)
 			var splitcount = 0;
 
 			for(var i = 0; i < upper - lower; i++)
-				splitcount += ($scope.mongo.shardalyzer.shards[shard][lower+i].splits || 0);
+				splitcount = Math.max($scope.mongo.shardalyzer.shards[shard][lower+i].splits || 0, splitcount);
 
 			splitcount /= ($scope.mongo.shardalyzer.splitcount || 1);
 
