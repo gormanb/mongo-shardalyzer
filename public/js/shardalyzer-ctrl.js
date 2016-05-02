@@ -44,6 +44,7 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 			shardenabled : {},
 			changelog : [],
 			logwindow : 18,
+			heatmap : true,
 			errorsummary : {},
 			errors : [],
 			errmsg : [],
@@ -351,6 +352,8 @@ shardalyze.controller("updateCharts", function($scope)
 		return tagtip.substring(1, tagtip.length-2);
 	}
 
+	var heatlow = [174,198,207], heathigh = [255,198,174];
+
 	// lower (inclusive) to upper (exclusive)
 	function addWedge(shard, lower, upper, index)
 	{
@@ -367,6 +370,17 @@ shardalyze.controller("updateCharts", function($scope)
 		// set watch color if watched and not involved in operation
 		if(!shards[shard][lower].status && shards[shard][lower].watched)
 			$scope.chartmeta.colors[shard][index] = shards[shard][lower].watched;
+		else if(!shards[shard][lower].status && $scope.mongo.ui.heatmap)
+		{
+			var splitcount = 0;
+
+			for(var i = 0; i < upper - lower; i++)
+				splitcount += ($scope.mongo.shardalyzer.shards[shard][lower+i].splits || 0);
+
+			splitcount /= ($scope.mongo.shardalyzer.splitcount || 1);
+
+			$scope.chartmeta.colors[shard][index] = gradient(heatlow, heathigh, splitcount);
+		}
 
 		// set hover highlight color
 		$scope.chartmeta.highlights[shard][index] =

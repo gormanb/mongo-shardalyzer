@@ -22,6 +22,20 @@ function hexToRgb (hex) {
   return [r, g, b];
 }
 
+function rgbToHex(rgb)
+{
+	var output = "#";
+
+	for(var c in rgb)
+	{
+		var comp = rgb[c].toString(16);
+
+		output += (comp.length == 1 ? "0" + comp : comp);
+	}
+
+	return output;
+}
+
 // sum all elements of an array
 function sum(arr)
 {
@@ -37,4 +51,16 @@ function merge(arr1, arr2, owfunc)
 		if(!(m in arr1) || !owfunc || owfunc(arr1[m], arr2[m]))
 			arr1[m] = arr2[m];
 	}
+}
+
+function gradient(start, end, percent)
+{
+	var output = [];
+
+	for(var i = 0; i < 3; i++)
+		output[i] = Math.round(start[i] + (end[i] - start[i]) * percent);
+
+	// var alpha = start[3] ? Math.round(start[3] + (end[3] - start[3]) * percent) : 1;
+
+	return rgbToHex(output);
 }
