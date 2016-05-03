@@ -352,7 +352,7 @@ shardalyze.controller("updateCharts", function($scope)
 		return tagtip.substring(1, tagtip.length-2);
 	}
 
-	var heatlow = [174,198,207], heathigh = [228,75,75];
+	var heatlow = [174,198,207], heathigh = [192,75,75];
 
 	// lower (inclusive) to upper (exclusive)
 	function addWedge(shard, lower, upper, index)
