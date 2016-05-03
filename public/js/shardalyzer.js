@@ -132,7 +132,7 @@ var Shardalyzer =
 	migrations : [],
 	failures : [],
 	splits : [],
-	splitcount : 0,
+	splitcount : {},
 	balancer : {},
 	position : null,
 
@@ -152,8 +152,8 @@ var Shardalyzer =
 		this.migrations = [];
 		this.failures = [];
 
+		this.splitcount = { totalsplits : 0 };
 		this.splits = [];
-		this.splitcount = 0;
 
 		var currentmove = {};
 
@@ -178,6 +178,8 @@ var Shardalyzer =
 					}
 				}
 			}
+
+			this.splitcount[sharddata[k]._id] = 0;
 		}
 
 		for(var k in chunkdata)
@@ -270,11 +272,17 @@ var Shardalyzer =
 		// clusters with no changelog entries still valid
 		this.position = (chunkdata.length > 0 ? 0 : null);
 
-		// total number of splits in changelog
-		this.splitcount = Object.keys(this.splits).length;
-
+		// tag last change
 		if(this.canRewind())
 			this.tag(this.chunks, this.changes[0]);
+
+		// rebuild per-chunk counts from changelog
+		this.bttf(this.changes.length);
+
+		for(var k in this.splitcount)
+			this.splitcount[k] = 0;
+
+		this.bttf(0);
 
 		this.updateBalancer();
 	},
@@ -408,7 +416,8 @@ var Shardalyzer =
 
 		// update split counters
 		chunk.splits = (chunk.splits || 0) + 1;
-		this.splitcount++;
+		this.splitcount[chunk.shard]++;
+		this.splitcount.totalsplits++;
 
 		// update the source chunk' details
 		putAll(chunk, left);
@@ -442,7 +451,8 @@ var Shardalyzer =
 
 		// ... and revert left
 		putAll(chunk, before);
-		this.splitcount--;
+		this.splitcount[chunk.shard]--;
+		this.splitcount.totalsplits--;
 		chunk.splits--;
 	},
 
@@ -531,7 +541,8 @@ var Shardalyzer =
 
 			// update root chunk split count before cloning
 			chunk.splits = (chunk.splits || 0) + change.details.of;
-			this.splitcount += change.details.of;
+			this.splitcount[chunk.shard] += change.details.of;
+			this.splitcount.totalsplits += change.details.of;
 		}
 		else
 		{
@@ -577,7 +588,8 @@ var Shardalyzer =
 			putAll(chunk, before);
 
 			// root chunk split count
-			this.splitcount -= change.details.of;
+			this.splitcount[chunk.shard] -= change.details.of;
+			this.splitcount.totalsplits -= change.details.of;
 			chunk.splits -= change.details.of;
 		}
 		else

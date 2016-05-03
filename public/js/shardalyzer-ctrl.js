@@ -379,7 +379,7 @@ shardalyze.controller("updateCharts", function($scope)
 			for(var i = 0; i < upper - lower; i++)
 				splitcount = Math.max($scope.mongo.shardalyzer.shards[shard][lower+i].splits || 0, splitcount);
 
-			splitcount /= ($scope.mongo.shardalyzer.splitcount || 1);
+			splitcount /= ($scope.mongo.shardalyzer.splitcount.totalsplits || 1);
 
 			$scope.chartmeta.colors[shard][index] = gradient(heatlow, heathigh, splitcount);
 		}
