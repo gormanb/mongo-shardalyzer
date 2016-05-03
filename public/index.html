@@ -258,7 +258,7 @@
 						<div ng-repeat="shard in chartmeta.shardlist" ng-if="mongo.ui.shardenabled[shard] || chartmeta.shardedit"
 							class="{{chartmeta.colclasses[chartmeta.currentcol]}} col-centered" style="opacity:{{mongo.ui.shardenabled[shard] ? 1 : 0.25}}">
 							<canvas id="doughnut_{{shard}}" class="chart chart-doughnut" ng-readonly="true"
-								chart-options="chartmeta.options"
+								chart-options="chartmeta.options[shard]"
 								chart-data="chartmeta.data[shard]"
 								chart-labels="chartmeta.labels[shard]"
 								chart-colors="chartmeta.colors[shard]"

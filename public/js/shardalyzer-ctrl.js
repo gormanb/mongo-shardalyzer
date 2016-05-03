@@ -255,6 +255,8 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta.labels = {};
 	$scope.chartmeta.data = {};
 
+	$scope.chartmeta.options = {};
+
 	var GRANULARITY_DEFAULT = 200;
 
 	$scope.chartmeta.granularity =
@@ -332,8 +334,8 @@ shardalyze.controller("updateCharts", function($scope)
 		}
 		else if(numChunks > 1 && !(event.altKey || event.shiftKey || event.ctrlKey))
 		{
-			$scope.chartmeta.options.animation.animateScale = true;
-			$scope.chartmeta.options.animation.duration = 1000;
+			$scope.chartmeta.options[label[0]].animation.animateRotate = true;
+			$scope.chartmeta.options[label[0]].animation.duration = 1000;
 			generateChart(label[0], label[1], label[2]);
 		}
 
@@ -408,6 +410,8 @@ shardalyze.controller("updateCharts", function($scope)
 		{
 			if(!$scope.chartmeta.data[s])
 			{
+				$scope.chartmeta.options[s] = $scope.chartmeta.newopts(s);
+
 				$scope.chartmeta.highlights[s] = [];
 				$scope.chartmeta.colors[s] = [];
 
@@ -420,14 +424,13 @@ shardalyze.controller("updateCharts", function($scope)
 
 		if(position == null)
 		{
-			$scope.chartmeta.options.animation.animateRotate = true;
-			$scope.chartmeta.options.animation.duration = 1000;
-
 			$scope.chartmeta.highlights = {};
 			$scope.chartmeta.colors = {};
 
 			$scope.chartmeta.labels = {};
 			$scope.chartmeta.data = {};
+
+			$scope.chartmeta.options = {};
 		}
 
 		// update granularity max and (possibly) value
@@ -467,8 +470,9 @@ shardalyze.controller("updateCharts", function($scope)
 			}
 		}
 
-		$scope.chartmeta.labels[shardname].length = seq;
+		$scope.chartmeta.highlights[shardname].length = seq;
 		$scope.chartmeta.colors[shardname].length = seq;
+		$scope.chartmeta.labels[shardname].length = seq;
 		$scope.chartmeta.data[shardname].length = seq;
 
 		// trigger redraw of empty shard
@@ -502,39 +506,41 @@ shardalyze.controller("updateCharts", function($scope)
 	};
 
 	// Chart.js Options
-	$scope.chartmeta.options =
+	$scope.chartmeta.newopts = function(shardname)
 	{
-		responsive: true,
+		return {
+			responsive: true,
 
-		elements :
-		{
-			arc :
+			elements :
 			{
-				borderColor : '#fff',
-				borderWidth : 0.25
-			}
-		},
+				arc :
+				{
+					borderColor : '#fff',
+					borderWidth : 0.25
+				}
+			},
 
-		cutoutPercentage : 75, // This is 0 for Pie charts
+			cutoutPercentage : 75, // This is 0 for Pie charts
 
-		tooltips : { enabled : false },
-		legend : { display : false },
+			tooltips : { enabled : false },
+			legend : { display : false },
 
-		animation :
-		{
-			easing : 'easeOutQuart',
-			animateRotate : true,
-			animateScale : false,
-			duration : 1000,
-
-			// disable animation after initial loading
-			onComplete : function()
+			animation :
 			{
-				$scope.chartmeta.options.animation.animateRotate = false;
-				$scope.chartmeta.options.animation.animateScale = false;
-				$scope.chartmeta.options.animation.duration = 0;
+				easing : 'easeOutQuart',
+				animateRotate : true,
+				animateScale : false,
+				duration : 1000,
+
+				// disable animation after initial loading
+				onComplete : function()
+				{
+					$scope.chartmeta.options[shardname].animation.animateRotate = false;
+					$scope.chartmeta.options[shardname].animation.animateScale = false;
+					$scope.chartmeta.options[shardname].animation.duration = 0;
+				}
 			}
-		},
+		}
 	};
 });
 
