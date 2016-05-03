@@ -244,20 +244,24 @@ var Shardalyzer =
 			else // split or multi-split operation
 			{
 				var change = this.splits[i] = this.changes[i];
-				var src = change.details.before;
 
 				if(this.changes[i].what == OP_SPLIT)
 				{
-					this.chunks[s(change.details.left.min)].splits =
-						(this.chunks[s(change.details.left.min)].splits || 0) + 1;
+					var left = this.chunks[s(change.details.left.min)];
+					var right = this.chunks[s(change.details.right.min)];
 
-					this.chunks[s(change.details.right.min)].splits =
-						(this.chunks[s(change.details.right.min)].splits || 0) + 1;
+					left.splits = (left.splits || 0) + 1;
+					right.splits = (right.splits || 0) + 1;
 				}
-				else
+				else if(this.changes[i].what == OP_MULTI_SPLIT)
 				{
-					this.chunks[s(change.details.chunk.min)].splits =
-						(this.chunks[s(change.details.chunk.min)].splits || 0) + change.details.of;
+					var before = this.chunks[s(change.details.before.min)];
+					var chunk = this.chunks[s(change.details.chunk.min)];
+
+					if(change.details.number == 1)
+						before.splits = (before.splits || 0) + change.details.of;
+					else
+						chunk.splits = before.splits;
 				}
 			}
 		}
