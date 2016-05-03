@@ -443,6 +443,8 @@ shardalyze.controller("updateCharts", function($scope)
 		var shard = $scope.mongo.shardalyzer.shards[shardname];
 		var granularity = $scope.chartmeta.granularity.value;
 
+		var splitcount = $scope.mongo.shardalyzer.splitcount;
+
 		end = (end || shard.length);
 		start = (start || 0);
 
@@ -475,10 +477,18 @@ shardalyze.controller("updateCharts", function($scope)
 		$scope.chartmeta.labels[shardname].length = seq;
 		$scope.chartmeta.data[shardname].length = seq;
 
+		// percentage of total splits that happened on this shard
+		var shardheat = splitcount[shardname] / (splitcount.totalsplits || 1);
+
+		// colour shard border based on percentage of splits per shard
+		$scope.chartmeta.options[shardname].cutoutPercentage = 25 + (50 * (1.0-shardheat));
+
 		// trigger redraw of empty shard
 		if($scope.chartmeta.data[shardname].length == 0)
 			$scope.chartmeta.colors[shardname][0] = '#EEEEEE';		
 	}
+
+	var shardheatlow = [255,255,255], shardheathigh = [255,0,0];
 
 	$scope.$watch('mongo.shardalyzer.shards', function(shards)
 	{
