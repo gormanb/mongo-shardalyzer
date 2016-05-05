@@ -247,11 +247,11 @@ var Shardalyzer =
 
 				if(this.changes[i].what == OP_SPLIT)
 				{
-					var left = this.chunks[s(change.details.left.min)];
+					var before = this.chunks[s(change.details.before.min)];
 					var right = this.chunks[s(change.details.right.min)];
 
-					left.splits = (left.splits || 0) + 1;
-					right.splits = (right.splits || 0) + 1;
+					before.splits = (before.splits || 0) + 1;
+					right.splits = before.splits;
 				}
 				else if(this.changes[i].what == OP_MULTI_SPLIT)
 				{
