@@ -185,11 +185,11 @@
 
             var cvs = elem[0], ctx = cvs.getContext('2d');
 
-            var data = Array.isArray(scope.chartData[0]) ?
-              getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartYAxes) :
+            var data = Array.isArray(scope.chartData[0]) ? // doughnut
+              getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights, scope.chartYAxes) :
             	scope.chartData[0] instanceof Object ? // line
             	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights) :
-            	    getData(scope.chartLabels, scope.chartData, scope.chartColors, scope.chartHighlights); // doughnut, bar
+            	    getData(scope.chartLabels, scope.chartData, scope.chartColors, scope.chartHighlights); // bar
 
             //var options = angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
 
@@ -237,7 +237,8 @@
     }
 
     function getColors (type, scope) {
-      if(scope.chartColors[0] instanceof Object)
+      // pre-prepared colors blob; return as-is and handle later
+      if(Array.isArray(scope.chartColors[0]) || scope.chartColors[0] instanceof Object)
     	  return scope.chartColors;
 
       var colors = angular.copy(scope.chartColors ||
@@ -311,14 +312,15 @@
     	}
     }
 
-    function getDataSets (labels, data, series, colors, yaxis) {
+    function getDataSets (labels, data, series, colors, highlights, yaxis) {
       return {
         labels: labels,
         datasets: data.map(function (item, i) {
-          var dataset = angular.extend({}, colors[i], {
-            label: series[i],
-            data: item,
-            fill: true
+          var dataset = angular.extend({},
+        	(Array.isArray(colors[i]) ? { backgroundColor : colors[i] } : colors[i]),
+        	(highlights ? (Array.isArray(highlights[i]) ? { hoverBackgroundColor : highlights[i] } : highlights[i]) : {}), {
+            label: (series ? series[i] : null),
+            data: item
           });
           if (yaxis) {
             dataset.yAxisID = 'y-axis-' + (i + 1);
