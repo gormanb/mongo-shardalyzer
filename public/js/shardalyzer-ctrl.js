@@ -257,6 +257,13 @@ shardalyze.controller("updateCharts", function($scope)
 
 	$scope.chartmeta.options = {};
 
+	var	shardheathigh = hexToRgb(statuscolors[STATUS_SPLIT_SOURCE].substr(1)),
+		shardheatlow = hexToRgb(statuscolors[STATUS_SPLIT_DEST].substr(1));
+
+	var chunkheatlow = [174,198,207], chunkheathigh = [192,75,75];
+
+	var DS_CHUNKS = 0, DS_SPLITS = 1;
+
 	var GRANULARITY_DEFAULT = 200;
 
 	$scope.chartmeta.granularity =
@@ -354,8 +361,6 @@ shardalyze.controller("updateCharts", function($scope)
 		return tagtip.substring(1, tagtip.length-2);
 	}
 
-	var heatlow = [174,198,207], heathigh = [192,75,75];
-
 	// lower (inclusive) to upper (exclusive)
 	function addWedge(shard, lower, upper, index)
 	{
@@ -363,15 +368,15 @@ shardalyze.controller("updateCharts", function($scope)
 
 		var shards = $scope.mongo.shardalyzer.shards;
 
-		$scope.chartmeta.data[shard][index] = 1;
+		$scope.chartmeta.data[shard][DS_CHUNKS].data[index] = 1;
 
 		// status color takes prio if currently involved in an operation
-		$scope.chartmeta.colors[shard][index] =
+		$scope.chartmeta.colors[shard][DS_CHUNKS].backgroundColor[index] =
 			$scope.mongo.shardalyzer.statuscolors[shards[shard][lower].status];
 
 		// set watch color if watched and not involved in operation
 		if(!shards[shard][lower].status && shards[shard][lower].watched)
-			$scope.chartmeta.colors[shard][index] = shards[shard][lower].watched;
+			$scope.chartmeta.colors[shard][DS_CHUNKS].backgroundColor[index] = shards[shard][lower].watched;
 		else if(!shards[shard][lower].status && $scope.mongo.ui.heatmap)
 		{
 			var splitcount = 0;
@@ -381,12 +386,12 @@ shardalyze.controller("updateCharts", function($scope)
 
 			splitcount /= ($scope.mongo.shardalyzer.splitcount.totalsplits || 1);
 
-			$scope.chartmeta.colors[shard][index] = gradient(heatlow, heathigh, splitcount);
+			$scope.chartmeta.colors[shard][DS_CHUNKS].backgroundColor[index] = gradient(chunkheatlow, chunkheathigh, splitcount);
 		}
 
 		// set hover highlight color
-		$scope.chartmeta.highlights[shard][index] =
-			rgba(hexToRgb($scope.chartmeta.colors[shard][index].substr(1)), 0.8);
+		$scope.chartmeta.highlights[shard][DS_CHUNKS].hoverBackgroundColor[index] =
+			rgba(hexToRgb($scope.chartmeta.colors[shard][DS_CHUNKS].backgroundColor[index].substr(1)), 0.8);
 
 		if(!$scope.chartmeta.labels[shard][index])
 			$scope.chartmeta.labels[shard][index] = [];
@@ -412,11 +417,13 @@ shardalyze.controller("updateCharts", function($scope)
 			{
 				$scope.chartmeta.options[s] = $scope.chartmeta.newopts(s);
 
-				$scope.chartmeta.highlights[s] = [];
-				$scope.chartmeta.colors[s] = [];
+				$scope.chartmeta.highlights[s] = [{ hoverBackgroundColor : [] }, { hoverBackgroundColor : [] }];
+				$scope.chartmeta.colors[s] = [{ backgroundColor : [] }, { backgroundColor : [] }];
 
 				$scope.chartmeta.labels[s] = [];
-				$scope.chartmeta.data[s] = [];
+
+				$scope.chartmeta.data[s] = // chunk data, shard heat indicator
+					[ {	data: [] }, { data: [], label: "shardsplitheat" } ];
 			}
 
 			generateChart(s);
@@ -472,23 +479,26 @@ shardalyze.controller("updateCharts", function($scope)
 			}
 		}
 
-		$scope.chartmeta.highlights[shardname].length = seq;
-		$scope.chartmeta.colors[shardname].length = seq;
+		$scope.chartmeta.highlights[shardname][DS_CHUNKS].hoverBackgroundColor.length = seq;
+		$scope.chartmeta.colors[shardname][DS_CHUNKS].backgroundColor.length = seq;
+		$scope.chartmeta.data[shardname][DS_CHUNKS].data.length = seq;
 		$scope.chartmeta.labels[shardname].length = seq;
-		$scope.chartmeta.data[shardname].length = seq;
 
 		// percentage of total splits that happened on this shard
 		var shardheat = splitcount[shardname] / (splitcount.totalsplits || 1);
 
-		// colour shard border based on percentage of splits per shard
-		$scope.chartmeta.options[shardname].cutoutPercentage = 25 + (50 * (1.0-shardheat));
+		// render internal donut dataset to indicate shard heat, i.e. percentage split rate
+		//$scope.chartmeta.options[shardname].cutoutPercentage = 25 + (50 * (1.0-shardheat));
+		$scope.chartmeta.data[shardname][DS_SPLITS].data = [ splitcount[shardname], splitcount.totalsplits-splitcount[shardname] ];
+
+		$scope.chartmeta.colors[shardname][DS_SPLITS].backgroundColor =
+			$scope.chartmeta.colors[shardname][DS_SPLITS].hoverBackgroundColor =
+				[ gradient(shardheatlow, shardheathigh, shardheat), 'rgba(0,0,0,0)' ];
 
 		// trigger redraw of empty shard
-		if($scope.chartmeta.data[shardname].length == 0)
-			$scope.chartmeta.colors[shardname][0] = '#EEEEEE';		
+		if($scope.chartmeta.data[shardname][DS_CHUNKS].data.length == 0)
+			$scope.chartmeta.colors[shardname][DS_CHUNKS].backgroundColor[0] = '#EEEEEE';		
 	}
-
-	var shardheatlow = [255,255,255], shardheathigh = [255,0,0];
 
 	$scope.$watch('mongo.shardalyzer.shards', function(shards)
 	{
@@ -530,7 +540,7 @@ shardalyze.controller("updateCharts", function($scope)
 				}
 			},
 
-			cutoutPercentage : 75, // This is 0 for Pie charts
+			cutoutPercentage : 50, // This is 0 for Pie charts
 
 			tooltips : { enabled : false },
 			legend : { display : false },

@@ -188,7 +188,7 @@
             var data = Array.isArray(scope.chartData[0]) ?
               getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartYAxes) :
             	scope.chartData[0] instanceof Object ? // line
-            	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope)) :
+            	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights) :
             	    getData(scope.chartLabels, scope.chartData, scope.chartColors, scope.chartHighlights); // doughnut, bar
 
             //var options = angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
@@ -237,6 +237,9 @@
     }
 
     function getColors (type, scope) {
+      if(scope.chartColors[0] instanceof Object)
+    	  return scope.chartColors;
+
       var colors = angular.copy(scope.chartColors ||
         ChartJs.getOptions(type).chartColors ||
         Chart.defaults.global.colors
@@ -297,10 +300,10 @@
     }
 
     // array of objects [{ data : [] }], fill in colors & labels
-    function fillDataSets(labels, data, series, colors)
+    function fillDataSets(labels, data, series, colors, highlights)
     {
     	for(var i in data)
-    		angular.extend(data[i], colors[i], (i in series ? { label : series[i] } : {}));
+    		angular.extend(data[i], colors[i], (highlights ? highlights[i] : {}), (i in series ? { label : series[i] } : {}));
 
     	return {
     		labels : labels,
