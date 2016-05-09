@@ -16,6 +16,7 @@ var shardSegmentTooltipRaw = function(point, event)
 	tooltipEl.removeClass('above below');
 	tooltipEl.addClass('center');
 
+	var splits = Shardalyzer.splitcount;
 	var shards = Shardalyzer.shards;
 
 	var info = point._model.label;
@@ -28,7 +29,10 @@ var shardSegmentTooltipRaw = function(point, event)
 	var numChunks = (upper-lower);
 	var text;
 
-	if(numChunks == 1)
+	// split count dataset has index 1
+	if(point._datasetIndex == 1)
+		text = JSON.stringify({ splits : splits[shard], of : splits.totalsplits }, null, 2);
+	else if(numChunks == 1)
 		text = JSON.stringify(shards[shard][lower], null, 2);
 	else
 	{

@@ -224,8 +224,9 @@
 
     function getEventHandler (scope, chart, action, triggerOnlyOnChange) {
       var lastState = null;
+      var mode = (action == 'chartHover' ? (scope.chartOptions && scope.chartOptions.hover && scope.chartOptions.hover.mode) || null : null);
+  	  var atEvent = (mode == 'single' ? chart.getElementAtEvent : (mode == 'dataset' ? chart.getDatasetAtEvent : chart.getElementsAtEvent));
       return function (evt) {
-        var atEvent = chart.getElementsAtEvent || chart.getPointsAtEvent;
         if (atEvent) {
           var activePoints = atEvent.call(chart, evt);
           if (triggerOnlyOnChange === false || angular.equals(lastState, activePoints) === false) {

@@ -257,8 +257,8 @@ shardalyze.controller("updateCharts", function($scope)
 
 	$scope.chartmeta.options = {};
 
-	var	shardheathigh = hexToRgb(statuscolors[STATUS_SPLIT_SOURCE].substr(1)),
-		shardheatlow = hexToRgb(statuscolors[STATUS_SPLIT_DEST].substr(1));
+	var	shardheatlow = hexToRgb(statuscolors[STATUS_SPLIT_DEST].substr(1)),
+		shardheathigh = hexToRgb("FF7518"); // orange
 
 	var chunkheatlow = [174,198,207], chunkheathigh = [192,75,75];
 
@@ -545,6 +545,7 @@ shardalyze.controller("updateCharts", function($scope)
 
 			tooltips : { enabled : false },
 			legend : { display : false },
+			hover : { mode : 'single' },
 
 			animation :
 			{
