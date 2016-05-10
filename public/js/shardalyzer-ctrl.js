@@ -44,7 +44,6 @@ var shardalyze = angular.module('shardalyzer-ui', ['chart.js', 'ui.bootstrap', '
 			shardenabled : {},
 			changelog : [],
 			logwindow : 18,
-			heatmap : true,
 			errorsummary : {},
 			errors : [],
 			errmsg : [],
@@ -310,6 +309,12 @@ shardalyze.controller("updateCharts", function($scope)
 		}
 	};
 
+	$scope.chartmeta.heatmap =
+	{
+		thermostat : 1,
+		level : [ 'default', 'primary', 'warning', 'danger' ]
+	}
+
 	$scope.scaleCharts = function(event, delta, deltaX, deltaY)
 	{
 		// !event implies manual call from button click
@@ -377,7 +382,7 @@ shardalyze.controller("updateCharts", function($scope)
 		// set watch color if watched and not involved in operation
 		if(!shards[shard][lower].status && shards[shard][lower].watched)
 			$scope.chartmeta.colors[shard][DS_CHUNKS][index] = shards[shard][lower].watched;
-		else if(!shards[shard][lower].status && $scope.mongo.ui.heatmap)
+		else if(!shards[shard][lower].status && $scope.chartmeta.heatmap.thermostat)
 		{
 			var chunkheat = 0;
 
@@ -403,7 +408,7 @@ shardalyze.controller("updateCharts", function($scope)
 		return 1;
 	}
 
-	$scope.$watchGroup(['mongo.shardalyzer.position', 'chartmeta.granularity.value'], generateCharts);
+	$scope.$watchGroup(['mongo.shardalyzer.position', 'chartmeta.granularity.value', 'chartmeta.heatmap.thermostat'], generateCharts);
 	$scope.$watch('mongo.shardalyzer.watched', generateCharts, true);
 
 	function generateCharts(posgran)
@@ -485,11 +490,11 @@ shardalyze.controller("updateCharts", function($scope)
 
 		// percentage of total splits that happened on this shard
 		var shardheat = splitcount[shardname] / (splitcount.totalsplits || 1);
+		var heatmode = $scope.chartmeta.heatmap.thermostat;
 
 		// render internal donut dataset to indicate shard heat, i.e. percentage split rate
-		//$scope.chartmeta.options[shardname].cutoutPercentage = 25 + (50 * (1.0-shardheat));
-		$scope.chartmeta.data[shardname][DS_SPLITS][1] = splitcount.totalsplits-splitcount[shardname];
-		$scope.chartmeta.data[shardname][DS_SPLITS][0] = splitcount[shardname];
+		$scope.chartmeta.data[shardname][DS_SPLITS][1] = (heatmode ? splitcount.totalsplits-splitcount[shardname] : 0);
+		$scope.chartmeta.data[shardname][DS_SPLITS][0] = (heatmode ? splitcount[shardname] : 0);
 
 		var shardgrad = gradient(shardheatlow, shardheathigh, shardheat);
 

@@ -233,6 +233,11 @@
 								</button>
 							</div>
 							<div style="padding:5px">
+								<button type="button" class="btn btn-{{chartmeta.heatmap.level[chartmeta.heatmap.thermostat]}}" ng-show="chartmeta.shardedit" ng-click="chartmeta.heatmap.thermostat = (chartmeta.heatmap.thermostat+1)%2" value="Heat">
+									<span class="glyphicon glyphicon-fire" aria-hidden="true"></span>
+								</button>
+							</div>
+							<div style="padding:5px">
 								<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, 1)" value="+">
 									<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
 								</button>
@@ -263,7 +268,7 @@
 								chart-labels="chartmeta.labels[shard]"
 								chart-colors="chartmeta.colors[shard]"
 								chart-highlights="chartmeta.highlights[shard]"
-								chart-watch="{'chartColors[0]':{type:'collection'},'chartColors[1]':{type:'collection'},'chartData':{reset:true}}"
+								chart-watch="{'chartColors[0]':{type:'collection'},'chartData[1]':{type:'collection'},'chartData':{reset:true}}"
 								chart-hover="chunkHover"
 								chart-click="chunkClick"></canvas>
 							<p align="center">
