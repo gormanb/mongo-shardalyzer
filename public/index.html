@@ -217,32 +217,31 @@
 				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
 					<div id="shardedit" style="position:absolute; z-index:2">
 						<span id="shardeditbuttons" style="display:inline-block; float:left">
-							<div style="padding:5px">
+							<div class="btn-group-vertical" style="padding:2px">
 								<button type="button" class="{{chartmeta.shardedit ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="chartmeta.shardedit = (!chartmeta.shardedit)" value="Edit">
 									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 								</button>
 							</div>
-							<div style="padding:5px">
+							<br />
+							<div class="btn-group-vertical" style="padding:2px">
 								<button type="button" class="btn btn-success" ng-show="chartmeta.shardedit" ng-click="chartmeta.enableall(true);" value="All">
 									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 								</button>
-							</div>
-							<div style="padding:5px">
 								<button type="button" class="btn btn-danger" ng-show="chartmeta.shardedit" ng-click="chartmeta.enableall(false);" value="None">
 									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 								</button>
 							</div>
-							<div style="padding:5px">
+							<br />
+							<div class="btn-group-vertical" style="padding:2px">
 								<button type="button" class="btn btn-{{chartmeta.heatmap.level[chartmeta.heatmap.thermostat]}}" ng-show="chartmeta.shardedit" ng-click="chartmeta.heatmap.thermostat = (chartmeta.heatmap.thermostat+1)%2" value="Heat">
 									<span class="glyphicon glyphicon-fire" aria-hidden="true"></span>
 								</button>
 							</div>
-							<div style="padding:5px">
+							<br />
+							<div class="btn-group-vertical" style="padding:2px">
 								<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, 1)" value="+">
 									<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
 								</button>
-							</div>
-							<div style="padding:5px">
 								<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, -1)" value="-">
 									<span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
 								</button>
