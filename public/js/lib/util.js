@@ -71,17 +71,17 @@ function decile(percent)
 	return Math.round(percent/0.1)/10.0;
 }
 
+var gradscratch = [];
+
 // compute gradient colour from endpoints and percent
 function gradient(start, end, percent, func)
 {
-	var output = [];
-
 	percent = (func ? func(percent) : percent);
 
 	for(var i = 0; i < 3; i++)
-		output[i] = start[i] + Math.round((end[i] - start[i]) * percent);
+		gradscratch[i] = start[i] + Math.round((end[i] - start[i]) * percent);
 
 	// var alpha = start[3] ? Math.round(start[3] + (end[3] - start[3]) * percent) : 1;
 
-	return rgbToHex(output);
+	return rgbToHex(gradscratch);
 }
