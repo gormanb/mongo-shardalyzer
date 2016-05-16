@@ -493,8 +493,8 @@ shardalyze.controller("updateCharts", function($scope)
 		var heatmode = $scope.chartmeta.heatmap.thermostat;
 
 		// render internal donut dataset to indicate shard heat, i.e. percentage split rate
-		$scope.chartmeta.data[shardname][DS_SPLITS][1] = (heatmode ? splitcount.totalsplits-splitcount[shardname] : 0);
-		$scope.chartmeta.data[shardname][DS_SPLITS][0] = (heatmode ? splitcount[shardname] : 0);
+		$scope.chartmeta.data[shardname][DS_SPLITS][1] = (heatmode ? 100-Math.round(shardheat*100) : 0);
+		$scope.chartmeta.data[shardname][DS_SPLITS][0] = (heatmode ? Math.round(shardheat*100) : 0);
 
 		var shardgrad = gradient(shardheatlow, shardheathigh, shardheat);
 
