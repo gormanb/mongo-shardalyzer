@@ -155,8 +155,6 @@ var Shardalyzer =
 		this.splitcount = { totalsplits : 0 };
 		this.splits = [];
 
-		var currentmove = {};
-
 		for(var k in sharddata)
 		{
 			this.shards[sharddata[k]._id] = [];
@@ -191,11 +189,30 @@ var Shardalyzer =
 		}
 
 		/*
+		 * Cache original locations of chunks at start of changelog
+		 */
+		var chunkcache = {};
+
+		for(var i = 0; i < this.changes.length; i++)
+		{
+			if(this.changes[i].what == OP_FROM && success(this.changes[i]))
+			{
+				if(!this.changes[i].details.from)
+					while((++i) < this.changes.length && this.changes[i].what !== OP_COMMIT);
+
+				if(i < this.changes.length)
+					chunkcache[s(this.changes[i].details.min)] = this.changes[i].details.from;
+			}
+		}
+
+		/*
 		 * Iterate from end to start, i.e. in chronological order
 		 * Homogenise 2.x changelog format to newer 3.0 format
 		 *   - populate "from" & "to" fields in 2.x moveChunk.from
 		 *   - change "stepX" in 2.x moveChunk to 3.x "step X"
 		 */
+		var currentmove = {};
+
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
 			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
@@ -235,6 +252,7 @@ var Shardalyzer =
 
 				if(success(this.changes[i]))
 				{
+					chunkcache[s(this.changes[i].details.min)] = this.changes[i].details.to;
 					currentmove[MIGRATE_TIME] = sum(migratesteps(this.changes[i]));
 					this.migrations[i] = currentmove;
 				}
@@ -249,19 +267,31 @@ var Shardalyzer =
 
 				if(this.changes[i].what == OP_SPLIT)
 				{
-					var before = this.chunks[s(change.details.before.min)];
+					var bkey = s(change.details.before.min);
+
 					var right = this.chunks[s(change.details.right.min)];
+					var before = this.chunks[bkey];
 
 					before.splits = (before.splits || 0) + 1;
 					right.splits = before.splits;
+
+					this.splitcount[(chunkcache[bkey] || this.chunks[bkey].shard)]++;
+					this.splitcount.totalsplits++;
 				}
 				else if(this.changes[i].what == OP_MULTI_SPLIT)
 				{
-					var before = this.chunks[s(change.details.before.min)];
+					var bkey = s(change.details.before.min);
+
 					var chunk = this.chunks[s(change.details.chunk.min)];
+					var before = this.chunks[bkey];
 
 					if(change.details.number == 1)
+					{
 						before.splits = (before.splits || 0) + change.details.of;
+
+						this.splitcount[(chunkcache[bkey] || this.chunks[bkey].shard)] += change.details.of;
+						this.splitcount.totalsplits += change.details.of;
+					}
 					else
 						chunk.splits = before.splits;
 				}
@@ -275,14 +305,6 @@ var Shardalyzer =
 		// tag last change
 		if(this.canRewind())
 			this.tag(this.chunks, this.changes[0]);
-
-		// rebuild per-chunk counts from changelog
-		this.bttf(this.changes.length);
-
-		for(var k in this.splitcount)
-			this.splitcount[k] = 0;
-
-		this.bttf(0);
 
 		this.updateBalancer();
 	},
