@@ -265,36 +265,17 @@ var Shardalyzer =
 			{
 				var change = this.splits[i] = this.changes[i];
 
-				if(this.changes[i].what == OP_SPLIT)
-				{
-					var bkey = s(change.details.before.min);
+				var before = this.chunks[s(change.details.before.min)];
 
-					var right = this.chunks[s(change.details.right.min)];
-					var before = this.chunks[bkey];
+				var after = (change.what == OP_SPLIT ?
+					this.chunks[s(change.details.right.min)] : this.chunks[s(change.details.chunk.min)]);
 
-					before.splits = (before.splits || 0) + 1;
-					right.splits = before.splits;
+				// increment != 0 => increment before, increment 0 => only set after to before
+				var inc = change.what == OP_SPLIT ? 1 : (change.details.number == 1 ? change.details.of : 0);
 
-					this.splitcount[(chunkcache[bkey] || this.chunks[bkey].shard)]++;
-					this.splitcount.totalsplits++;
-				}
-				else if(this.changes[i].what == OP_MULTI_SPLIT)
-				{
-					var bkey = s(change.details.before.min);
+				var shard = (chunkcache[s(before.min)] || before.shard);
 
-					var chunk = this.chunks[s(change.details.chunk.min)];
-					var before = this.chunks[bkey];
-
-					if(change.details.number == 1)
-					{
-						before.splits = (before.splits || 0) + change.details.of;
-
-						this.splitcount[(chunkcache[bkey] || this.chunks[bkey].shard)] += change.details.of;
-						this.splitcount.totalsplits += change.details.of;
-					}
-					else
-						chunk.splits = before.splits;
-				}
+				this.updateSplitCount(before, after, shard, inc);
 			}
 		}
 
@@ -327,6 +308,21 @@ var Shardalyzer =
 		newId = newId.replace(/"/g, "");
 
 		return newId;
+	},
+
+	// update counters for OP_SPLIT or OP_MULTI_SPLIT
+	updateSplitCount : function(before, after, shard, inc)
+	{
+		if(inc) // inc != 0 => increment before chunk
+		{
+			before.splits = (before.splits || 0) + inc;
+
+			this.splitcount.totalsplits += inc;
+			this.splitcount[shard] += inc;
+		}
+
+		// set after to before if specified
+		after && (after.splits = before.splits);
 	},
 
 	updateBalancer : function()
@@ -437,9 +433,7 @@ var Shardalyzer =
 		var chunk = chunks[s(before.min)];
 
 		// update split counters
-		chunk.splits = (chunk.splits || 0) + 1;
-		this.splitcount[chunk.shard]++;
-		this.splitcount.totalsplits++;
+		this.updateSplitCount(chunk, null, chunk.shard, 1);
 
 		// update the source chunk' details
 		putAll(chunk, left);
@@ -473,9 +467,7 @@ var Shardalyzer =
 
 		// ... and revert left
 		putAll(chunk, before);
-		this.splitcount[chunk.shard]--;
-		this.splitcount.totalsplits--;
-		chunk.splits--;
+		this.updateSplitCount(chunk, null, chunk.shard, -1);
 	},
 
 /*
@@ -562,9 +554,7 @@ var Shardalyzer =
 			putAll(chunk, newMeta);
 
 			// update root chunk split count before cloning
-			chunk.splits = (chunk.splits || 0) + change.details.of;
-			this.splitcount[chunk.shard] += change.details.of;
-			this.splitcount.totalsplits += change.details.of;
+			this.updateSplitCount(chunk, null, chunk.shard, change.details.of);
 		}
 		else
 		{
@@ -610,9 +600,7 @@ var Shardalyzer =
 			putAll(chunk, before);
 
 			// root chunk split count
-			this.splitcount[chunk.shard] -= change.details.of;
-			this.splitcount.totalsplits -= change.details.of;
-			chunk.splits -= change.details.of;
+			this.updateSplitCount(chunk, null, chunk.shard, -change.details.of);
 		}
 		else
 		{
