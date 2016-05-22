@@ -650,7 +650,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 	$scope.chartmeta.graph.options =
 	{
 		elements : { point : { radius : 0, hitRadius : 4 }, line : { tension : 0, borderJoinStyle : 'bevel' } },
-		title : { padding : 0, position : "bottom", display : true },
+		title : { padding : 2, position : "bottom", display : true },
 		tooltips : { enabled : false, mode : 'label' },
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
