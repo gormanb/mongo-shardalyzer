@@ -649,7 +649,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 	$scope.chartmeta.graph.options =
 	{
-		elements : { point : { radius : 0, hitRadius : 4 }, line : { borderJoinStyle : 'bevel' } },
+		elements : { point : { radius : 0, hitRadius : 4 }, line : { tension : 0, borderJoinStyle : 'bevel' } },
 		title : { padding : 0, position : "bottom", display : true },
 		tooltips : { enabled : false, mode : 'label' },
 		scaleShowVerticalLines: false,
@@ -693,7 +693,6 @@ shardalyze.controller("migrateCtrl", function($scope)
 			datasets[ds] =
 			{
 				data : [],
-				tension : 0,
 				borderWidth : 2,
 				fill :  (ds == "Data Size" ? false : $scope.chartmeta.graph.yAxes.mig_time.stacked),
 				yAxisID : (ds == "Data Size" ? "mig_data" : "mig_time")
