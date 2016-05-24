@@ -3061,6 +3061,10 @@ module.exports = function(Chart) {
 
 				for (var i = 0; i < datasetIndex; i++) {
 					var ds = this.chart.data.datasets[i];
+
+					if(ds.yAxisID !== meta.yAxisID)
+						continue;
+
 					var dsMeta = this.chart.getDatasetMeta(i);
 					if (dsMeta.type === 'line' && this.chart.isDatasetVisible(i)) {
 						if (ds.data[index] < 0) {
