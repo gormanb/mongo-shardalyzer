@@ -375,23 +375,33 @@ shardalyze.controller("updateCharts", function($scope)
 
 		$scope.chartmeta.data[shard][DS_CHUNKS][index] = 1;
 
-		// status color takes prio if currently involved in an operation
-		$scope.chartmeta.colors[shard][DS_CHUNKS][index] =
-			$scope.mongo.shardalyzer.statuscolors[shards[shard][lower].status];
-
-		// set watch color if watched and not involved in operation
-		if(!shards[shard][lower].status && shards[shard][lower].watched)
-			$scope.chartmeta.colors[shard][DS_CHUNKS][index] = shards[shard][lower].watched;
-		else if(!shards[shard][lower].status && $scope.chartmeta.heatmap.thermostat)
+		if(shards[shard][lower].status)
 		{
-			var chunkheat = 0;
+			// status color takes prio if currently involved in an operation
+			$scope.chartmeta.colors[shard][DS_CHUNKS][index] =
+				$scope.mongo.shardalyzer.statuscolors[shards[shard][lower].status];
+		}
+		else if(shards[shard][lower].watched) // otherwise set watch colour if applicable...
+			$scope.chartmeta.colors[shard][DS_CHUNKS][index] = shards[shard][lower].watched;
+		else
+		{
+			//... otherwise apply heat gradient or jumbo chunk colour as is appropriate
+			var totalsplits = ($scope.mongo.shardalyzer.splitcount.totalsplits || 1);
 
-			for(var i = 0; i < upper - lower; i++)
-				chunkheat = Math.max($scope.mongo.shardalyzer.shards[shard][lower+i].splits || 0, chunkheat);
+			var chunk = null, chunkheat = 0;
 
-			chunkheat /= ($scope.mongo.shardalyzer.splitcount.totalsplits || 1);
+			for(var i = lower; i < upper; i++)
+			{
+				chunk = $scope.mongo.shardalyzer.shards[shard][i];
 
-			$scope.chartmeta.colors[shard][DS_CHUNKS][index] = gradient(chunkheatlow, chunkheathigh, chunkheat);
+				if(chunk.jumbo)
+					break;
+				else if($scope.chartmeta.heatmap.thermostat)
+					chunkheat = Math.max(chunk.splits || 0, chunkheat);
+			}
+
+			$scope.chartmeta.colors[shard][DS_CHUNKS][index] =
+				(chunk.jumbo ? JUMBO_CHUNK_COLOR : gradient(chunkheatlow, chunkheathigh, chunkheat/totalsplits));
 		}
 
 		// set hover highlight color

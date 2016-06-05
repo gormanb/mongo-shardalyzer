@@ -21,6 +21,8 @@ var BALANCER_SOURCE_COLOR = '#EE0000', BALANCER_DEST_COLOR = '#00AA00';
 
 var DEFAULT_CHUNK_COLOR = '#AEC6CF';
 
+var JUMBO_CHUNK_COLOR = "#000000";
+
 var statuscolors = {};
 
 statuscolors[STATUS_MULTI_SPLIT_SOURCE] = '#D19036',
@@ -134,6 +136,7 @@ var Shardalyzer =
 	splits : [],
 	splitcount : {},
 	balancer : {},
+	jumbo : {},
 	position : null,
 
 	statuscolors : statuscolors,
@@ -154,6 +157,8 @@ var Shardalyzer =
 
 		this.splitcount = { totalsplits : 0 };
 		this.splits = [];
+
+		this.jumbo = {};
 
 		for(var k in sharddata)
 		{
@@ -183,9 +188,13 @@ var Shardalyzer =
 		for(var k in chunkdata)
 		{
 			var chunk = chunkdata[k];
+			var key = s(chunk.min);
 
 			this.shards[chunk.shard].push(chunk);
-			this.chunks[s(chunk.min)] = chunk;
+			this.chunks[key] = chunk;
+
+			if(chunk.jumbo)
+				this.jumbo[key] = chunk;
 		}
 
 		/*
