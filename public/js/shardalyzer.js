@@ -194,7 +194,7 @@ var Shardalyzer =
 			this.chunks[key] = chunk;
 
 			if(chunk.jumbo)
-				this.jumbo[key] = chunk;
+				this.jumbo[key] = s(chunk.max);
 		}
 
 		/*
@@ -334,6 +334,15 @@ var Shardalyzer =
 		after && (after.splits = before.splits);
 	},
 
+	// check whether chunk is in the jumbo list
+	updateJumbo : function(chunk)
+	{
+		var min = s(chunk.min);
+
+		if(min in this.jumbo && this.jumbo[min] == s(chunk.max))
+			chunk.jumbo = true;
+	},
+
 	updateBalancer : function()
 	{
 		var max = -1, min = Number.MAX_VALUE;
@@ -459,6 +468,10 @@ var Shardalyzer =
 		// add new chunk to topology
 		shards[newChunk.shard].push(newChunk);
 		chunks[s(newChunk.min)] = newChunk;
+
+		// tag the chunks as jumbo if relevant
+		this.updateJumbo(newChunk);
+		this.updateJumbo(chunk);
 	},
 
 	revertSplit : function(chunks, shards, change)
@@ -476,6 +489,9 @@ var Shardalyzer =
 
 		// ... and revert left
 		putAll(chunk, before);
+		delete(chunk.jumbo);
+
+		// update topology split count
 		this.updateSplitCount(chunk, null, chunk.shard, -1);
 	},
 
@@ -557,10 +573,13 @@ var Shardalyzer =
 		var newMeta = change.details.chunk;
 		var newMin = newMeta.min;
 
+		var newChunk = null;
+
 		if(splitNum == 1)
 		{
 			// split 1 of N updates existing chunk
 			putAll(chunk, newMeta);
+			newChunk = chunk;
 
 			// update root chunk split count before cloning
 			this.updateSplitCount(chunk, null, chunk.shard, change.details.of);
@@ -568,7 +587,7 @@ var Shardalyzer =
 		else
 		{
 			// subsequent splits create new chunks
-			var newChunk = clone(chunk, "watched");
+			newChunk = clone(chunk, "watched");
 			putAll(newChunk, newMeta);
 
 			// generate an ID for the new chunk
@@ -578,6 +597,9 @@ var Shardalyzer =
 			shards[newChunk.shard].push(newChunk);
 			chunks[s(newChunk.min)] = newChunk;
 		}
+
+		// check whether the new chunk is jumbo
+		this.updateJumbo(newChunk);
 	},
 
 	revertMultiSplit : function(chunks, shards, change)
@@ -607,6 +629,7 @@ var Shardalyzer =
 
 			// revert parent chunk
 			putAll(chunk, before);
+			delete(chunk.jumbo);
 
 			// root chunk split count
 			this.updateSplitCount(chunk, null, chunk.shard, -change.details.of);
