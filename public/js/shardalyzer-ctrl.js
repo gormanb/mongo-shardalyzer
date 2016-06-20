@@ -198,7 +198,7 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 		(
 			function(result)
 			{
-				$scope.mongo.shardalyzer.initialize(result.shards, result.tags, result.chunks, result.changelog);
+				$scope.mongo.shardalyzer.initialize(result.shards, result.tags, result.chunks, result.changelog, result.settings, result.mongos);
 			}
 		)
 		.error

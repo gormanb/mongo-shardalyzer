@@ -137,12 +137,15 @@ var Shardalyzer =
 	splitcount : {},
 	balancer : {},
 	jumbo : {},
+	shardhosts : {},
+	cluster : {},
+
 	position : null,
 
 	statuscolors : statuscolors,
 
 	// arguments are objects in original format from the config database
-	initialize : function(sharddata, tagdata, chunkdata, changedata)
+	initialize : function(sharddata, tagdata, chunkdata, changedata, settings, mongos)
 	{
 		this.changes = changedata;
 
@@ -160,9 +163,15 @@ var Shardalyzer =
 
 		this.jumbo = {};
 
+		this.shardhosts = {};
+
+		this.cluster = { settings : settings, mongos : mongos };
+
 		for(var k in sharddata)
 		{
 			this.shards[sharddata[k]._id] = [];
+
+			this.shardhosts[sharddata[k]._id] = sharddata[k].host;
 
 			var shardtags = this.tags[sharddata[k]._id] = { tags : {} };
 
@@ -301,7 +310,7 @@ var Shardalyzer =
 
 	reset : function()
 	{
-		this.initialize([], [], [], []);
+		this.initialize([], [], [], [], [], []);
 	},
 
 	// ns-minkey0_val-minkeyN_val

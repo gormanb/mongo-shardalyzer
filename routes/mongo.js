@@ -184,6 +184,9 @@ exports.metadata =
 				var shardcoll = db.collection('shards');
 				var tagcoll = db.collection('tags');
 
+				var settingscoll = db.collection('settings');
+				var mongoscoll = db.collection('mongos');
+
 				// guard against collections that were dropped and recreated; only take changelog entries since the most recent sharding
 				collcoll.find({ _id : namespace, dropped : false }).limit(1).toArray(function(err, shardevent)
 				{
@@ -205,8 +208,11 @@ exports.metadata =
 					var shardcursor = shardcoll.find({}).sort({ _id : 1 });
 					var tagcursor = tagcoll.find({ ns : namespace });
 
-					var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"'];
-					var cursors = [changecursor, chunkcursor, shardcursor, tagcursor];
+					var settingscursor = settingscoll.find({});
+					var mongoscursor = mongoscoll.find({});
+
+					var cursors = [changecursor, chunkcursor, shardcursor, tagcursor, settingscursor, mongoscursor];
+					var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"', '"settings"', '"mongos"'];
 
 					res.set('Content-Type', 'application/json');
 
