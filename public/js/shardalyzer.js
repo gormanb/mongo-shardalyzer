@@ -127,7 +127,7 @@ function success(change)
 var Shardalyzer =
 {
 	shards : {},
-	tags : {},
+	shardinfo : {},
 	chunks : {},
 	changes : [],
 	watched : {},
@@ -137,7 +137,6 @@ var Shardalyzer =
 	splitcount : {},
 	balancer : {},
 	jumbo : {},
-	shardhosts : {},
 	cluster : {},
 
 	position : null,
@@ -152,8 +151,8 @@ var Shardalyzer =
 		this.shards = {};
 		this.chunks = {};
 
+		this.shardinfo = {};
 		this.watched = {};
-		this.tags = {};
 
 		this.migrations = [];
 		this.failures = [];
@@ -163,30 +162,28 @@ var Shardalyzer =
 
 		this.jumbo = {};
 
-		this.shardhosts = {};
-
 		this.cluster = { settings : settings, mongos : mongos };
 
 		for(var k in sharddata)
 		{
 			this.shards[sharddata[k]._id] = [];
 
-			this.shardhosts[sharddata[k]._id] = sharddata[k].host;
+			this.shardinfo[sharddata[k]._id] = { hosts : sharddata[k].host.split(",") };
 
-			var shardtags = this.tags[sharddata[k]._id] = { tags : {} };
+			var shardtags = this.shardinfo[sharddata[k]._id].tags = {};
 
 			for(var st in sharddata[k].tags)
 			{
 				var tag = sharddata[k].tags[st];
 
-				shardtags.tags[tag] = {};
+				shardtags[tag] = {};
 
 				for(var t in tagdata)
 				{
 					if(tagdata[t].tag == tag)
 					{
-						shardtags.tags[tag].min = tagdata[t].min;
-						shardtags.tags[tag].max = tagdata[t].max;
+						shardtags[tag].min = tagdata[t].min;
+						shardtags[tag].max = tagdata[t].max;
 					}
 				}
 			}

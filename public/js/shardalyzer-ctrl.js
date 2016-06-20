@@ -359,11 +359,11 @@ shardalyze.controller("updateCharts", function($scope)
 		shardSegmentTooltipRaw(points[0], event);
 	}
 
-	$scope.shardtags = function(shard)
+	$scope.shardinfo = function(shard)
 	{
-		var tagtip = JSON.stringify($scope.mongo.shardalyzer.tags[shard], null, 4);
+		var shardtip = JSON.stringify($scope.mongo.shardalyzer.shardinfo[shard], null, 4);
 
-		return tagtip.substring(1, tagtip.length-2);
+		return shardtip.substring(1, shardtip.length-2);
 	}
 
 	// lower (inclusive) to upper (exclusive)
