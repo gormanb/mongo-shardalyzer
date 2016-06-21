@@ -162,7 +162,7 @@ var Shardalyzer =
 
 		this.jumbo = {};
 
-		this.cluster = { settings : settings, mongos : mongos };
+		this.cluster = { settings : settings, stats : null, mongos : mongos };
 
 		for(var k in sharddata)
 		{
@@ -228,6 +228,8 @@ var Shardalyzer =
 		 */
 		var currentmove = {};
 
+		var datasize = 0, docs = 0, moves = 0;
+
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
 			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
@@ -270,6 +272,10 @@ var Shardalyzer =
 					chunkcache[s(this.changes[i].details.min)] = this.changes[i].details.to;
 					currentmove[MIGRATE_TIME] = sum(migratesteps(this.changes[i]));
 					this.migrations[i] = currentmove;
+
+					datasize += (currentmove[OP_COMMIT].details.clonedBytes || 0);
+					docs += (currentmove[OP_COMMIT].details.cloned || 0);
+					moves++;
 				}
 				else
 					this.failures[i] = currentmove;
@@ -292,6 +298,15 @@ var Shardalyzer =
 
 				this.updateSplitCount(before, after, shard, inc);
 			}
+		}
+
+		// cluster stats
+		if(datasize)
+		{
+			this.cluster.stats = {
+				estimated_data_per_chunk_mb : (datasize/(moves*1024*1024)),
+				avg_doc_size_bytes : (datasize/(docs||1))
+			};
 		}
 
 		// if chunkdata is empty, position is null else 0

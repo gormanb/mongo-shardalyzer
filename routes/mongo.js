@@ -208,8 +208,8 @@ exports.metadata =
 					var shardcursor = shardcoll.find({}).sort({ _id : 1 });
 					var tagcursor = tagcoll.find({ ns : namespace });
 
+					var mongoscursor = mongoscoll.find({}).sort({ ping : -1 });
 					var settingscursor = settingscoll.find({});
-					var mongoscursor = mongoscoll.find({});
 
 					var cursors = [changecursor, chunkcursor, shardcursor, tagcursor, settingscursor, mongoscursor];
 					var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"', '"settings"', '"mongos"'];
