@@ -215,48 +215,62 @@
 				<div id="header" class="snug" style="padding:120px 0 0 0;"></div>
 
 				<div id="shardview" class="greedy" style="height:0px; overflow:auto" ng-controller="updateCharts" msd-wheel="scaleCharts($event, $delta, $deltaX, $deltaY)">
-					<div id="shardedit" style="position:absolute; z-index:2">
-						<span id="shardeditbuttons" style="display:inline-block; float:left">
-							<div class="btn-group-vertical" style="padding:2px">
-								<button type="button" class="{{chartmeta.shardedit ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="chartmeta.shardedit = (!chartmeta.shardedit)" value="Edit">
-									<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-								</button>
-							</div>
-							<br />
-							<div class="btn-group-vertical" style="padding:2px">
-								<button type="button" class="btn btn-success" ng-show="chartmeta.shardedit" ng-click="chartmeta.enableall(true);" value="All">
-									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-								</button>
-								<button type="button" class="btn btn-danger" ng-show="chartmeta.shardedit" ng-click="chartmeta.enableall(false);" value="None">
-									<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-								</button>
-							</div>
-							<br />
-							<div class="btn-group-vertical" style="padding:2px">
-								<button type="button" class="btn btn-{{chartmeta.heatmap.level[chartmeta.heatmap.thermostat]}}" ng-show="chartmeta.shardedit" ng-click="chartmeta.heatmap.thermostat = (chartmeta.heatmap.thermostat+1)%2" value="Heat">
-									<span class="glyphicon glyphicon-fire" aria-hidden="true"></span>
-								</button>
-							</div>
-							<br />
-							<div class="btn-group-vertical" style="padding:2px">
-								<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, 1)" value="+">
-									<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-								</button>
-								<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, -1)" value="-">
-									<span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
-								</button>
-							</div>
-						</span>
-						<span id="shardgranularity" style="display:inline-block; float:left; padding-top:5px; padding-left:5px">
-							<slider ng-model="chartmeta.granularity.value" ng-show="chartmeta.shardedit"
-								formatter="chartmeta.granularity.format(value)"
-								min="chartmeta.granularity.min"
-								max="chartmeta.granularity.max"
-								orientation="vertical"
-								scale="'logarithmic'"
-								reversed="true">
-							</slider>
-						</span>
+					<div id="clustersettings" style="position:absolute; z-index:2">
+						<div id="clusterinfo">
+							<button uib-tooltip-template="'clusterinfo.html'" tooltip-placement="right-top" tooltip-trigger="outsideClick" tooltip-append-to-body="false" type="button" class="btn btn-primary" style="margin:2px; float:left">
+								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+							</button>
+							<script type="text/ng-template" id="clusterinfo.html">
+								<div style="max-height:50vh">
+									<pre style="font-size:10px">
+										{{clusterinfo()}}
+									</pre>
+								</div>
+							</script>
+						</div>
+						<div id="shardedit">
+							<span id="shardeditbuttons" style="display:inline-block; float:left">
+								<div class="btn-group-vertical" style="padding:2px">
+									<button type="button" class="{{chartmeta.shardedit ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="chartmeta.shardedit = (!chartmeta.shardedit)" value="Edit">
+										<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+									</button>
+								</div>
+								<br />
+								<div class="btn-group-vertical" style="padding:2px">
+									<button type="button" class="btn btn-success" ng-show="chartmeta.shardedit" ng-click="chartmeta.enableall(true);" value="All">
+										<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-danger" ng-show="chartmeta.shardedit" ng-click="chartmeta.enableall(false);" value="None">
+										<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+									</button>
+								</div>
+								<br />
+								<div class="btn-group-vertical" style="padding:2px">
+									<button type="button" class="btn btn-{{chartmeta.heatmap.level[chartmeta.heatmap.thermostat]}}" ng-show="chartmeta.shardedit" ng-click="chartmeta.heatmap.thermostat = (chartmeta.heatmap.thermostat+1)%2" value="Heat">
+										<span class="glyphicon glyphicon-fire" aria-hidden="true"></span>
+									</button>
+								</div>
+								<br />
+								<div class="btn-group-vertical" style="padding:2px">
+									<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, 1)" value="+">
+										<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+									</button>
+									<button type="button" class="btn btn-default" ng-show="chartmeta.shardedit" ng-click="scaleCharts(null, -1)" value="-">
+										<span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
+									</button>
+								</div>
+							</span>
+							<span id="shardgranularity" style="display:inline-block; float:left; padding-top:5px; padding-left:5px">
+								<slider ng-model="chartmeta.granularity.value" ng-show="chartmeta.shardedit"
+									formatter="chartmeta.granularity.format(value)"
+									min="chartmeta.granularity.min"
+									max="chartmeta.granularity.max"
+									orientation="vertical"
+									scale="'logarithmic'"
+									reversed="true">
+								</slider>
+							</span>
+						</div>
 					</div>
 					<div id="shardsorter" ui-sortable="chartmeta.sortopts" ng-model="chartmeta.shardlist" ng-readonly="true" class="row-centered" style="overflow-x:hidden">
 						<div ng-repeat="shard in chartmeta.shardlist" ng-if="mongo.ui.shardenabled[shard] || chartmeta.shardedit"
@@ -271,12 +285,12 @@
 								chart-hover="chunkHover"
 								chart-click="chunkClick"></canvas>
 							<p align="center">
-								<a href="#" uib-tooltip-template="'tooltip.html'" tooltip-placement="bottom" tooltip-append-to-body="true" style="color:{{mongo.shardalyzer.balancer[shard]}};">
+								<a href="#" uib-tooltip-template="'shardinfo.html'" tooltip-trigger="outsideClick" tooltip-placement="auto bottom" tooltip-append-to-body="true" style="color:{{mongo.shardalyzer.balancer[shard]}};">
 									<b>{{shard}} : {{mongo.shardalyzer.shards[shard].length}}</b>
 								</a>
 							</p>
-							<script type="text/ng-template" id="tooltip.html">
-								<div>
+							<script type="text/ng-template" id="shardinfo.html">
+								<div style="max-height:30vh">
 									<pre style="font-size:10px">
 										{{shardinfo(shard)}}
 									</pre>

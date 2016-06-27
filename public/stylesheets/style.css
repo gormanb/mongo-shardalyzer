@@ -139,3 +139,7 @@ pre {
 .chart-container {
 	height: 100%
 }
+
+.tooltip-inner {
+	overflow:auto;
+}

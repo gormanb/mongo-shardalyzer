@@ -366,6 +366,13 @@ shardalyze.controller("updateCharts", function($scope)
 		return shardtip.substring(1, shardtip.length-2);
 	}
 
+	$scope.clusterinfo = function()
+	{
+		var clustertip = JSON.stringify($scope.mongo.shardalyzer.cluster, null, 4);
+
+		return clustertip.substring(1, clustertip.length-2);
+	}
+
 	// lower (inclusive) to upper (exclusive)
 	function addWedge(shard, lower, upper, index)
 	{
