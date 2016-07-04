@@ -335,7 +335,7 @@
 								</button>
 							</div>
 
-							<button popover-template="'chunklegend.html'" popover-title="Chunk Legend" popover-append-to-body="true" type="button" class="btn btn-default">
+							<button uib-popover-template="'chunklegend.html'" popover-title="Chunk Legend" popover-append-to-body="true" type="button" class="btn btn-default">
 								<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 							</button>
 
@@ -344,7 +344,7 @@
 									style="color:{{color}};"><strong>{{status}}</strong></div>
 							</script>
 
-							<button popover-template="'watchchunks.html'" popover-title="Watch Chunks" popover-append-to-body="true" type="button" class="btn btn-default">
+							<button uib-popover-template="'watchchunks.html'" popover-title="Watch Chunks" popover-append-to-body="true" type="button" class="btn btn-default">
 								<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
 							</button>
 
@@ -366,7 +366,7 @@
 								<input type="text" placeholder="Min shardkey of chunk" ng-model="watchbox.watch" ng-enter="watchbox.watchChunk(watchbox.watch)" class="form-control">
 							</script>
 
-							<button popover-template="'searchwidget.html'" popover-title="Search by Timestamp" popover-append-to-body="true" type="button" class="btn btn-default">
+							<button uib-popover-template="'searchwidget.html'" popover-title="Search by Timestamp" popover-append-to-body="true" type="button" class="btn btn-default">
 								<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 							</button>
 
@@ -390,7 +390,7 @@
 								<button type="button" style="margin:5px; float:left" class="{{mongo.ui.showmigrations ? 'btn btn-primary' : 'btn btn-default'}}" ng-click="mongo.ui.showmigrations = (!mongo.ui.showmigrations)" value="Edit">
 									<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 								</button>
-								<button popover-template="'errorsummary.html'" popover-title="Migration Summary" popover-append-to-body="true" type="button" class="btn btn-default" style="margin:5px; float:left">
+								<button uib-popover-template="'errorsummary.html'" popover-title="Migration Summary" popover-append-to-body="true" type="button" class="btn btn-default" style="margin:5px; float:left">
 									<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
 								</button>
 								<script type="text/ng-template" id="errorsummary.html">
