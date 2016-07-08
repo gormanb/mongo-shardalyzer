@@ -237,7 +237,7 @@ var Shardalyzer =
 			else if(this.changes[i].what == OP_TO)
 			{
 				// change 2.x "stepX" to 3.x "step X"
-				if(this.changes[i].details["step1 of 5"])
+				if("step1 of 5" in this.changes[i].details)
 					this.changes[i].details = remap(this.changes[i].details, migratekeymap);
 
 				currentmove[OP_TO] = this.changes[i];
@@ -245,7 +245,7 @@ var Shardalyzer =
 			else if(this.changes[i].what == OP_FROM)
 			{
 				// change 2.x "stepX" to 3.x "step X"
-				if(this.changes[i].details["step1 of 6"])
+				if("step1 of 6" in this.changes[i].details)
 					this.changes[i].details = remap(this.changes[i].details, migratekeymap);
 
 				if(this.changes[i].details.from == undefined)
