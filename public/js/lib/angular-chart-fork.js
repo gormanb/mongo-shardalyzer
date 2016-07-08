@@ -15,6 +15,8 @@
     define(['angular', 'chart'], factory);
   } else {
     // Browser globals
+    if (typeof angular === 'undefined' || typeof Chart === 'undefined') throw new Error('Chart.js library needs to included, ' +
+      'see http://jtblin.github.io/angular-chart.js/');
     factory(angular, Chart);
   }
 }(function (angular, Chart) {
@@ -31,11 +33,11 @@
     '#4D5360'  // dark grey
   ];
 
-  var usingExcanvas = typeof window.G_vmlCanvasManager === 'object' &&
+  var useExcanvas = typeof window.G_vmlCanvasManager === 'object' &&
     window.G_vmlCanvasManager !== null &&
     typeof window.G_vmlCanvasManager.initElement === 'function';
 
-  if (usingExcanvas) Chart.defaults.global.animation = false;
+  if (useExcanvas) Chart.defaults.global.animation = false;
 
   return angular.module('chart.js', [])
     .provider('ChartJs', ChartJsProvider)
@@ -47,19 +49,21 @@
     .directive('chartRadar', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('radar'); }])
     .directive('chartDoughnut', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('doughnut'); }])
     .directive('chartPie', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('pie'); }])
-    .directive('chartPolarArea', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('polarArea'); }]);
+    .directive('chartPolarArea', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('polarArea'); }])
+    .directive('chartBubble', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('bubble'); }])
+    .name;
 
   /**
    * Wrapper for chart.js
    * Allows configuring chart js using the provider
    *
    * angular.module('myModule', ['chart.js']).config(function(ChartJsProvider) {
-   *   ChartJsProvider.setOptions({ responsive: true });
-   *   ChartJsProvider.setOptions('Line', { responsive: false });
+   *   ChartJsProvider.setOptions({ responsive: false });
+   *   ChartJsProvider.setOptions('Line', { responsive: true });
    * })))
    */
   function ChartJsProvider () {
-    var options = {};
+    var options = { responsive: true };
     var ChartJs = {
       Chart: Chart,
       getOptions: function (type) {
@@ -102,16 +106,22 @@
           chartHighlights: '=?',
           chartClick: '=?',
           chartHover: '=?',
-          chartYAxes: '=?',
+          chartDatasetOverride: '=?',
           chartWatch: '=?'
         },
         link: function (scope, elem/*, attrs */) {
-          var chart;
+          if (useExcanvas) window.G_vmlCanvasManager.initElement(elem[0]);
 
-          if (usingExcanvas) window.G_vmlCanvasManager.initElement(elem[0]);
+          scope.$on('$destroy', function () {
+            destroyChart(scope);
+          });
+
+          scope.$on('$resize', function () {
+            if (scope.chart) scope.chart.resize();
+          });
 
           if(!scope.chartWatch)
-             scope.watch = { 'chartData' : false, 'chartSeries' : false, 'chartLabels' : false, 'chartOptions' : false, 'chartColors' : false };
+             scope.watch = { 'chartData' : false, 'chartDatasetOverride' : false, 'chartSeries' : false, 'chartLabels' : false, 'chartOptions' : false, 'chartColors' : false };
 
           // series, labels, options, colours
           for(var k in scope.chartWatch)
@@ -141,73 +151,56 @@
           scope.$watch('chartType', function (newVal, oldVal) {
             if (isEmpty(newVal)) return;
             if (angular.equals(newVal, oldVal)) return;
-            createChart(newVal);
-          });
-
-          scope.$on('$destroy', function () {
-            destroyChart(chart, scope);
+            createChart(newVal, scope, elem);
           });
 
           // only used for shard graphs at present
           function refreshChart(newVal, oldVal)
           {
-        	  if(chart)
-        	  {
-        		  // requires that all relevant data has been passed by reference to chart.js
-        		  angular.extend(chart.config.options, scope.chartOptions);
-        		  chart.update();
-        	  }
-        	  else
-        		  resetChart(newVal, oldVal);
-          }
-
-          function resetChart (newVal, oldVal) {
-            if (isEmpty(newVal)) return;
-
-            var chartType = type || scope.chartType;
-            if (! chartType) return;
-
-            // chart.update() doesn't work for series and labels
-            // so we have to re-create the chart entirely
-            createChart(chartType);
-          }
-
-          function createChart (type) {
-            destroyChart(chart, scope);
-
-            // TODO: check parent?
-            if (isResponsive(type, scope) && elem[0].clientHeight === 0) {
-              return $timeout(function () {
-                createChart(type);
-              }, 50, false);
+            if(scope.chart)
+            {
+            	// requires that all relevant data has been passed by reference to chart.js
+            	angular.extend(scope.chart.config.options, scope.chartOptions);
+            	scope.chart.update();
             }
-            if (! scope.chartData || ! scope.chartData.length) return;
-            scope.chartGetColor = typeof scope.chartGetColor === 'function' ? scope.chartGetColor : getRandomColor;
-
-            var cvs = elem[0], ctx = cvs.getContext('2d');
-
-            var data = Array.isArray(scope.chartData[0]) ? // doughnut
-              getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights, scope.chartYAxes) :
-            	scope.chartData[0] instanceof Object ? // line
-            	  fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights) :
-            	    getData(scope.chartLabels, scope.chartData, scope.chartColors, scope.chartHighlights); // bar
-
-            //var options = angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
-
-            chart = new ChartJs.Chart(ctx, {
-              type: type,
-              data: data,
-              options: scope.chartOptions
-            });
-            scope.$emit('chart-create', chart);
-
-            // Bind events
-            cvs.onclick = scope.chartClick ? getEventHandler(scope, chart, 'chartClick', false) : angular.noop;
-            cvs.onmousemove = scope.chartHover ? getEventHandler(scope, chart, 'chartHover', true) : angular.noop;
+            else
+            	resetChart(newVal, oldVal);
           }
+
+      	  function resetChart (newVal, oldVal) {
+      		if (isEmpty(newVal)) return;
+
+      		var chartType = type || scope.chartType;
+      		if (! chartType) return;
+
+      		// chart.update() doesn't work for series and labels
+      		// so we have to re-create the chart entirely
+      		createChart(chartType, scope, elem);
+      	  }
         }
       };
     };
+
+    function createChart (type, scope, elem) {
+      var options = scope.chartOptions; //getChartOptions(type, scope);
+      destroyChart(scope);
+
+      if (! hasData(scope) || ! canDisplay(type, scope, elem, options)) return;
+
+      var cvs = elem[0];
+      var ctx = cvs.getContext('2d');
+
+      scope.chartGetColor = getChartColorFn(scope);
+      var data = getChartData(type, scope);
+
+      scope.chart = new ChartJs.Chart(ctx, {
+        type: type,
+        data: data,
+        options: options
+      });
+      scope.$emit('chart-create', scope.chart);
+      bindEvents(cvs, scope);
+    }
 
     function canUpdateChart (newVal, oldVal) {
       if (newVal && oldVal && newVal.length && oldVal.length) {
@@ -223,13 +216,13 @@
       return carry + val;
     }
 
-    function getEventHandler (scope, chart, action, triggerOnlyOnChange) {
+    function getEventHandler (scope, action, triggerOnlyOnChange) {
       var lastState = null;
       var mode = (action == 'chartHover' ? (scope.chartOptions && scope.chartOptions.hover && scope.chartOptions.hover.mode) || null : null);
-  	  var atEvent = (mode == 'single' ? chart.getElementAtEvent : (mode == 'dataset' ? chart.getDatasetAtEvent : chart.getElementsAtEvent));
+  	  var atEvent = (mode == 'single' ? scope.chart.getElementAtEvent : (mode == 'dataset' ? scope.chart.getDatasetAtEvent : scope.chart.getElementsAtEvent));
       return function (evt) {
         if (atEvent) {
-          var activePoints = atEvent.call(chart, evt);
+          var activePoints = atEvent.call(scope.chart, evt);
           if (triggerOnlyOnChange === false || angular.equals(lastState, activePoints) === false) {
             lastState = activePoints;
             scope[action](activePoints, evt);
@@ -271,10 +264,10 @@
     function getColor (color) {
       return {
         backgroundColor: rgba(color, 1),
-        borderColor: rgba(color, 1),
         pointBackgroundColor: rgba(color, 1),
-        pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
+        borderColor: rgba(color, 1),
+        pointBorderColor: '#fff',
         pointHoverBorderColor: rgba(color, 0.8)
       };
     }
@@ -284,12 +277,8 @@
     }
 
     function rgba (color, alpha) {
-      if (usingExcanvas) {
-        // rgba not supported by IE8
-        return 'rgb(' + color.join(',') + ')';
-      } else {
-        return 'rgba(' + color.concat(alpha).join(',') + ')';
-      }
+      // rgba not supported by IE8
+      return useExcanvas ? 'rgb(' + color.join(',') + ')' : 'rgba(' + color.concat(alpha).join(',') + ')';
     }
 
     // Credit: http://stackoverflow.com/a/11508164/1190235
@@ -302,8 +291,26 @@
       return [r, g, b];
     }
 
+    function hasData (scope) {
+      return scope.chartData && scope.chartData.length;
+    }
+
+    function getChartColorFn (scope) {
+      return typeof scope.chartGetColor === 'function' ? scope.chartGetColor : getRandomColor;
+    }
+
+    function getChartData (type, scope) {
+      var data = Array.isArray(scope.chartData[0]) ? // doughnut
+        getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights, scope.chartDatasetOverride) :
+          scope.chartData[0] instanceof Object ? // line
+            fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights, scope.chartDatasetOverride) :
+              getData(scope.chartLabels, scope.chartData, scope.chartColors, scope.chartHighlights, scope.chartDatasetOverride); // bar
+
+      return data;
+    }
+
     // array of objects [{ data : [] }], fill in colors & labels
-    function fillDataSets(labels, data, series, colors, highlights)
+    function fillDataSets(labels, data, series, colors, highlights, datasetOverride)
     {
     	for(var i in data)
     		angular.extend(data[i], colors[i], (highlights ? highlights[i] : {}), (i in series ? { label : series[i] } : {}));
@@ -314,7 +321,7 @@
     	}
     }
 
-    function getDataSets (labels, data, series, colors, highlights, yaxis) {
+    function getDataSets (labels, data, series, colors, highlights, datasetOverride) {
       return {
         labels: labels,
         datasets: data.map(function (item, i) {
@@ -324,8 +331,8 @@
             label: (series ? series[i] : null),
             data: item
           });
-          if (yaxis) {
-            dataset.yAxisID = yaxis[i];
+          if (datasetOverride && datasetOverride.length >= i) {
+            angular.merge(dataset, datasetOverride[i]);
           }
           return dataset;
         })
@@ -333,8 +340,8 @@
     }
 
     // colors is array of hex strings
-    function getData (labels, data, colors, highlights) {
-      return {
+    function getData (labels, data, colors, highlights, datasetOverride) {
+      var dataset = {
         labels: labels,
         datasets: [{
           data: data,
@@ -344,19 +351,32 @@
           })
         }]
       };
+      if (datasetOverride) {
+        angular.merge(dataset.datasets[0], datasetOverride);
+      }
+      return dataset;
     }
 
-    function updateChart (chart, values, scope) {
+    function getChartOptions (type, scope) {
+      return angular.extend({}, ChartJs.getOptions(type), scope.chartOptions);
+    }
+
+    function bindEvents (cvs, scope) {
+      cvs.onclick = scope.chartClick ? getEventHandler(scope, 'chartClick', false) : angular.noop;
+      cvs.onmousemove = scope.chartHover ? getEventHandler(scope, 'chartHover', true) : angular.noop;
+    }
+
+    function updateChart (values, scope) {
       if (Array.isArray(scope.chartData[0])) {
-        chart.data.datasets.forEach(function (dataset, i) {
+        scope.chart.data.datasets.forEach(function (dataset, i) {
           dataset.data = values[i];
         });
       } else {
-        chart.data.datasets[0].data = values;
+        scope.chart.data.datasets[0].data = values;
       }
 
-      chart.update();
-      scope.$emit('chart-update', chart);
+      scope.chart.update();
+      scope.$emit('chart-update', scope.chart);
     }
 
     function isEmpty (value) {
@@ -365,15 +385,21 @@
         (typeof value === 'object' && ! Object.keys(value).length);
     }
 
-    function isResponsive (type, scope) {
-      var options = angular.extend({}, Chart.defaults.global, ChartJs.getOptions(type), scope.chartOptions);
-      return options.responsive;
+    function canDisplay (type, scope, elem, options) {
+      // TODO: check parent?
+      if (options.responsive && elem[0].clientHeight === 0) {
+        $timeout(function () {
+          createChart(type, scope, elem);
+        }, 50, false);
+        return false;
+      }
+      return true;
     }
 
-    function destroyChart(chart, scope) {
-      if(! chart) return;
-      chart.destroy();
-      scope.$emit('chart-destroy', chart);
+    function destroyChart(scope) {
+      if(! scope.chart) return;
+      scope.chart.destroy();
+      scope.$emit('chart-destroy', scope.chart);
     }
   }
 }));
