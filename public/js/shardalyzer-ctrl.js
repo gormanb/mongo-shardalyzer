@@ -335,6 +335,8 @@ shardalyze.controller("updateCharts", function($scope)
 
 	$scope.chunkClick = function(points, event)
 	{
+		if(!points || points.length == 0) return;
+
 		// label[0][1][2] = shard, startindex, endindex
 		var numChunks = points[0]._model.label[2] - points[0]._model.label[1];
 		var label = points[0]._model.label;
