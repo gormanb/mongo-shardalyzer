@@ -74,11 +74,6 @@ function remap(obj, keymap)
 	return newObj;
 }
 
-function peekBack(array)
-{
-	return array[array.length-1];
-}
-
 function remove(array, object)
 {
 	var pos = array.indexOf(object);
@@ -157,7 +152,7 @@ var Shardalyzer =
 		this.migrations = [];
 		this.failures = [];
 
-		this.splitcount = { totalsplits : 0 };
+		this.splitcount = { totalsplits : 0, maxsplit : [] };
 		this.splits = [];
 
 		this.jumbo = {};
@@ -345,10 +340,18 @@ var Shardalyzer =
 	{
 		if(inc) // inc != 0 => increment before chunk
 		{
-			before.splits = (before.splits || 0) + inc;
+			var bsplits = (before.splits || 0) + inc;
+
+			inc > 0 && bsplits >= peek(this.splitcount.maxsplit)
+				&& this.splitcount.maxsplit.push(bsplits);
+
+			inc < 0 && peek(this.splitcount.maxsplit) ==
+				before.splits && this.splitcount.maxsplit.pop();
 
 			this.splitcount.totalsplits += inc;
 			this.splitcount[shard] += inc;
+
+			before.splits = bsplits;
 		}
 
 		// set after to before if specified

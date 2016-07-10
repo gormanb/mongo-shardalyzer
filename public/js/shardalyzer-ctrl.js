@@ -394,8 +394,11 @@ shardalyze.controller("updateCharts", function($scope)
 			$scope.chartmeta.colors[shard][DS_CHUNKS][index] = shards[shard][lower].watched;
 		else
 		{
-			//... otherwise apply heat gradient or jumbo chunk colour as is appropriate
-			var totalsplits = ($scope.mongo.shardalyzer.splitcount.totalsplits || 1);
+			var heatmode = $scope.chartmeta.heatmap.thermostat;
+
+			var totalsplits = (heatmode == 0 && 1) ||
+				(heatmode == 1 && $scope.mongo.shardalyzer.splitcount.totalsplits) ||
+					(heatmode == 2 && peek($scope.mongo.shardalyzer.splitcount.maxsplit));
 
 			var chunk = null, chunkheat = 0;
 
@@ -410,7 +413,7 @@ shardalyze.controller("updateCharts", function($scope)
 			}
 
 			$scope.chartmeta.colors[shard][DS_CHUNKS][index] =
-				(chunk.jumbo ? JUMBO_CHUNK_COLOR : gradient(chunkheatlow, chunkheathigh, chunkheat/totalsplits));
+				(chunk.jumbo ? JUMBO_CHUNK_COLOR : gradient(chunkheatlow, chunkheathigh, chunkheat/(totalsplits||1)));
 		}
 
 		// set hover highlight color

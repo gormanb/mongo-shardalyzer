@@ -43,6 +43,11 @@ function sum(arr)
 		arr.reduce(function(a, b) { return (a || 0) + (b || 0) }, 0);
 }
 
+function peek(arr, idx)
+{
+	return arr.length == 0 ? null : arr[arr.length-1 - (idx||0)];
+}
+
 // merge one array into another
 function merge(arr1, arr2, owfunc)
 {
