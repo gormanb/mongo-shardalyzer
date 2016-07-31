@@ -89,9 +89,9 @@ exports.namespaces =
 				res.status(500).send(err);
 			else
 			{
-				var chunkcoll = db.collection('chunks');
+				var collcoll = db.collection('collections');
 
-				chunkcoll.distinct('ns', function(err, namespaces)
+				collcoll.distinct('_id', { dropped : false }, function(err, namespaces)
 				{
 					if(err)
 						res.status(500).send(err);
