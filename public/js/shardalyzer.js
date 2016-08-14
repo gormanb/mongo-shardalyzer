@@ -225,17 +225,28 @@ var Shardalyzer =
 
 		var datasize = 0, docs = 0, moves = 0;
 
+		function addStep(movehash, key, op)
+		{
+			if(!movehash[key])
+				movehash[key] = {};
+
+			movehash[key][op.what] = op;
+		}
+
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
+			if(this.changes[i].details.min)
+				var skey = s({ min : this.changes[i].details.min, max : this.changes[i].details.max });
+
 			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
-				currentmove[this.changes[i].what] = this.changes[i];
+				addStep(currentmove, skey, this.changes[i]);
 			else if(this.changes[i].what == OP_TO)
 			{
 				// change 2.x "stepX" to 3.x "step X"
 				if("step1 of 5" in this.changes[i].details)
 					this.changes[i].details = remap(this.changes[i].details, migratekeymap);
 
-				currentmove[OP_TO] = this.changes[i];
+				addStep(currentmove, skey, this.changes[i]);
 			}
 			else if(this.changes[i].what == OP_FROM)
 			{
@@ -245,7 +256,7 @@ var Shardalyzer =
 
 				if(this.changes[i].details.from == undefined)
 				{
-					var context = (currentmove[OP_START] || currentmove[OP_COMMIT]);
+					var context = currentmove[skey] && (currentmove[skey][OP_START] || currentmove[skey][OP_COMMIT]);
 
 					if(context && context.details.from !== undefined)
 					{
@@ -255,27 +266,27 @@ var Shardalyzer =
 					else if(success(this.changes[i])) // change is not reproducible
 					{
 						this.changes.splice(i, 1);
-						currentmove = {};
+						delete currentmove[skey];
 						continue;
 					}
 				}
 
-				currentmove[OP_FROM] = this.changes[i];
+				addStep(currentmove, skey, this.changes[i]);
 
 				if(success(this.changes[i]))
 				{
 					chunkcache[s(this.changes[i].details.min)] = this.changes[i].details.to;
-					currentmove[MIGRATE_TIME] = sum(migratesteps(this.changes[i]));
-					this.migrations[i] = currentmove;
+					currentmove[skey][MIGRATE_TIME] = sum(migratesteps(this.changes[i]));
+					this.migrations[i] = currentmove[skey];
 
-					datasize += (currentmove[OP_COMMIT].details.clonedBytes || 0);
-					docs += (currentmove[OP_COMMIT].details.cloned || 0);
+					datasize += (currentmove[skey][OP_COMMIT].details.clonedBytes || 0);
+					docs += (currentmove[skey][OP_COMMIT].details.cloned || 0);
 					moves++;
 				}
 				else
-					this.failures[i] = currentmove;
+					this.failures[i] = currentmove[skey];
 
-				currentmove = {};
+				delete currentmove[skey];
 			}
 			else // split or multi-split operation
 			{
