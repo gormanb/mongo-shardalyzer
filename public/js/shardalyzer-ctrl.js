@@ -922,7 +922,12 @@ shardalyze.controller("sliderControl", function($scope)
 		 			var errors = [];
 
 		 			for(var f in shardalyzer.failures)
-		 				errors[f] = { type : "danger", msg : shardalyzer.failures[f][OP_FROM].details.errmsg };
+		 			{
+		 				var errmsg = shardalyzer.failures[f][OP_FROM].details.errmsg ||
+		 					(shardalyzer.failures[f][OP_TO] && shardalyzer.failures[f][OP_TO].details.errmsg);
+
+		 				errors[f] = { type : "danger", msg : errmsg };
+		 			}
 
 		 			return errors;
 		 		},
