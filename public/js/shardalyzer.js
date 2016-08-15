@@ -233,6 +233,13 @@ var Shardalyzer =
 			movehash[key][op.what] = op;
 		}
 
+		function needsTo(moveFrom)
+		{
+			// if we've passed step 3, moveChunk.to should
+			// be present regardless of success or failure
+			return "step 3 of 6" in moveFrom.details;
+		}
+
 		for(var i = this.changes.length-1; i >= 0; i--)
 		{
 			if(this.changes[i].details.min)
@@ -247,6 +254,10 @@ var Shardalyzer =
 					this.changes[i].details = remap(this.changes[i].details, migratekeymap);
 
 				addStep(currentmove, skey, this.changes[i]);
+
+				// moveChunk.to may be last
+				if(currentmove[skey][OP_FROM])
+					delete currentmove[skey];
 			}
 			else if(this.changes[i].what == OP_FROM)
 			{
@@ -286,7 +297,9 @@ var Shardalyzer =
 				else
 					this.failures[i] = currentmove[skey];
 
-				delete currentmove[skey];
+				// may need to wait for a dangling moveChunk.to
+				if(currentmove[skey][OP_TO] || !needsTo(this.changes[i]))
+					delete currentmove[skey];
 			}
 			else // split or multi-split operation
 			{
