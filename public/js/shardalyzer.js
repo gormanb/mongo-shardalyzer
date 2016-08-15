@@ -839,7 +839,16 @@ var Shardalyzer =
 				break;
 
 			case OP_TO:
-				chunks[s(change.details.min)].status = STATUS_TO_SOURCE;
+				// In extremely rare cases, a moveChunk.to can precede the split
+				// event which creates the chunk being moved. If this happens,
+				// log the error and ignore. TODO: raise to user?
+				var ckey = s(change.details.min);
+
+				if(chunks[ckey])
+					chunks[ckey].status = STATUS_TO_SOURCE;
+				else
+					console.log("moveChunk.to referred to a chunk which does not exist; changelog entries are likely out-of-order. " + s(change));
+
 				break;
 
 			case OP_COMMIT:
@@ -884,7 +893,16 @@ var Shardalyzer =
 				break;
 
 			case OP_TO:
-				delete chunks[s(change.details.min)].status;
+				// In extremely rare cases, a moveChunk.to can precede the split
+				// event which creates the chunk being moved. If this happens,
+				// log the error and ignore. TODO: raise to user?
+				var ckey = s(change.details.min);
+
+				if(chunks[ckey])
+					delete chunks[ckey].status;
+				else
+					console.log("moveChunk.to referred to a chunk which does not exist; changelog entries are likely out-of-order. " + s(change));
+
 				break;
 
 			case OP_COMMIT:
