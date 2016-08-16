@@ -1,7 +1,8 @@
 
 var	OP_SPLIT = "split", OP_MULTI_SPLIT = "multi-split",
 	OP_START = "moveChunk.start", OP_TO = "moveChunk.to",
-	OP_COMMIT = "moveChunk.commit", OP_FROM = "moveChunk.from";
+	OP_COMMIT = "moveChunk.commit", OP_FROM = "moveChunk.from",
+	OP_MOVE_ERROR = "moveChunk.error";
 
 var	SOURCE = ".source", DESTINATION = ".dest",
 	SUCCESS = ".success", FAILURE = ".fail";
@@ -11,7 +12,7 @@ var MIGRATE_TIME = "moveChunk.duration";
 var	STATUS_START_SOURCE = OP_START + SOURCE, STATUS_START_DEST = OP_START + DESTINATION,
 	STATUS_TO_SOURCE = OP_TO + SOURCE, STATUS_TO_DEST = OP_TO + DESTINATION,
 	STATUS_FROM_SUCCESS = OP_FROM + SUCCESS, STATUS_FROM_FAILURE = OP_FROM + FAILURE,
-	STATUS_COMMIT = OP_COMMIT;
+	STATUS_COMMIT = OP_COMMIT, STATUS_MOVE_ERROR = OP_MOVE_ERROR;
 
 var	STATUS_SPLIT_SOURCE = OP_SPLIT + SOURCE, STATUS_SPLIT_DEST = OP_SPLIT + DESTINATION,
 	STATUS_MULTI_SPLIT_SOURCE = OP_MULTI_SPLIT + SOURCE,
@@ -34,6 +35,7 @@ statuscolors[STATUS_TO_SOURCE] = '#90EE90',
 statuscolors[STATUS_COMMIT] = '#0000AA',
 statuscolors[STATUS_FROM_SUCCESS] = '#009900',
 statuscolors[STATUS_FROM_FAILURE] = '#EE0000',
+statuscolors[STATUS_MOVE_ERROR] = "#9932CC",
 statuscolors.undefined = DEFAULT_CHUNK_COLOR;
 
 /*
@@ -245,7 +247,7 @@ var Shardalyzer =
 			if(this.changes[i].details.min)
 				var skey = s({ min : this.changes[i].details.min, max : this.changes[i].details.max });
 
-			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT)
+			if(this.changes[i].what == OP_START || this.changes[i].what == OP_COMMIT || this.changes[i].what == OP_MOVE_ERROR)
 				addStep(currentmove, skey, this.changes[i]);
 			else if(this.changes[i].what == OP_TO)
 			{
@@ -814,6 +816,16 @@ var Shardalyzer =
 		// nothing to do here at present
 	},
 
+	applyMoveError : function(chunks, shards, change)
+	{
+		// nothing to do here at present
+	},
+
+	revertMoveError : function(chunks, shards, change)
+	{
+		// nothing to do here at present
+	},
+
 	applyMoveCommit : function(chunks, shards, change)
 	{
 		// nothing to do here at present
@@ -849,6 +861,10 @@ var Shardalyzer =
 				else
 					console.log("moveChunk.to referred to a chunk which does not exist; changelog entries are likely out-of-order. " + s(change));
 
+				break;
+
+			case OP_MOVE_ERROR:
+				chunks[s(change.details.min)].status = STATUS_MOVE_ERROR;
 				break;
 
 			case OP_COMMIT:
@@ -903,6 +919,10 @@ var Shardalyzer =
 				else
 					console.log("moveChunk.to referred to a chunk which does not exist; changelog entries are likely out-of-order. " + s(change));
 
+				break;
+
+			case OP_MOVE_ERROR:
+				delete chunks[s(change.details.min)].status;
 				break;
 
 			case OP_COMMIT:
@@ -961,6 +981,10 @@ var Shardalyzer =
 					this.revertMoveTo(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
+				case OP_MOVE_ERROR:
+					this.revertMoveError(this.chunks, this.shards, this.changes[this.position]);
+					break;
+
 				case OP_COMMIT:
 					this.revertMoveCommit(this.chunks, this.shards, this.changes[this.position]);
 					break;
@@ -1003,6 +1027,10 @@ var Shardalyzer =
 
 				case OP_TO:
 					this.applyMoveTo(this.chunks, this.shards, this.changes[this.position]);
+					break;
+
+				case OP_MOVE_ERROR:
+					this.applyMoveError(this.chunks, this.shards, this.changes[this.position]);
 					break;
 
 				case OP_COMMIT:
@@ -1069,9 +1097,10 @@ var Shardalyzer =
 				var skey = s(change.details.before.min);
 				break;
 
-			case OP_FROM:
-			case OP_START:
+			case OP_MOVE_ERROR:
 			case OP_COMMIT:
+			case OP_START:
+			case OP_FROM:
 			case OP_TO:
 				var skey = s(change.details.min);
 				break;
