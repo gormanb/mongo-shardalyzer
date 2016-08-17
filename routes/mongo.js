@@ -188,35 +188,45 @@ exports.metadata =
 				var mongoscoll = db.collection('mongos');
 
 				// guard against collections that were dropped and recreated; only take changelog entries since the most recent sharding
-				collcoll.find({ _id : namespace, dropped : false }).limit(1).toArray(function(err, shardevent)
+				collcoll.find({ _id : namespace, dropped : false }).limit(1).toArray(function(err, collinfo)
 				{
-					var start = new Date(0);
-
-					if(err)
+					if(err || (!collinfo) || collinfo.length == 0)
 					{
-						res.status(500).send(err);
+						res.status(500).send(err ||  { message : "No record of the sharded namespace was found; was it recently dropped?" } );
 						db.close();
 
 						return;
 					}
-					else if(shardevent && shardevent.length > 0)
-						start = shardevent[0].lastmod;
 
-					var changecursor = changecoll.find({ ns : namespace, what : /moveChunk|split/, time : { $gt : start } }).sort({ time : -1 });
-					var chunkcursor = chunkcoll.find({ ns : namespace }).sort({ min : 1 });
+					var epoch = collinfo[0].lastmodEpoch;
+					var start = epoch.getTimestamp();
 
-					var shardcursor = shardcoll.find({}).sort({ _id : 1 });
-					var tagcursor = tagcoll.find({ ns : namespace });
+					chunkcoll.count({ ns : namespace, lastmodEpoch : epoch }, function(err, result)
+					{
+						if(err || result == 0)
+						{
+							res.status(err ? 500 : 404).send(err || { message : "Namespace " + namespace + " is sharded, but no chunks were found. Config metadata may be inconsistent." } );
+							db.close();
 
-					var mongoscursor = mongoscoll.find({}).sort({ ping : -1 });
-					var settingscursor = settingscoll.find({});
+							return;
+						}
 
-					var cursors = [changecursor, chunkcursor, shardcursor, tagcursor, settingscursor, mongoscursor];
-					var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"', '"settings"', '"mongos"'];
+						var changecursor = changecoll.find({ ns : namespace, what : /moveChunk|split/, time : { $gt : start } }).sort({ time : -1 });
+						var chunkcursor = chunkcoll.find({ ns : namespace, lastmodEpoch : epoch }).sort({ min : 1 });
 
-					res.set('Content-Type', 'application/json');
+						var shardcursor = shardcoll.find({}).sort({ _id : 1 });
+						var tagcursor = tagcoll.find({ ns : namespace });
 
-					send(collections, cursors, res, 0);
+						var mongoscursor = mongoscoll.find({}).sort({ ping : -1 });
+						var settingscursor = settingscoll.find({});
+
+						var cursors = [changecursor, chunkcursor, shardcursor, tagcursor, settingscursor, mongoscursor];
+						var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"', '"settings"', '"mongos"'];
+
+						res.set('Content-Type', 'application/json');
+
+						send(collections, cursors, res, 0);
+					});
 				});
 			}
 		});

@@ -207,6 +207,8 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 			{
 				growl.error(growlmsg("Failed to retrieve data",
 					$scope.mongo.host + ":" + $scope.mongo.port + "/" + $scope.mongo.selectedNS, err.message));
+
+				$scope.mongo.selectedNS = null;
 			}
 		);
 	});
