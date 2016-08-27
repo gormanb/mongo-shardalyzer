@@ -198,7 +198,8 @@ shardalyze.controller('serverNsCtrl', [ '$scope', '$http', 'growl', function($sc
 		(
 			function(result)
 			{
-				$scope.mongo.shardalyzer.initialize(result.shards, result.tags, result.chunks, result.changelog, result.settings, result.mongos);
+				$scope.mongo.shardalyzer.initialize(result.shards, result.tags, result.chunks,
+					result.changelog, result.settings, result.mongos, result.locks, result.lockpings);
 			}
 		)
 		.error
@@ -375,6 +376,13 @@ shardalyze.controller("updateCharts", function($scope)
 		var clustertip = JSON.stringify($scope.mongo.shardalyzer.cluster, null, 4);
 
 		return clustertip.substring(1, clustertip.length-2);
+	}
+
+	$scope.lockinfo = function()
+	{
+		var locktip = JSON.stringify($scope.mongo.shardalyzer.locking, null, 4);
+
+		return locktip.substring(1, locktip.length-2);
 	}
 
 	// lower (inclusive) to upper (exclusive)

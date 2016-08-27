@@ -187,6 +187,9 @@ exports.metadata =
 				var settingscoll = db.collection('settings');
 				var mongoscoll = db.collection('mongos');
 
+				var lockpingscoll = db.collection('lockpings');
+				var lockscoll = db.collection('locks');
+
 				// guard against collections that were dropped and recreated; only take changelog entries since the most recent sharding
 				collcoll.find({ _id : namespace, dropped : false }).limit(1).toArray(function(err, collinfo)
 				{
@@ -220,8 +223,11 @@ exports.metadata =
 						var mongoscursor = mongoscoll.find({}).sort({ ping : -1 });
 						var settingscursor = settingscoll.find({});
 
-						var cursors = [changecursor, chunkcursor, shardcursor, tagcursor, settingscursor, mongoscursor];
-						var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"', '"settings"', '"mongos"'];
+						var lockscursor = lockscoll.find().sort({ state : -1, when : -1 });
+						var lockpingscursor = lockpingscoll.find().sort({ ping : -1 });
+
+						var cursors = [changecursor, chunkcursor, shardcursor, tagcursor, settingscursor, mongoscursor, lockscursor, lockpingscursor];
+						var collections = ['"changelog"', '"chunks"', '"shards"', '"tags"', '"settings"', '"mongos"', '"locks"', '"lockpings"'];
 
 						res.set('Content-Type', 'application/json');
 

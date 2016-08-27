@@ -228,6 +228,18 @@
 								</div>
 							</script>
 						</div>
+						<div id="lockinfo">
+							<button uib-tooltip-template="'lockinfo.html'" tooltip-placement="right-top" tooltip-trigger="outsideClick" tooltip-append-to-body="false" type="button" class="btn btn-primary" style="margin:2px; float:left">
+								<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+							</button>
+							<script type="text/ng-template" id="lockinfo.html">
+								<div style="max-height:50vh">
+									<pre style="font-size:10px">
+										{{lockinfo()}}
+									</pre>
+								</div>
+							</script>
+						</div>
 						<div id="shardedit">
 							<span id="shardeditbuttons" style="display:inline-block; float:left">
 								<div class="btn-group-vertical" style="padding:2px">

@@ -135,13 +135,14 @@ var Shardalyzer =
 	balancer : {},
 	jumbo : {},
 	cluster : {},
+	locking : {},
 
 	position : null,
 
 	statuscolors : statuscolors,
 
 	// arguments are objects in original format from the config database
-	initialize : function(sharddata, tagdata, chunkdata, changedata, settings, mongos)
+	initialize : function(sharddata, tagdata, chunkdata, changedata, settings, mongos, lockdata, pingdata)
 	{
 		this.changes = changedata;
 
@@ -160,6 +161,7 @@ var Shardalyzer =
 		this.jumbo = {};
 
 		this.cluster = { settings : settings, stats : null, mongos : mongos };
+		this.locking = { locks : lockdata, lockpings : pingdata };
 
 		for(var k in sharddata)
 		{
