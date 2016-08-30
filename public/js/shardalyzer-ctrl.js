@@ -689,6 +689,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 		pointHitDetectionRadius : 0,
 		//bezierCurve : false,
 		responsive : true,
+		spanGaps : true,
 		scales:
 		{
 			xAxes : [ { display : false } ],

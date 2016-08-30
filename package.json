@@ -11,6 +11,8 @@
     "express": "3.21.1",
     "jade": "^1.11.0",
 
+	"bower-npm-resolver": "*",
+
     "relaxed-json": "*",
     "bower": "*"
   }
