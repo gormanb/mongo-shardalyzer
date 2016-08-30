@@ -21,7 +21,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular-chart.js": "^0.10.2",
+    "angular-chart.js": "^1.0.2",
     "angular-bootstrap-checkbox": "^0.5.0",
     "angular-bootstrap-slider": "^0.1.28",
     "angular-bootstrap-switch": "^0.5.1",
@@ -36,10 +36,9 @@
     "angular-animate": "^1.5.7",
     "jasny-bootstrap": "^3.1.3",
     "json-formatter": "^0.6.0",
+    "Chart.Zoom.js": "^0.1.3",
     "jquery-ui": "1.11.4",
-    "hamsterjs": "^1.1.2"
-  },
-  "resolutions": {
-    "Chart.js": "^2.2.2"
+    "hamsterjs": "^1.1.2",
+    "hammerjs": "^2.0.8"
   }
 }

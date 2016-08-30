@@ -682,6 +682,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 	$scope.chartmeta.graph.options =
 	{
 		elements : { point : { radius : 0, hitRadius : 4 }, line : { tension : 0, borderJoinStyle : 'bevel' } },
+		pan : { enabled : true, mode : 'x' }, zoom : { enabled : true, mode : 'x'},
 		title : { padding : 2, position : "bottom", display : true },
 		tooltips : { enabled : false, mode : 'label' },
 		scaleShowVerticalLines: false,
@@ -692,7 +693,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 		spanGaps : true,
 		scales:
 		{
-			xAxes : [ { display : false } ],
+			xAxes : [ { type : 'linear', display : false, ticks : { beginAtZero : true } } ],
 			yAxes : [ $scope.chartmeta.graph.yAxes.mig_time, $scope.chartmeta.graph.yAxes.mig_data ]
 		}
 	}
@@ -759,7 +760,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 			var r = changes.length - (i+1);
 
 			for(var m in datasets)
-				datasets[m].data[r] = NaN;
+				datasets[m].data[r] = { x : r, y : NaN };
 
 			if(i in migrations)
 			{
@@ -771,15 +772,15 @@ shardalyze.controller("migrateCtrl", function($scope)
 					var steptimes = migratesteps(moveFrom);
 
 					for(var j in steptimes)
-						datasets["F" + j].data[r] = steptimes[j];
+						datasets["F" + j].data[r] = { x : r, y : steptimes[j] };
 
 					// Total is not shown if graph is stacked
 					if(!$scope.chartmeta.graph.yAxes.mig_time.stacked)
-						datasets["Total"].data[r] = migrations[i][MIGRATE_TIME];
+						datasets["Total"].data[r] = { x : r, y : migrations[i][MIGRATE_TIME] };
 
 					// amount of data transferred (optional)
 					if($scope.chartmeta.graph.yAxes.mig_data.display)
-						datasets["Data Size"].data[r] = moveCommit.details.clonedBytes/(1024.0*1024.0);
+						datasets["Data Size"].data[r] = { x : r, y : moveCommit.details.clonedBytes/(1024.0*1024.0) };
 				}
 			}
 
@@ -838,7 +839,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 
 		if(point)
 		{
-			$scope.mongo.ui.slider = (point._xScale.ticks.length-1 - point._index);
+			$scope.mongo.ui.slider = ($scope.mongo.shardalyzer.changes.length-1 - point._index);
 			$scope.$apply();
 		}
 	}

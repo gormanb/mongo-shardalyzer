@@ -44,6 +44,7 @@
     .factory('ChartJsFactory', ['ChartJs', '$timeout', ChartJsFactory])
     .directive('chartBase', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory(); }])
     .directive('chartLine', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('line'); }])
+    .directive('chartScatter', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('scatter'); }])
     .directive('chartBar', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('bar'); }])
     .directive('chartHorizontalBar', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('horizontalBar'); }])
     .directive('chartRadar', ['ChartJsFactory', function (ChartJsFactory) { return new ChartJsFactory('radar'); }])

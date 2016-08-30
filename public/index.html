@@ -29,6 +29,7 @@
 
 		<script src="/bower_components/angular-animate/angular-animate.min.js"></script>
 
+		<script src="/bower_components/hammerjs/hammer.js"></script>
 		<script src="/bower_components/hamsterjs/hamster.js"></script>
 		<script src="/bower_components/angular-mousewheel/mousewheel.js"></script>
 
@@ -48,7 +49,9 @@
 		<script src="/bower_components/angular-file-model/angular-file-model.js"></script>
 
 		<script src="/bower_components/angular-ui-sortable/sortable.min.js"></script>
+
 		<script src="/bower_components/Chart.js/dist/Chart.js"></script>
+		<script src="/bower_components/Chart.Zoom.js/Chart.Zoom.js"></script>
 
 		<script src="/node_modules/relaxed-json/relaxed-json.js"></script>
 
@@ -436,7 +439,7 @@
 					</div>
 					<div class="panel panel-default panel-body" style="float: right; width:75%; height:100%">
 						<div style="width:100%; height:100%">
-							<canvas id="migrateGraph" class="chart chart-line" ng-readonly="true" chart-data="chartmeta.graph.data" chart-labels="chartmeta.graph.labels" chart-colors="chartmeta.graph.colors"
+							<canvas id="migrateGraph" class="chart chart-scatter" ng-readonly="true" chart-data="chartmeta.graph.data" chart-labels="chartmeta.graph.labels" chart-colors="chartmeta.graph.colors"
 								chart-series="chartmeta.graph.series" chart-options="chartmeta.graph.options" chart-watch="{'chartLabels':{reset:true}}" chart-click="migrateClick" chart-hover="migrateHover">
 							</canvas>
 						</div>
