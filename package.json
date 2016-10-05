@@ -6,14 +6,16 @@
     "start": "node mongo-shardalyzer.js"
   },
   "dependencies": {
-    "kerberos": "^0.0.18",
+    "kerberos": "^0.0.21",
     "mongodb": "^2.1.16",
+
     "express": "3.21.1",
-    "jade": "^1.11.0",
+    "pug": "*",
 
 	"bower-npm-resolver": "*",
 
     "relaxed-json": "*",
-    "bower": "*"
+    "bower": "*",
+    "npm": "*"
   }
 }

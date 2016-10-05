@@ -4,7 +4,7 @@ if [[ ! -z $(which yum) ]]; then
 	sudo yum install epel-release
 	sudo yum install nodejs npm --enablerepo=epel
 elif [[ ! -z $(which apt-get) ]]; then
-	sudo apt-get install nodejs-legacy npm
+	sudo apt-get install nodejs-legacy npm libkrb5-dev
 elif [[ ! -z $(which brew) ]]; then
 	brew install node
 elif [[ ! -z $(which port) ]]; then

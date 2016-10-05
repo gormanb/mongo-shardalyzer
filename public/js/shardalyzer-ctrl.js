@@ -567,6 +567,9 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta.newopts = function(shardname)
 	{
 		return {
+			zoom : { enabled : false },
+			pan : { enabled : false },
+
 			responsive: true,
 
 			elements :
@@ -676,13 +679,15 @@ shardalyze.controller("migrateCtrl", function($scope)
 	{
 		legend : { display : false },
 		maintainAspectRatio : false,
+		zoom : { enabled : false },
+		pan : { enabled : false },
 		responsive : true
 	}
 
 	$scope.chartmeta.graph.options =
 	{
 		elements : { point : { radius : 0, hitRadius : 4 }, line : { tension : 0, borderJoinStyle : 'bevel' } },
-		pan : { enabled : true, mode : 'x' }, zoom : { enabled : true, mode : 'x'},
+		pan : { enabled : true, mode : 'x' }, zoom : { enabled : true, mode : 'x', drag : false },
 		title : { padding : 2, position : "bottom", display : true },
 		tooltips : { enabled : false, mode : 'label' },
 		scaleShowVerticalLines: false,
