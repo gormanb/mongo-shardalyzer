@@ -15,8 +15,8 @@
     define(['angular', 'chart'], factory);
   } else {
     // Browser globals
-    if (typeof angular === 'undefined' || typeof Chart === 'undefined') throw new Error('Chart.js library needs to included, ' +
-      'see http://jtblin.github.io/angular-chart.js/');
+    if (typeof angular === 'undefined' || typeof Chart === 'undefined')
+      throw new Error('Chart.js library needs to be included, see http://jtblin.github.io/angular-chart.js/');
     factory(angular, Chart);
   }
 }(function (angular, Chart) {
@@ -80,11 +80,13 @@
       // If no type was specified set option for the global object
       if (! customOptions) {
         customOptions = type;
-        options = angular.extend(options, customOptions);
-        return;
+        options = angular.merge(options, customOptions);
+      } else {
+        // Set options for the specific chart
+        options[type] = angular.merge(options[type] || {}, customOptions);
       }
-      // Set options for the specific chart
-      options[type] = angular.extend(options[type] || {}, customOptions);
+
+      angular.merge(ChartJs.Chart.defaults, options);
     };
 
     this.$get = function () {
@@ -122,7 +124,7 @@
           });
 
           if(!scope.chartWatch)
-             scope.watch = { 'chartData' : false, 'chartDatasetOverride' : false, 'chartSeries' : false, 'chartLabels' : false, 'chartOptions' : false, 'chartColors' : false };
+             scope.chartWatch = { 'chartData' : {}, 'chartDatasetOverride' : {}, 'chartSeries' : {}, 'chartLabels' : {}, 'chartOptions' : {}, 'chartColors' : {} };
 
           // series, labels, options, colours
           for(var k in scope.chartWatch)
@@ -155,13 +157,13 @@
             createChart(newVal, scope, elem);
           });
 
-          // only used for shard graphs at present
+          // used for shard and migration graphs
           function refreshChart(newVal, oldVal)
           {
             if(scope.chart)
             {
             	// requires that all relevant data has been passed by reference to chart.js
-            	angular.extend(scope.chart.config.options, scope.chartOptions);
+            	angular.merge(scope.chart.config.options, scope.chartOptions);
             	scope.chart.update();
             }
             else

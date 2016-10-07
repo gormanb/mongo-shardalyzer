@@ -610,6 +610,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 {
 	var scolors = $scope.mongo.shardalyzer.statuscolors;
 
+	var datasets = null; // set later createGraphMeta
+
 	var colormap =
 	{
 		F1 : "#AEC6CF",
@@ -635,7 +637,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 			 	colormap["F1"],	colormap["F2"],
 			 	colormap["F3"],	colormap["F4"],
 			 	colormap["F5"],	colormap["F6"],
-			 ],
+			],
 
 			series:
 			{
@@ -651,8 +653,15 @@ shardalyze.controller("migrateCtrl", function($scope)
 			from : null,
 			to : null,
 
-			series : [], // generated dynamically based on current settings
-			colors : [],
+			series : [ "Data Size", "F1", "F2", "F3", "F4", "F5", "F6", "Total" ],
+
+			colors : [
+				colormap["Data Size"],
+				colormap["F1"],	colormap["F2"],
+				colormap["F3"],	colormap["F4"],
+				colormap["F5"],	colormap["F6"],
+				colormap["Total"]
+			],
 
 			yAxes:
 			{
@@ -690,17 +699,28 @@ shardalyze.controller("migrateCtrl", function($scope)
 		pan : { enabled : true, mode : 'x' }, zoom : { enabled : true, mode : 'x', drag : false },
 		title : { padding : 2, position : "bottom", display : true },
 		tooltips : { enabled : false, mode : 'label' },
+		legend : { onClick : graphLegendClick },
 		scaleShowVerticalLines: false,
 		maintainAspectRatio : false,
 		pointHitDetectionRadius : 0,
 		//bezierCurve : false,
 		responsive : true,
 		spanGaps : true,
+		flagRefresh : 1,
 		scales:
 		{
 			xAxes : [ { type : 'linear', display : false, ticks : { beginAtZero : true } } ],
 			yAxes : [ $scope.chartmeta.graph.yAxes.mig_time, $scope.chartmeta.graph.yAxes.mig_data ]
 		}
+	}
+
+	// toggle dataset.hidden on click; without handler,
+	// chart.js sets this internally in dataset._meta
+	function graphLegendClick(event, item)
+	{
+		datasets[item.text].hidden = !datasets[item.text].hidden;
+		updateGraphMeta();
+		$scope.$apply();
 	}
 
 	function filterMigration(moveFrom)
@@ -709,56 +729,70 @@ shardalyze.controller("migrateCtrl", function($scope)
 			&& (!$scope.chartmeta.graph.to || moveFrom.details.to == $scope.chartmeta.graph.to);
 	}
 
-	function generateGraphMeta()
+	function createGraphMeta()
 	{
-		var series = $scope.chartmeta.graph.series = [];
-		var colors = $scope.chartmeta.graph.colors = [];
+		var series = $scope.chartmeta.graph.series;
 
-		if($scope.chartmeta.graph.yAxes.mig_data.display)
-			series.push('Data Size');
-
-		for(var i = 1; i <= 6; i++)
-			series.push('F' + i);
-
-		if(!$scope.chartmeta.graph.yAxes.mig_time.stacked)
-			series.push('Total')
-
-		var datasets = {};
+		var sets = {};
 
 		for(var s in series)
 		{
 			var ds = series[s];
 
-			datasets[ds] =
+			sets[ds] =
 			{
 				data : [],
 				borderWidth : 2,
+				hidden : (ds == "Data Size" ? true : false),
 				fill :  (ds == "Data Size" ? false : $scope.chartmeta.graph.yAxes.mig_time.stacked),
 				yAxisID : (ds == "Data Size" ? "mig_data" : "mig_time")
 			}
-
-			colors.push(colormap[ds]);
 		}
 
-		return datasets;
+		// add datasets to scoped variable
+		for(var ds in sets)
+			$scope.chartmeta.graph.data.push(sets[ds]);
+
+		return sets;
 	}
 
-	function updateGraph()
-	{
-		$scope.chartmeta.graph.data = [];
-		$scope.chartmeta.graph.labels = [];
+	// same elements as $scope.chartmeta.graph.data array, but allows reference by dataset title
+	datasets = $scope.chartmeta.graph.datasets = createGraphMeta();
 
+	// changes to dataset visibility, axes, etc
+	function updateGraphMeta(stacked)
+	{
 		// don't show Time (ms) label if MB scale is disabled
 		$scope.chartmeta.graph.yAxes.mig_time.scaleLabel.display =
-			$scope.chartmeta.graph.yAxes.mig_data.display;
+			$scope.chartmeta.graph.yAxes.mig_data.display = !datasets["Data Size"].hidden;
 
-		// set series & build template datasets based on current settings
-		var datasets = generateGraphMeta();
+		for(var m in datasets)
+		{
+			datasets[m].fill = (m == "Data Size" ? false :
+				$scope.chartmeta.graph.yAxes.mig_time.stacked);
+		}
+
+		if(stacked !== undefined)
+			datasets["Total"].hidden = stacked;
+
+		$scope.chartmeta.graph.options.flagRefresh ^= 1;
+	}
+
+	// changes to actual underlying data
+	function updateGraphData()
+	{
+		var labels = $scope.chartmeta.graph.labels;
+		var data = $scope.chartmeta.graph.data;
 
 		var migrations = $scope.mongo.shardalyzer.migrations;
 		var changes = $scope.mongo.shardalyzer.changes;
 
 		if(!changes || !migrations) return;
+
+		for(var ds in datasets)
+			datasets[ds].data.length = changes.length;
+
+		$scope.chartmeta.graph.labels.length = changes.length;
 
 		for(var i = 0; i < changes.length; i++)
 		{
@@ -780,25 +814,22 @@ shardalyze.controller("migrateCtrl", function($scope)
 						datasets["F" + j].data[r] = { x : r, y : steptimes[j] };
 
 					// Total is not shown if graph is stacked
-					if(!$scope.chartmeta.graph.yAxes.mig_time.stacked)
-						datasets["Total"].data[r] = { x : r, y : migrations[i][MIGRATE_TIME] };
+					datasets["Total"].data[r] = { x : r, y : migrations[i][MIGRATE_TIME] };
 
-					// amount of data transferred (optional)
-					if($scope.chartmeta.graph.yAxes.mig_data.display)
-						datasets["Data Size"].data[r] = { x : r, y : moveCommit.details.clonedBytes/(1024.0*1024.0) };
+					// amount of data transferred, if available
+					datasets["Data Size"].data[r] = { x : r, y : moveCommit.details.clonedBytes/(1024.0*1024.0) };
 				}
 			}
 
 			$scope.chartmeta.graph.labels[r] = $scope.mongo.shardalyzer.changes[i].time;
 		}
 
-		// finalise datasets
-		for(var ds in datasets)
-			$scope.chartmeta.graph.data.push(datasets[ds]);
+		$scope.chartmeta.graph.options.flagRefresh ^= 1;
 	};
 
-	$scope.$watchGroup(['chartmeta.graph.from', 'chartmeta.graph.to', 'chartmeta.graph.yAxes.mig_time.stacked', 'chartmeta.graph.yAxes.mig_data.display'], updateGraph);
-	$scope.$watch('mongo.shardalyzer.changes', function(changes) { $scope.mongo.ui.showmigrations = false; updateGraph(); } )
+	$scope.$watch('mongo.shardalyzer.changes', function(changes) { $scope.mongo.ui.showmigrations = false; updateGraphData(); } )
+	$scope.$watchGroup(['chartmeta.graph.from', 'chartmeta.graph.to'], updateGraphData);
+	$scope.$watch('chartmeta.graph.yAxes.mig_time.stacked', updateGraphMeta);
 
 	function updateBars(pos, op)
 	{
