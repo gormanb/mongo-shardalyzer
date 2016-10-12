@@ -304,7 +304,7 @@
 
     function getChartData (type, scope) {
       var data = Array.isArray(scope.chartData[0]) ? // doughnut
-        getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights, scope.chartDatasetOverride) :
+        getDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights, scope.chartDatasetOverride || []) :
           scope.chartData[0] instanceof Object ? // line
             fillDataSets(scope.chartLabels, scope.chartData, scope.chartSeries || [], getColors(type, scope), scope.chartHighlights, scope.chartDatasetOverride) :
               getData(scope.chartLabels, scope.chartData, scope.chartColors, scope.chartHighlights, scope.chartDatasetOverride); // bar
@@ -316,7 +316,7 @@
     function fillDataSets(labels, data, series, colors, highlights, datasetOverride)
     {
     	for(var i in data)
-    		angular.extend(data[i], colors[i], (highlights ? highlights[i] : {}), (i in series ? { label : series[i] } : {}));
+    		angular.extend(data[i], colors[i], (highlights ? highlights[i] : {}), (i in series ? { label : series[i] } : {}), (i in datasetOverride ? datasetOverride[i] : {}));
 
     	return {
     		labels : labels,

@@ -3,7 +3,7 @@ var shardSegmentTooltipRaw = function(point, event)
 {
 	var tooltipEl = $('#chartjs-tooltip-shardalyzer');
 
-	if (!point) {
+	if (!point || !point._model.label) {
 		tooltipEl.css({
 			opacity: 0
 		});

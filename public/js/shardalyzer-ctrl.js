@@ -483,8 +483,15 @@ shardalyze.controller("updateCharts", function($scope)
 	// start (inclusive) to end (exclusive)
 	function generateChart(shardname, start, end)
 	{
-		var shard = $scope.mongo.shardalyzer.shards[shardname];
 		var granularity = $scope.chartmeta.granularity.value;
+
+		var shards = $scope.mongo.shardalyzer.shards;
+		var shard = shards[shardname];
+
+		var maxchunks = 1;
+
+		for(var s in shards)
+			maxchunks = Math.max(shards[s].length, maxchunks);
 
 		var splitcount = $scope.mongo.shardalyzer.splitcount;
 
@@ -493,7 +500,7 @@ shardalyze.controller("updateCharts", function($scope)
 
 		var length = (end-start);
 
-		var inc = Math.max(1, length/granularity);
+		var inc = Math.max(1, (maxchunks/granularity));
 		var seq = 0;
 
 		for(var skip = start; skip < end; skip+=inc)
@@ -515,6 +522,14 @@ shardalyze.controller("updateCharts", function($scope)
 			}
 		}
 
+		// add invisible extra segment to represent diff between current and largest shards
+		$scope.chartmeta.data[shardname][DS_CHUNKS][seq] = Math.round(Math.max(0, granularity-seq));
+		$scope.chartmeta.highlights[shardname][DS_CHUNKS][seq] = 'rgba(0,0,0,0)';
+		$scope.chartmeta.colors[shardname][DS_CHUNKS][seq] = 'rgba(0,0,0,0)';
+		$scope.chartmeta.labels[shardname][seq] = null;
+		seq++;
+
+		// set size of each component to reflect updated dataset
 		$scope.chartmeta.highlights[shardname][DS_CHUNKS].length = seq;
 		$scope.chartmeta.colors[shardname][DS_CHUNKS].length = seq;
 		$scope.chartmeta.data[shardname][DS_CHUNKS].length = seq;
