@@ -316,7 +316,7 @@
     function fillDataSets(labels, data, series, colors, highlights, datasetOverride)
     {
     	for(var i in data)
-    		angular.extend(data[i], colors[i], (highlights ? highlights[i] : {}), (i in series ? { label : series[i] } : {}), (i in datasetOverride ? datasetOverride[i] : {}));
+    		angular.extend(data[i], colors[i], (highlights ? highlights[i] : {}), (series && i in series ? { label : series[i] } : {}), (datasetOverride && i in datasetOverride ? datasetOverride[i] : {}));
 
     	return {
     		labels : labels,
