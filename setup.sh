@@ -6,7 +6,7 @@ if [[ ! -z $(which yum) ]]; then
 elif [[ ! -z $(which apt-get) ]]; then
 	sudo apt-get install nodejs-legacy npm libkrb5-dev
 elif [[ ! -z $(which brew) ]]; then
-	brew install node
+	brew install node npm
 elif [[ ! -z $(which port) ]]; then
 	port install nodejs npm
 elif [[ -z $(which npm) ]]; then

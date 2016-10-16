@@ -12,7 +12,6 @@
 
 		<link rel="stylesheet" href="/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css">
 		<script src="/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.js"></script>
-		<script src="/bower_components/angular-bootstrap-slider/slider.js"></script>
 
 		<!--<link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">-->
 		<!--<script src="/bower_components/angular-chart.js/dist/angular-chart.js"></script>-->
@@ -60,7 +59,9 @@
 		<link rel="stylesheet" href="stylesheets/spinner.css">
 		<link rel="stylesheet" href="stylesheets/style.css">
 
-		<script src="/js/lib/util.js"></script>
+		<script src="js/lib/util.js"></script>
+
+		<script src="js/lib/angular-bootstrap-slider-fork.js"></script>
 
 		<script src="js/lib/angular-chart-fork.js"></script>
 		<script src="js/lib/chart-tooltip.js"></script>
@@ -398,8 +399,7 @@
 								min="slidermeta.min"
 								max="slidermeta.max"
 								scale="slidermeta.scale"
-								ticks="mongo.ui.errors"
-								ticks_snap_bounds="slidermeta.snap"
+								range_highlights="slidermeta.ranges"
 								formatter="slidermeta.formatter(value)">
 							</slider>
 							<span id="erroroptions" class="form-inline form-group" style="width:100%">

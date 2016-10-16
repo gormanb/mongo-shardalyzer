@@ -931,6 +931,8 @@ shardalyze.controller("sliderControl", function($scope)
 
 	$scope.slidermeta.scale = null;
 
+	$scope.slidermeta.ranges = [];
+
 	$scope.slidermeta.formatter = function(value)
 	{
 		var changes = $scope.mongo.shardalyzer.changes;
@@ -1104,6 +1106,25 @@ shardalyze.controller("sliderControl", function($scope)
 
 		if($scope.mongo.ui.errors[$scope.mongo.ui.errors.length-1] !== $scope.slidermeta.max)
 			$scope.mongo.ui.errors.push($scope.slidermeta.max);
+
+		$scope.slidermeta.ranges = [];
+
+		var currange = { start : -0.5, end : 0 };
+
+		for(var idx = 0; idx < $scope.mongo.ui.errors.length; idx++)
+		{
+			var erridx = +$scope.mongo.ui.errors[idx];
+
+			// merge errors within 5 changelog entries of each other (i.e. consecutive migrate failures)
+			if(Math.abs(erridx - currange.end) >= 5 || idx == $scope.mongo.ui.errors.length-1)
+			{
+				currange.end += 0.5;
+				$scope.slidermeta.ranges.push(currange);
+				currange = { start : erridx-0.5, end : erridx };
+			}
+			else
+				currange.end = erridx;
+		}
 
 		// slider doesn't $watch ticks; force it to refresh itself
 		$scope.slidermeta.scale = (	$scope.slidermeta.scale == null ? "linear" : null);

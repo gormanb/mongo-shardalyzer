@@ -82,6 +82,15 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffebeb', endColorstr='#ffffcccc', GradientType=0);
 }
 
+.slider-selection {
+	background: #81bfde;
+}
+
+.slider-rangeHighlight {
+	background: #f70616;
+	min-width: 1px;
+}
+
 .row-centered {
     text-align:center;
 }
