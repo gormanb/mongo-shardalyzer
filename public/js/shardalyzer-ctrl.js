@@ -523,7 +523,7 @@ shardalyze.controller("updateCharts", function($scope)
 		}
 
 		// add invisible extra segment to represent diff between current and largest shards
-		$scope.chartmeta.data[shardname][DS_CHUNKS][seq] = Math.round(Math.max(0, granularity-seq));
+		$scope.chartmeta.data[shardname][DS_CHUNKS][seq] = Math.max(Math.min(maxchunks, granularity)-seq, 0);
 		$scope.chartmeta.highlights[shardname][DS_CHUNKS][seq] = 'rgba(0,0,0,0)';
 		$scope.chartmeta.colors[shardname][DS_CHUNKS][seq] = 'rgba(0,0,0,0)';
 		$scope.chartmeta.labels[shardname][seq] = null;
