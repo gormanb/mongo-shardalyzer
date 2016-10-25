@@ -35,7 +35,7 @@
     "angular-animate": "^1.5.7",
     "jasny-bootstrap": "^3.1.3",
     "json-formatter": "^0.6.0",
-    "Chart.Zoom.js": "^0.2.0",
+    "Chart.Zoom.js": "npm:chartjs-plugin-zoom#^0.4.0",
     "jquery-ui": "1.11.4",
     "hamsterjs": "^1.1.2",
     "hammerjs": "^2.0.8",
