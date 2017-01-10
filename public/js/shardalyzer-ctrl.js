@@ -244,7 +244,7 @@ shardalyze.controller("updateCharts", function($scope)
 	$scope.chartmeta = {};
 
 	$scope.chartmeta.colclasses = ["col-md-1", "col-md-2", "col-md-3", "col-md-4", "col-md-6", "col-md-12"];
-	$scope.chartmeta.currentcol = 3;
+	$scope.chartmeta.currentcol = 2;
 
 	$scope.chartmeta.shardedit = false;
 
