@@ -21,29 +21,30 @@
     "tests"
   ],
   "dependencies": {
-    "angular-chart.js": "~1.0.2",
-    "angular-bootstrap-checkbox": "~0.5.0",
-    "angular-bootstrap-slider": "~0.1.28",
-    "angular-bootstrap-switch": "~0.5.1",
-    "seiyria-bootstrap-slider": "~9.2.2",
-    "angular-ui-sortable": "~0.14.3",
-    "angular-ui-select": "~0.18.0",
-    "angular-mousewheel": "~1.0.5",
-    "angular-file-model": "~0.3.1",
-    "angular-bootstrap": "~1.3.3",
-    "angular-growl-v2": "~0.7.9",
-    "angular-animate": "~1.5.7",
-    "jasny-bootstrap": "~3.1.3",
-    "json-formatter": "~0.6.0",
-    "chart.zoom.js": "npm:chartjs-plugin-zoom#~0.4.0",
-    "jquery": "~2.2.4",
-    "jquery-ui": "~1.11.4",
-    "hamsterjs": "~1.1.2",
-    "hammerjs": "~2.0.8",
-    "chart.js": "~2.4.0"
+    "chart.zoom.js": "npm:chartjs-plugin-zoom#0.4.5",
+    "angular-bootstrap-checkbox": "0.5.1",
+    "angular-bootstrap-slider": "0.1.28",
+    "angular-bootstrap-switch": "0.5.2",
+    "seiyria-bootstrap-slider": "9.2.2",
+    "angular-ui-sortable": "0.14.4",
+    "angular-ui-select": "0.18.1",
+    "angular-mousewheel": "1.0.5",
+    "angular-file-model": "0.3.1",
+    "angular-bootstrap": "1.3.3",
+    "angular-growl-v2": "0.7.9",
+    "angular-chart.js": "1.0.3",
+    "angular-animate": "1.5.11",
+    "jasny-bootstrap": "3.1.3",
+    "json-formatter": "0.6.0",
+    "jquery-ui": "1.11.4",
+    "bootstrap": "3.3.7",
+    "hamsterjs": "1.1.2",
+    "hammerjs": "2.0.8",
+    "chart.js": "2.4.0",
+    "jquery": "2.2.4"
   },
   "resolutions": {
-    "seiyria-bootstrap-slider": "~9.2.2",
-    "jquery": "~2.2.4"
+    "seiyria-bootstrap-slider": "9.2.2",
+    "jquery": "2.2.4"
   }
 }
