@@ -635,6 +635,7 @@ shardalyze.controller("migrateCtrl", function($scope)
 		F4 : scolors[STATUS_TO_SOURCE],
 		F5 : scolors[STATUS_COMMIT],
 		F6 : scolors[STATUS_FROM_SUCCESS],
+		F7 : scolors[STATUS_FROM_SUCCESS],
 
 		"Total" : scolors[STATUS_FROM_FAILURE],
 		"Data Size" : '#000000'
@@ -652,11 +653,12 @@ shardalyze.controller("migrateCtrl", function($scope)
 			 	colormap["F1"],	colormap["F2"],
 			 	colormap["F3"],	colormap["F4"],
 			 	colormap["F5"],	colormap["F6"],
+			 	colormap["F7"]
 			],
 
 			series:
 			{
-				"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6'],
+				"moveChunk.from": ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'],
 				"moveChunk.to": ['T1', 'T2', 'T3', 'T4', 'T5']
 			}
 		},
@@ -668,14 +670,14 @@ shardalyze.controller("migrateCtrl", function($scope)
 			from : null,
 			to : null,
 
-			series : [ "Data Size", "F1", "F2", "F3", "F4", "F5", "F6", "Total" ],
+			series : [ "Data Size", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "Total" ],
 
 			colors : [
 				colormap["Data Size"],
 				colormap["F1"],	colormap["F2"],
 				colormap["F3"],	colormap["F4"],
 				colormap["F5"],	colormap["F6"],
-				colormap["Total"]
+				colormap["F7"], colormap["Total"]
 			],
 
 			yAxes:
@@ -832,7 +834,8 @@ shardalyze.controller("migrateCtrl", function($scope)
 					datasets["Total"].data[r] = { x : r, y : migrations[i][MIGRATE_TIME] };
 
 					// amount of data transferred, if available
-					datasets["Data Size"].data[r] = { x : r, y : moveCommit.details.clonedBytes/(1024.0*1024.0) };
+					const migrationStats = moveCommit && (moveCommit.details.counts || moveCommit.details);
+					datasets["Data Size"].data[r] = { x : r, y : (migrationStats && migrationStats.clonedBytes/(1024.0*1024.0)) || 0 };
 				}
 			}
 

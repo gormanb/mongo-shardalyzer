@@ -56,7 +56,10 @@ function migratesteps(change)
 {
 	var steptimes = [];
 
-	var numsteps = (change.what == OP_FROM ? 6 : change.what == OP_TO ? 5 : 0);
+    // OP_FROM is 6 steps prior to 3.6 and 3.4.14, 7 afterwards.
+	var numsteps = (change.what == OP_FROM
+	    ? ("step 1 of 7" in change.details ? 7 : 6)
+	    : change.what == OP_TO ? 5 : 0);
 
 	for(var i = 1; i <= numsteps; i++)
 		steptimes[i] = change.details["step " + i + " of " + numsteps];
@@ -239,9 +242,8 @@ var Shardalyzer =
 
 		function needsTo(moveFrom)
 		{
-			// if we've passed step 3, moveChunk.to should
-			// be present regardless of success or failure
-			return "step 3 of 6" in moveFrom.details;
+			// if we've passed step 3, moveChunk.to should be present regardless of success or failure.
+			return "step 3 of 6" in moveFrom.details || "step 3 of 7" in moveFrom.details;
 		}
 
 		for(var i = this.changes.length-1; i >= 0; i--)
@@ -294,8 +296,12 @@ var Shardalyzer =
 					currentmove[skey][MIGRATE_TIME] = sum(migratesteps(this.changes[i]));
 					this.migrations[i] = currentmove[skey];
 
-					datasize += (currentmove[skey][OP_COMMIT].details.clonedBytes || 0);
-					docs += (currentmove[skey][OP_COMMIT].details.cloned || 0);
+					if(moveCommit = currentmove[skey][OP_COMMIT]) {
+					    // In 3.4.14, migration stats were added back in a new 'details.counts' subdoc.
+					    const migrationStats = (moveCommit.details.counts || moveCommit.details);
+    					datasize += (migrationStats.clonedBytes || 0);
+    					docs += (migrationStats.cloned || 0);
+					}
 					moves++;
 				}
 				else
