@@ -6,13 +6,18 @@
     "start": "node mongo-shardalyzer.js"
   },
   "dependencies": {
-    "bower-npm-resolver": "0.7.0",
-    "relaxed-json": "1.0.0",
-    "kerberos": "0.0.21",
-    "mongodb": "2.1.16",
-    "express": "3.21.1",
+    "body-parser": "^1.18.3",
     "bower": "1.8.0",
+    "bower-npm-resolver": "0.7.0",
+    "errorhandler": "^1.5.0",
+    "express": "^4.16.4",
+    "kerberos": "0.0.21",
+    "method-override": "^3.0.0",
+    "mongodb": "2.1.16",
+    "morgan": "^1.9.1",
+    "npm": "^6.5.0",
     "pug": "0.1.0",
-    "npm": "4.1.1"
+    "relaxed-json": "1.0.0",
+    "serve-favicon": "^2.5.0"
   }
 }
